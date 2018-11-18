@@ -1,0 +1,16 @@
+﻿using Newtonsoft.Json;
+
+namespace Uni.WebApi.Models.Requests
+{
+    [JsonObject]
+    public class FacultyRequestModel
+    {
+        public int UniversityId { get; set; }
+
+        public string Name { get; set; }
+
+        public string ShortName { get; set; }
+
+        public string Description { get; set; }
+    }
+}
