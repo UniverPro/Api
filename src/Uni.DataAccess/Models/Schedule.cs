@@ -2,7 +2,7 @@
 
 namespace Uni.DataAccess.Models
 {
-    public class Schedule
+    public class Schedule : ITableObject
     {
         public int Id { get; set; }
         public int SubjectId { get; set; }

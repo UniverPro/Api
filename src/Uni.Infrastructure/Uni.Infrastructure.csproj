@@ -4,4 +4,31 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="CQRS\Commands\Faculties\" />
+    <Folder Include="CQRS\Commands\Groups\" />
+    <Folder Include="CQRS\Commands\Common\" />
+    <Folder Include="CQRS\Commands\Universities\" />
+    <Folder Include="CQRS\Commands\Teachers\" />
+    <Folder Include="CQRS\Commands\Subjects\" />
+    <Folder Include="CQRS\Commands\Students\" />
+    <Folder Include="CQRS\Commands\Schedules\" />
+    <Folder Include="CQRS\Queries\Faculties\" />
+    <Folder Include="CQRS\Queries\Groups\" />
+    <Folder Include="CQRS\Queries\Schedules\" />
+    <Folder Include="CQRS\Queries\Students\" />
+    <Folder Include="CQRS\Queries\Subjects\" />
+    <Folder Include="CQRS\Queries\Teachers\" />
+    <Folder Include="CQRS\Queries\Universities\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="JetBrains.Annotations" Version="2018.2.1" />
+    <PackageReference Include="MediatR" Version="5.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Uni.DataAccess\Uni.DataAccess.csproj" />
+  </ItemGroup>
+
 </Project>

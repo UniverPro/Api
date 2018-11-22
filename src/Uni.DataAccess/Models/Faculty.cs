@@ -2,7 +2,7 @@
 
 namespace Uni.DataAccess.Models
 {
-    public class Faculty
+    public class Faculty : ITableObject
     {
         public Faculty()
         {

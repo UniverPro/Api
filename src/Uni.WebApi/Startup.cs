@@ -2,8 +2,11 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using AutoMapper;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using JetBrains.Annotations;
+using MediatR;
 using MicroElements.Swashbuckle.FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -14,14 +17,16 @@ using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Uni.DataAccess.Data;
+using Uni.Infrastructure.CQRS;
+using Uni.WebApi.Validators;
 
 namespace Uni.WebApi
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup([NotNull] IConfiguration configuration)
         {
-            Configuration = configuration;
+            Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
 
         public IConfiguration Configuration { get; }
@@ -32,27 +37,25 @@ namespace Uni.WebApi
                 .AddFluentValidation(configuration =>
                 {
                     // Add validators
-                    AssemblyScanner.FindValidatorsInAssemblyContaining<Startup>().ForEach(pair =>
+                    AssemblyScanner.FindValidatorsInAssemblyContaining<ValidatorsMarker>().ForEach(pair =>
                     {
-                        // RegisterValidatorsFromAssemblyContaining does this:
                         services.AddTransient(pair.InterfaceType, pair.ValidatorType);
-                        // Also register it as its concrete type as well as the interface type
                         services.AddTransient(pair.ValidatorType);
                     });
                 })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            
+
             services.AddEntityFrameworkSqlServer();
             services.AddDbContext<UniDbContext>(x =>
             {
                 x.UseSqlServer(
                     Configuration.GetConnectionString("UniDbConnection"),
                     sql => sql.MigrationsAssembly(typeof(UniDbContext).Assembly.FullName)
-                    );
-//#if DEBUG
-//                x.EnableSensitiveDataLogging();
-//#endif
+                );
             });
+
+            services.AddAutoMapper();
+            services.AddMediatR(typeof(CqrsMarker));
 
             // Configure versions 
             services.AddApiVersioning(o =>
@@ -108,7 +111,7 @@ namespace Uni.WebApi
             }
 
             app.UseScopedSwagger();
-            app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "Uni API v1"); });
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Uni API v1"));
 
             app.UseHttpsRedirection();
             app.UseMvc();

@@ -2,7 +2,7 @@
 
 namespace Uni.DataAccess.Models
 {
-    public class University
+    public class University : ITableObject
     {
         public University()
         {

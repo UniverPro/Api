@@ -1,6 +1,6 @@
 ﻿namespace Uni.DataAccess.Models
 {
-    public class Subject
+    public class Subject : ITableObject
     {
         public int Id { get; set; }
         public int GroupId { get; set; }

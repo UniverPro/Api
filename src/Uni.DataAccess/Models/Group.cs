@@ -2,7 +2,7 @@
 
 namespace Uni.DataAccess.Models
 {
-    public class Group
+    public class Group : ITableObject
     {
         public Group()
         {

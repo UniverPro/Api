@@ -1,6 +1,6 @@
 ﻿namespace Uni.DataAccess.Models
 {
-    public abstract class Person
+    public abstract class Person : ITableObject
     {
         public int Id { get; set; }
         public string AvatarPath { get; set; }
