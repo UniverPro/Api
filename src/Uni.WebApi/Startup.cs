@@ -2,11 +2,12 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using JetBrains.Annotations;
-using MediatR;
 using MicroElements.Swashbuckle.FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -17,7 +18,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Uni.DataAccess.Data;
-using Uni.Infrastructure.CQRS;
+using Uni.Infrastructure.CQRS.Queries.Common.FindAll;
 using Uni.WebApi.Validators;
 
 namespace Uni.WebApi
@@ -31,8 +32,9 @@ namespace Uni.WebApi
 
         public IConfiguration Configuration { get; }
 
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
+            // Add services to the collection.
             services.AddMvc()
                 .AddFluentValidation(configuration =>
                 {
@@ -55,7 +57,6 @@ namespace Uni.WebApi
             });
 
             services.AddAutoMapper();
-            services.AddMediatR(typeof(CqrsMarker));
 
             // Configure versions 
             services.AddApiVersioning(o =>
@@ -100,6 +101,14 @@ namespace Uni.WebApi
                     return versions.Any(x => $"v{x}" == version);
                 });
             });
+
+            // Create the container builder.
+            var builder = new ContainerBuilder();
+            builder.Populate(services);
+
+            builder.RegisterModule(new MediatorModule());
+
+            return new AutofacServiceProvider(builder.Build());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
