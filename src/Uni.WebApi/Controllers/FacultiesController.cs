@@ -7,6 +7,8 @@ using JetBrains.Annotations;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Uni.DataAccess.Models;
+using Uni.Infrastructure.CQRS.Commands.Common.Create;
+using Uni.Infrastructure.CQRS.Commands.Common.Delete;
 using Uni.Infrastructure.CQRS.Queries.Common.FindAll;
 using Uni.Infrastructure.CQRS.Queries.Common.FindById;
 using Uni.Infrastructure.Exceptions;
@@ -47,7 +49,8 @@ namespace Uni.WebApi.Controllers
         [HttpGet("{id}")]
         public async Task<FacultyResponseModel> Get(int id, CancellationToken cancellationToken)
         {
-            var entity = await _mediator.Send(new FindByIdQuery<Faculty>(id), cancellationToken);
+            var query = new FindByIdQuery<Faculty>(id);
+            var entity = await _mediator.Send(query, cancellationToken);
 
             if (entity == null)
             {
@@ -67,38 +70,52 @@ namespace Uni.WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<FacultyResponseModel> Post([FromBody] FacultyRequestModel model)
+        public async Task<FacultyResponseModel> Post([FromBody] FacultyRequestModel model, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
-            //var faculty = new Faculty
-            //{
-            //    UniversityId = model.UniversityId,
-            //    Description = model.Description,
-            //    Name = model.Name,
-            //    ShortName = model.ShortName
-            //};
+            var faculty = new Faculty
+            {
+                UniversityId = model.UniversityId,
+                Description = model.Description,
+                Name = model.Name,
+                ShortName = model.ShortName
+            };
 
-            //var entityEntry = _uniDbContext.Faculties.Add(faculty);
+            var command = new CreateCommand<Faculty>(faculty);
+            var entity = await _mediator.Send(command, cancellationToken);
 
-            //await _uniDbContext.SaveChangesAsync();
+            var response = new FacultyResponseModel
+            {
+                Id = entity.Id,
+                Description = entity.Description,
+                Name = entity.Name,
+                ShortName = entity.ShortName
+            };
 
-            //var entity = entityEntry.Entity;
-
-            //var response = new FacultyResponseModel
-            //{
-            //    Id = entity.Id,
-            //    Description = entity.Description,
-            //    Name = entity.Name,
-            //    ShortName = entity.ShortName
-            //};
-
-            //return response;
+            return response;
         }
 
         [HttpPut("{id}")]
-        public async Task<FacultyResponseModel> Put(int id, [FromBody] FacultyRequestModel model)
+        public async Task<FacultyResponseModel> Put(int id, [FromBody] FacultyRequestModel model, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var query = new FindByIdQuery<Faculty>(id);
+            var entity = await _mediator.Send(query, cancellationToken);
+
+            if (entity == null)
+            {
+                throw new NotFoundException();
+            }
+
+            var faculty = new Faculty
+            {
+                UniversityId = model.UniversityId,
+                Description = model.Description,
+                Name = model.Name,
+                ShortName = model.ShortName
+            };
+
+            var command = new UpdateCommand<Faculty>(id, faculty);
+            var entity = await _mediator.Send(query, cancellationToken);
+
             //var entity = await _uniDbContext.Faculties.SingleOrDefaultAsync(x => x.Id == id);
 
             //if (entity == null)
@@ -124,19 +141,18 @@ namespace Uni.WebApi.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task Delete(int id)
+        public async Task Delete(int id, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
-            //var entity = await _uniDbContext.Faculties.SingleOrDefaultAsync(x => x.Id == id);
+            var query = new FindByIdQuery<Faculty>(id);
+            var entity = await _mediator.Send(query, cancellationToken);
 
-            //if (entity == null)
-            //{
-            //    throw new NotFoundException();
-            //}
+            if (entity == null)
+            {
+                throw new NotFoundException();
+            }
 
-            //_uniDbContext.Faculties.Remove(entity);
-
-            //await _uniDbContext.SaveChangesAsync();
+            var command = new DeleteCommand<Faculty>(entity);
+            await _mediator.Send(command, cancellationToken);
         }
     }
 }

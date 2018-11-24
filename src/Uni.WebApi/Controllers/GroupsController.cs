@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Uni.WebApi.Models.Requests;
@@ -13,7 +14,7 @@ namespace Uni.WebApi.Controllers
     public class GroupsController : ControllerBase
     {
         [HttpGet]
-        public async Task<IEnumerable<GroupResponseModel>> Get()
+        public async Task<IEnumerable<GroupResponseModel>> Get(CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
@@ -25,19 +26,19 @@ namespace Uni.WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<GroupResponseModel> Post([FromBody] GroupRequestModel model)
+        public async Task<GroupResponseModel> Post([FromBody] GroupRequestModel model, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
 
         [HttpPut("{id}")]
-        public async Task<GroupResponseModel> Put(int id, [FromBody] GroupRequestModel model)
+        public async Task<GroupResponseModel> Put(int id, [FromBody] GroupRequestModel model, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
 
         [HttpDelete("{id}")]
-        public async Task Delete(int id)
+        public async Task Delete(int id, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }

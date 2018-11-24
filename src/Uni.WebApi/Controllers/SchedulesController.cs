@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Uni.WebApi.Models.Requests;
@@ -13,7 +14,7 @@ namespace Uni.WebApi.Controllers
     public class SchedulesController : ControllerBase
     {
         [HttpGet]
-        public async Task<IEnumerable<ScheduleResponseModel>> Get()
+        public async Task<IEnumerable<ScheduleResponseModel>> Get(CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
@@ -25,19 +26,19 @@ namespace Uni.WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ScheduleResponseModel> Post([FromBody] ScheduleRequestModel model)
+        public async Task<ScheduleResponseModel> Post([FromBody] ScheduleRequestModel model, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
 
         [HttpPut("{id}")]
-        public async Task<ScheduleResponseModel> Put(int id, [FromBody] ScheduleRequestModel model)
+        public async Task<ScheduleResponseModel> Put(int id, [FromBody] ScheduleRequestModel model, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
 
         [HttpDelete("{id}")]
-        public async Task Delete(int id)
+        public async Task Delete(int id, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }

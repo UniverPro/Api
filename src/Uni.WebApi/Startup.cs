@@ -12,13 +12,10 @@ using MicroElements.Swashbuckle.FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using Uni.DataAccess.Data;
-using Uni.Infrastructure.CQRS.Queries.Common.FindAll;
 using Uni.WebApi.Validators;
 
 namespace Uni.WebApi
@@ -47,14 +44,7 @@ namespace Uni.WebApi
                 })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            services.AddEntityFrameworkSqlServer();
-            services.AddDbContext<UniDbContext>(x =>
-            {
-                x.UseSqlServer(
-                    Configuration.GetConnectionString("UniDbConnection"),
-                    sql => sql.MigrationsAssembly(typeof(UniDbContext).Assembly.FullName)
-                );
-            });
+            services.AddCustomDbContext(Configuration);
 
             services.AddAutoMapper();
 

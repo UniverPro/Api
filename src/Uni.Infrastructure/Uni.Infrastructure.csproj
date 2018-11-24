@@ -5,9 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="CQRS\Commands\Common\Update\" />
     <Folder Include="CQRS\Commands\Faculties\" />
     <Folder Include="CQRS\Commands\Groups\" />
-    <Folder Include="CQRS\Commands\Common\" />
     <Folder Include="CQRS\Commands\Universities\" />
     <Folder Include="CQRS\Commands\Teachers\" />
     <Folder Include="CQRS\Commands\Subjects\" />
@@ -23,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Autofac" Version="4.8.1" />
     <PackageReference Include="JetBrains.Annotations" Version="2018.2.1" />
     <PackageReference Include="MediatR" Version="5.1.0" />
   </ItemGroup>

@@ -1,26 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
-using Microsoft.EntityFrameworkCore;
+using MediatR;
 using Uni.DataAccess.Data;
 using Uni.DataAccess.Models;
-using Uni.Infrastructure.Interfaces.CQRS.Queries;
+using Uni.Infrastructure.Interfaces.CQRS.Commands;
 
-namespace Uni.Infrastructure.CQRS.Queries.Common.FindAll
+namespace Uni.Infrastructure.CQRS.Commands.Common.Delete
 {
     [UsedImplicitly]
-    public class FindAllQueryHandler<T> : IQueryHandler<FindAllQuery<T>, List<T>> where T : class, ITableObject
+    public class DeleteCommandHandler<T> : ICommandHandler<DeleteCommand<T>> where T : class, ITableObject
     {
         private readonly UniDbContext _context;
 
-        public FindAllQueryHandler([NotNull] UniDbContext context)
+        public DeleteCommandHandler([NotNull] UniDbContext context)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task<List<T>> Handle(FindAllQuery<T> request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(DeleteCommand<T> request, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -28,9 +27,13 @@ namespace Uni.Infrastructure.CQRS.Queries.Common.FindAll
             {
                 try
                 {
-                    var entity = await _context.Set<T>().AsNoTracking().ToListAsync(cancellationToken);
+                    var requestEntity = request.Entity;
+                    var tracked = _context.Set<T>().Remove(requestEntity);
 
-                    return entity;
+                    await _context.SaveChangesAsync(cancellationToken);
+                    transaction.Commit();
+
+                    return Unit.Value;
                 }
                 catch
                 {

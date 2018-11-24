@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Uni.WebApi.Models.Requests;
@@ -13,31 +14,31 @@ namespace Uni.WebApi.Controllers
     public class UniversitiesController : ControllerBase
     {
         [HttpGet]
-        public async Task<IEnumerable<UniversityResponseModel>> Get()
+        public async Task<IEnumerable<UniversityResponseModel>> Get(CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
 
         [HttpGet("{id}")]
-        public async Task<UniversityResponseModel> Get(int id)
+        public async Task<UniversityResponseModel> Get(int id, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
 
         [HttpPost]
-        public async Task<UniversityResponseModel> Post([FromBody] UniversityRequestModel model)
+        public async Task<UniversityResponseModel> Post([FromBody] UniversityRequestModel model, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
 
         [HttpPut("{id}")]
-        public async Task<UniversityResponseModel> Put(int id, [FromBody] UniversityRequestModel model)
+        public async Task<UniversityResponseModel> Put(int id, [FromBody] UniversityRequestModel model, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
 
         [HttpDelete("{id}")]
-        public async Task Delete(int id)
+        public async Task Delete(int id, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }

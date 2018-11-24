@@ -1,10 +1,12 @@
 ﻿using System.Linq;
+using JetBrains.Annotations;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Uni.WebApi
 {
-    public class RemoveVersionFromParameter : IOperationFilter
+    [UsedImplicitly]
+    internal class RemoveVersionFromParameter : IOperationFilter
     {
         public void Apply(Operation operation, OperationFilterContext context)
         {
