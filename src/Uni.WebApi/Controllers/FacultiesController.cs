@@ -92,25 +92,25 @@ namespace Uni.WebApi.Controllers
         [HttpPut("{id}")]
         public async Task<FacultyResponseModel> Put(int id, [FromBody] FacultyRequestModel model)
         {
-            var entity = await _uniDbContext.Faculties.SingleOrDefaultAsync(x => x.Id == id);
+            var faculty = await _uniDbContext.Faculties.SingleOrDefaultAsync(x => x.Id == id);
 
-            if (entity == null)
+            if (faculty == null)
             {
                 throw new NotFoundException();
             }
 
-            entity.Name = model.Name;
-            entity.ShortName = model.ShortName;
-            entity.Description = model.Description;
+            faculty.Name = model.Name;
+            faculty.ShortName = model.ShortName;
+            faculty.Description = model.Description;
 
             await _uniDbContext.SaveChangesAsync();
             var response = new FacultyResponseModel
             {
-                Id = entity.Id,
-                Description = entity.Description,
-                Name = entity.Name,
-                ShortName = entity.ShortName,
-                UniversityId = entity.UniversityId
+                Id = faculty.Id,
+                Description = faculty.Description,
+                Name = faculty.Name,
+                ShortName = faculty.ShortName,
+                UniversityId = faculty.UniversityId
             };
 
             return response;
@@ -119,14 +119,14 @@ namespace Uni.WebApi.Controllers
         [HttpDelete("{id}")]
         public async Task Delete(int id)
         {
-            var entity = await _uniDbContext.Faculties.SingleOrDefaultAsync(x => x.Id == id);
+            var faculty = await _uniDbContext.Faculties.SingleOrDefaultAsync(x => x.Id == id);
 
-            if (entity == null)
+            if (faculty == null)
             {
                 throw new NotFoundException();
             }
 
-            _uniDbContext.Faculties.Remove(entity);
+            _uniDbContext.Faculties.Remove(faculty);
 
             await _uniDbContext.SaveChangesAsync();
         }
