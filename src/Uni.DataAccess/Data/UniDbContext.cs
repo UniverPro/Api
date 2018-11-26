@@ -28,9 +28,9 @@ namespace Uni.DataAccess.Data
 
                 entity.Property(e => e.Name)
                     .IsRequired()
-                    .HasMaxLength(255);
+                    .HasMaxLength(Consts.MaxNameLength);
 
-                entity.Property(e => e.ShortName).HasMaxLength(16);
+                entity.Property(e => e.ShortName).HasMaxLength(50);
 
                 entity.HasOne(d => d.University)
                     .WithMany(p => p.Faculties)
@@ -47,7 +47,7 @@ namespace Uni.DataAccess.Data
 
                 entity.Property(e => e.Name)
                     .IsRequired()
-                    .HasMaxLength(255);
+                    .HasMaxLength(Consts.MaxNameLength);
 
                 entity.HasOne(d => d.Faculty)
                     .WithMany(p => p.Group)
@@ -62,14 +62,14 @@ namespace Uni.DataAccess.Data
 
                 entity.Property(e => e.FirstName)
                     .IsRequired()
-                    .HasMaxLength(255);
+                    .HasMaxLength(Consts.MaxNameLength);
 
                 entity.Property(e => e.LastName)
                     .IsRequired()
-                    .HasMaxLength(255);
+                    .HasMaxLength(Consts.MaxNameLength);
 
                 entity.Property(e => e.MiddleName)
-                    .HasMaxLength(255);
+                    .HasMaxLength(Consts.MaxNameLength);
             });
 
             modelBuilder.Entity<Teacher>(entity =>
@@ -113,7 +113,7 @@ namespace Uni.DataAccess.Data
 
                 entity.Property(e => e.Name)
                     .IsRequired()
-                    .HasMaxLength(255);
+                    .HasMaxLength(Consts.MaxNameLength);
 
                 entity.HasOne(d => d.Group)
                     .WithMany(p => p.Subjects)
@@ -137,7 +137,7 @@ namespace Uni.DataAccess.Data
 
                 entity.Property(e => e.Name)
                     .IsRequired()
-                    .HasMaxLength(255);
+                    .HasMaxLength(Consts.MaxNameLength);
 
                 entity.Property(e => e.ShortName)
                     .HasMaxLength(50);

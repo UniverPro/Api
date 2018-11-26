@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using JetBrains.Annotations;
+using Uni.DataAccess;
 using Uni.WebApi.Models.Requests;
 
 namespace Uni.WebApi.Validators
@@ -11,10 +12,10 @@ namespace Uni.WebApi.Validators
         {
             RuleFor(x => x.Name)
                 .NotEmpty()
-                .MaximumLength(255);
+                .MaximumLength(Consts.MaxNameLength);
 
             RuleFor(x => x.ShortName)
-                .MaximumLength(50)
+                .MaximumLength(Consts.MaxShortNameLength)
                 .When(x => !string.IsNullOrWhiteSpace(x.ShortName));
         }
     }
