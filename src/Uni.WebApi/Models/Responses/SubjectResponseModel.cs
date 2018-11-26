@@ -9,7 +9,7 @@ namespace Uni.WebApi.Models.Responses
 
         public int GroupId { get; set; }
 
-        public int TeacherId { get; set; }
+        public int ScheduleId { get; set; }
 
         public string Name { get; set; }
     }
