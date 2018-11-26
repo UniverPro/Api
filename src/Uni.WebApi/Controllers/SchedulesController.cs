@@ -54,7 +54,7 @@ namespace Uni.WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ScheduleResponseModel> Post([FromBody] ScheduleRequestModel model)
+        public async Task<ScheduleResponseModel> Post([FromForm] ScheduleRequestModel model)
         {
             var schedule = _mapper.Map<ScheduleRequestModel, Schedule>(model);
 
@@ -70,7 +70,7 @@ namespace Uni.WebApi.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ScheduleResponseModel> Put(int id, [FromBody] ScheduleRequestModel model)
+        public async Task<ScheduleResponseModel> Put(int id, [FromForm] ScheduleRequestModel model)
         {
             var schedule = await _uniDbContext.Schedules.SingleOrDefaultAsync(x => x.Id == id);
 

@@ -54,7 +54,7 @@ namespace Uni.WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<GroupResponseModel> Post([FromBody] GroupRequestModel model)
+        public async Task<GroupResponseModel> Post([FromForm] GroupRequestModel model)
         {
             var group = _mapper.Map<GroupRequestModel, Group>(model);
 
@@ -70,7 +70,7 @@ namespace Uni.WebApi.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<GroupResponseModel> Put(int id, [FromBody] GroupRequestModel model)
+        public async Task<GroupResponseModel> Put(int id, [FromForm] GroupRequestModel model)
         {
             var group = await _uniDbContext.Groups.SingleOrDefaultAsync(x => x.Id == id);
 

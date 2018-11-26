@@ -72,7 +72,7 @@ namespace Uni.WebApi.Controllers
         /// <returns>Created faculty object</returns>
         [HttpPost]
         [ProducesResponseType(typeof(FacultyResponseModel), 200)]
-        public async Task<FacultyResponseModel> Post([FromBody] FacultyRequestModel model)
+        public async Task<FacultyResponseModel> Post([FromForm] FacultyRequestModel model)
         {
             var faculty = _mapper.Map<FacultyRequestModel, Faculty>(model);
 
@@ -96,7 +96,7 @@ namespace Uni.WebApi.Controllers
         [HttpPut("{id}")]
         [ProducesResponseType(typeof(FacultyResponseModel), 200)]
         [ProducesResponseType(404)]
-        public async Task<FacultyResponseModel> Put(int id, [FromBody] FacultyRequestModel model)
+        public async Task<FacultyResponseModel> Put(int id, [FromForm] FacultyRequestModel model)
         {
             var faculty = await _uniDbContext.Faculties.SingleOrDefaultAsync(x => x.Id == id);
 

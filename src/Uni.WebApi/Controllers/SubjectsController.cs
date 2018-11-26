@@ -54,7 +54,7 @@ namespace Uni.WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<SubjectResponseModel> Post([FromBody] SubjectRequestModel model)
+        public async Task<SubjectResponseModel> Post([FromForm] SubjectRequestModel model)
         {
             var subject = _mapper.Map<SubjectRequestModel, Subject>(model);
 
@@ -70,7 +70,7 @@ namespace Uni.WebApi.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<SubjectResponseModel> Put(int id, [FromBody] SubjectRequestModel model)
+        public async Task<SubjectResponseModel> Put(int id, [FromForm] SubjectRequestModel model)
         {
             var subject = await _uniDbContext.Subjects.SingleOrDefaultAsync(x => x.Id == id);
 
