@@ -53,6 +53,24 @@ namespace Uni.WebApi.Controllers
             return subject;
         }
 
+        [HttpGet("{subjectId}/schedules")]
+        public async Task<IEnumerable<ScheduleResponseModel>> GetSchedules(int subjectId)
+        {
+            var subjectExists = await _uniDbContext.Subjects.AnyAsync(x => x.Id == subjectId);
+
+            if (!subjectExists)
+            {
+                throw new NotFoundException();
+            }
+
+            var schedules = await _uniDbContext.Schedules.AsNoTracking()
+                .Where(x => x.SubjectId == subjectId)
+                .Select(x => _mapper.Map<Schedule, ScheduleResponseModel>(x))
+                .ToListAsync();
+
+            return schedules;
+        }
+
         [HttpPost]
         public async Task<SubjectResponseModel> Post([FromForm] SubjectRequestModel model)
         {
