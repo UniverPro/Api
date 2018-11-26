@@ -16,7 +16,6 @@ namespace Uni.DataAccess.Data
 
         public virtual DbSet<Faculty> Faculties { get; set; }
         public virtual DbSet<Group> Groups { get; set; }
-        public virtual DbSet<Person> Persons { get; set; }
         public virtual DbSet<Student> Students { get; set; }
         public virtual DbSet<Teacher> Teachers { get; set; }
         public virtual DbSet<Schedule> Schedules { get; set; }
@@ -33,9 +32,9 @@ namespace Uni.DataAccess.Data
 
                 entity.Property(e => e.Name)
                     .IsRequired()
-                    .HasMaxLength(50);
+                    .HasMaxLength(255);
 
-                entity.Property(e => e.ShortName).HasMaxLength(50);
+                entity.Property(e => e.ShortName).HasMaxLength(16);
 
                 entity.HasOne(d => d.University)
                     .WithMany(p => p.Faculties)
@@ -52,7 +51,7 @@ namespace Uni.DataAccess.Data
 
                 entity.Property(e => e.Name)
                     .IsRequired()
-                    .HasMaxLength(50);
+                    .HasMaxLength(255);
 
                 entity.HasOne(d => d.Faculty)
                     .WithMany(p => p.Group)
@@ -67,13 +66,14 @@ namespace Uni.DataAccess.Data
 
                 entity.Property(e => e.FirstName)
                     .IsRequired()
-                    .HasMaxLength(50);
+                    .HasMaxLength(255);
 
                 entity.Property(e => e.LastName)
                     .IsRequired()
-                    .HasMaxLength(50);
+                    .HasMaxLength(255);
 
-                entity.Property(e => e.MiddleName).HasMaxLength(50);
+                entity.Property(e => e.MiddleName)
+                    .HasMaxLength(255);
             });
 
             modelBuilder.Entity<Teacher>(entity =>
@@ -96,9 +96,11 @@ namespace Uni.DataAccess.Data
             {
                 entity.ToTable("Schedule");
 
-                entity.Property(e => e.Id).ValueGeneratedOnAdd();
+                entity.Property(e => e.Id)
+                    .ValueGeneratedOnAdd();
 
-                entity.Property(e => e.StartTime).HasColumnType("datetime");
+                entity.Property(e => e.StartTime)
+                    .HasColumnType("datetime");
 
                 entity.HasOne(d => d.IdNavigation)
                     .WithOne(p => p.Schedule)
@@ -115,7 +117,7 @@ namespace Uni.DataAccess.Data
 
                 entity.Property(e => e.Name)
                     .IsRequired()
-                    .HasMaxLength(50);
+                    .HasMaxLength(255);
 
                 entity.HasOne(d => d.Group)
                     .WithMany(p => p.Subjects)
@@ -139,7 +141,7 @@ namespace Uni.DataAccess.Data
 
                 entity.Property(e => e.Name)
                     .IsRequired()
-                    .HasMaxLength(50);
+                    .HasMaxLength(255);
 
                 entity.Property(e => e.ShortName)
                     .HasMaxLength(50);
