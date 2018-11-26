@@ -24,7 +24,7 @@ namespace Uni.WebApi.Validators
                     .MaximumLength(Consts.MaxNameLength));
 
             RuleFor(x => x.AvatarPath)
-                .IsValidUrl().When(x => string.IsNullOrEmpty(x.AvatarPath));
+                .IsValidUrl().When(x => !string.IsNullOrEmpty(x.AvatarPath));
         }
     }
 }
