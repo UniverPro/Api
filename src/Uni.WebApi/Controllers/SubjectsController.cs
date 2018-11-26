@@ -28,6 +28,10 @@ namespace Uni.WebApi.Controllers
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
+        /// <summary>
+        ///     Get all subjects
+        /// </summary>
+        /// <returns>List of subject objects.</returns>
         [HttpGet]
         public async Task<IEnumerable<SubjectResponseModel>> Get()
         {
@@ -38,6 +42,11 @@ namespace Uni.WebApi.Controllers
             return subjects;
         }
 
+        /// <summary>
+        ///     Searches the subject by id
+        /// </summary>
+        /// <param name="id">Subject unique identifier</param>
+        /// <returns>Subject object</returns>
         [HttpGet("{id}")]
         public async Task<SubjectResponseModel> Get(int id)
         {
@@ -71,6 +80,11 @@ namespace Uni.WebApi.Controllers
             return schedules;
         }
 
+        /// <summary>
+        ///     Creates a new subject
+        /// </summary>
+        /// <param name="model">Schedule object containing the data</param>
+        /// <returns>Created subject object</returns>
         [HttpPost]
         public async Task<SubjectResponseModel> Post([FromForm] SubjectRequestModel model)
         {
@@ -87,6 +101,12 @@ namespace Uni.WebApi.Controllers
             return response;
         }
 
+        /// <summary>
+        ///     Updates the subject by id
+        /// </summary>
+        /// <param name="id">Subject unique identifier</param>
+        /// <param name="model">Subject object containing the new data</param>
+        /// <returns>Updated subject object</returns>
         [HttpPut("{id}")]
         public async Task<SubjectResponseModel> Put(int id, [FromForm] SubjectRequestModel model)
         {
@@ -106,6 +126,10 @@ namespace Uni.WebApi.Controllers
             return response;
         }
 
+        /// <summary>
+        ///     Deletes the subject by id
+        /// </summary>
+        /// <param name="id">Subject unique identifier</param>
         [HttpDelete("{id}")]
         public async Task Delete(int id)
         {

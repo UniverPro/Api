@@ -66,7 +66,7 @@ namespace Uni.WebApi.Controllers
         }
 
         /// <summary>
-        ///     Creates a new faculty in the system
+        ///     Creates a new faculty
         /// </summary>
         /// <param name="model">Faculty object containing the data</param>
         /// <returns>Created faculty object</returns>

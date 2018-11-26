@@ -28,6 +28,10 @@ namespace Uni.WebApi.Controllers
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
+        /// <summary>
+        ///     Get all universities
+        /// </summary>
+        /// <returns>List of university objects.</returns>
         [HttpGet]
         public async Task<IEnumerable<UniversityResponseModel>> Get()
         {
@@ -38,6 +42,11 @@ namespace Uni.WebApi.Controllers
             return universities;
         }
 
+        /// <summary>
+        ///     Searches the university by id
+        /// </summary>
+        /// <param name="id">University unique identifier</param>
+        /// <returns>University object</returns>
         [HttpGet("{id}")]
         public async Task<UniversityResponseModel> Get(int id)
         {
@@ -71,6 +80,11 @@ namespace Uni.WebApi.Controllers
             return faculties;
         }
 
+        /// <summary>
+        ///     Creates a new university
+        /// </summary>
+        /// <param name="model">University object containing the data</param>
+        /// <returns>Created university object</returns> 
         [HttpPost]
         public async Task<UniversityResponseModel> Post([FromForm] UniversityRequestModel model)
         {
@@ -87,6 +101,12 @@ namespace Uni.WebApi.Controllers
             return response;
         }
 
+        /// <summary>
+        ///     Updates the university by id
+        /// </summary>
+        /// <param name="id">University unique identifier</param>
+        /// <param name="model">University object containing the new data</param>
+        /// <returns>Updated university object</returns>
         [HttpPut("{id}")]
         public async Task<UniversityResponseModel> Put(int id, [FromForm] UniversityRequestModel model)
         {
@@ -106,6 +126,10 @@ namespace Uni.WebApi.Controllers
             return response;
         }
 
+        /// <summary>
+        ///     Deletes the university by id
+        /// </summary>
+        /// <param name="id">University unique identifier</param>
         [HttpDelete("{id}")]
         public async Task Delete(int id)
         {

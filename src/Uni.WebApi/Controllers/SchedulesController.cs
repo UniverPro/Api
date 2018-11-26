@@ -28,6 +28,10 @@ namespace Uni.WebApi.Controllers
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
+        /// <summary>
+        ///     Get all schedules
+        /// </summary>
+        /// <returns>List of schedule objects.</returns>
         [HttpGet]
         public async Task<IEnumerable<ScheduleResponseModel>> Get()
         {
@@ -38,6 +42,11 @@ namespace Uni.WebApi.Controllers
             return schedules;
         }
 
+        /// <summary>
+        ///     Searches the schedule by id
+        /// </summary>
+        /// <param name="id">Schedule unique identifier</param>
+        /// <returns>Schedule object</returns>
         [HttpGet("{id}")]
         public async Task<ScheduleResponseModel> Get(int id)
         {
@@ -53,6 +62,11 @@ namespace Uni.WebApi.Controllers
             return schedule;
         }
 
+        /// <summary>
+        ///     Creates a new schedule
+        /// </summary>
+        /// <param name="model">Schedule object containing the data</param>
+        /// <returns>Created schedule object</returns>
         [HttpPost]
         public async Task<ScheduleResponseModel> Post([FromForm] ScheduleRequestModel model)
         {
@@ -69,6 +83,12 @@ namespace Uni.WebApi.Controllers
             return response;
         }
 
+        /// <summary>
+        ///     Updates the schedule by id
+        /// </summary>
+        /// <param name="id">Schedule unique identifier</param>
+        /// <param name="model">Schedule object containing the new data</param>
+        /// <returns>Updated schedule object</returns>
         [HttpPut("{id}")]
         public async Task<ScheduleResponseModel> Put(int id, [FromForm] ScheduleRequestModel model)
         {
@@ -88,6 +108,10 @@ namespace Uni.WebApi.Controllers
             return response;
         }
 
+        /// <summary>
+        ///     Deletes the schedule by id
+        /// </summary>
+        /// <param name="id">Schedule unique identifier</param>
         [HttpDelete("{id}")]
         public async Task Delete(int id)
         {

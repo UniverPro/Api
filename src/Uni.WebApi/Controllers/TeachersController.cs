@@ -28,6 +28,10 @@ namespace Uni.WebApi.Controllers
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
+        /// <summary>
+        ///     Get all teachers
+        /// </summary>
+        /// <returns>List of teacher objects.</returns>
         [HttpGet]
         public async Task<IEnumerable<TeacherResponseModel>> Get()
         {
@@ -38,6 +42,11 @@ namespace Uni.WebApi.Controllers
             return teachers;
         }
 
+        /// <summary>
+        ///     Searches the teacher by id
+        /// </summary>
+        /// <param name="id">Teacher unique identifier</param>
+        /// <returns>Teacher object</returns>
         [HttpGet("{id}")]
         public async Task<TeacherResponseModel> Get(int id)
         {
@@ -53,6 +62,11 @@ namespace Uni.WebApi.Controllers
             return teacher;
         }
 
+        /// <summary>
+        ///     Creates a new teacher
+        /// </summary>
+        /// <param name="model">Teacher object containing the data</param>
+        /// <returns>Created teacher object</returns>
         [HttpPost]
         public async Task<TeacherResponseModel> Post([FromForm] TeacherRequestModel model)
         {
@@ -69,6 +83,12 @@ namespace Uni.WebApi.Controllers
             return response;
         }
 
+        /// <summary>
+        ///     Updates the teacher by id
+        /// </summary>
+        /// <param name="id">Teacher unique identifier</param>
+        /// <param name="model">Teacher object containing the new data</param>
+        /// <returns>Updated teacher object</returns>
         [HttpPut("{id}")]
         public async Task<TeacherResponseModel> Put(int id, [FromForm] TeacherRequestModel model)
         {
@@ -88,6 +108,10 @@ namespace Uni.WebApi.Controllers
             return response;
         }
 
+        /// <summary>
+        ///     Deletes the teacher by id
+        /// </summary>
+        /// <param name="id">Teacher unique identifier</param>
         [HttpDelete("{id}")]
         public async Task Delete(int id)
         {

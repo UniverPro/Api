@@ -28,6 +28,10 @@ namespace Uni.WebApi.Controllers
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
+        /// <summary>
+        ///     Get all groups
+        /// </summary>
+        /// <returns>List of group objects.</returns>
         [HttpGet]
         public async Task<IEnumerable<GroupResponseModel>> Get()
         {
@@ -38,6 +42,11 @@ namespace Uni.WebApi.Controllers
             return groups;
         }
 
+        /// <summary>
+        ///     Searches the group by id
+        /// </summary>
+        /// <param name="id">Group unique identifier</param>
+        /// <returns>Group object</returns>
         [HttpGet("{id}")]
         public async Task<GroupResponseModel> Get(int id)
         {
@@ -53,6 +62,11 @@ namespace Uni.WebApi.Controllers
             return group;
         }
 
+        /// <summary>
+        ///     Creates a new group
+        /// </summary>
+        /// <param name="model">Group object containing the data</param>
+        /// <returns>Created group object</returns>
         [HttpPost]
         public async Task<GroupResponseModel> Post([FromForm] GroupRequestModel model)
         {
@@ -69,6 +83,12 @@ namespace Uni.WebApi.Controllers
             return response;
         }
 
+        /// <summary>
+        ///     Updates the group by id
+        /// </summary>
+        /// <param name="id">Group unique identifier</param>
+        /// <param name="model">Group object containing the new data</param>
+        /// <returns>Updated group object</returns>
         [HttpPut("{id}")]
         public async Task<GroupResponseModel> Put(int id, [FromForm] GroupRequestModel model)
         {
@@ -88,6 +108,10 @@ namespace Uni.WebApi.Controllers
             return response;
         }
 
+        /// <summary>
+        ///     Deletes the group by id
+        /// </summary>
+        /// <param name="id">Group unique identifier</param>
         [HttpDelete("{id}")]
         public async Task Delete(int id)
         {
