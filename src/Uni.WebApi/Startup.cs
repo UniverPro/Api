@@ -44,6 +44,9 @@ namespace Uni.WebApi
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddAutoMapper();
+
+            services.AddTransient<ErrorHandlingMiddleware>();
+
             services.AddEntityFrameworkSqlServer();
             services.AddDbContext<UniDbContext>(x =>
             {
@@ -109,14 +112,15 @@ namespace Uni.WebApi
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            if (!env.IsDevelopment())
+            if (env.IsDevelopment())
             {
-                app.UseHsts();
+                app.UseDeveloperExceptionPage();
             }
 
-            app.UseDeveloperExceptionPage();
+            app.UseMiddleware<ErrorHandlingMiddleware>();
+
             app.UseScopedSwagger();
-            app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "Uni API v1"); });
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Uni API v1"));
 
             app.UseHttpsRedirection();
             app.UseMvc();
