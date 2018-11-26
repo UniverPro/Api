@@ -53,6 +53,24 @@ namespace Uni.WebApi.Controllers
             return university;
         }
 
+        [HttpGet("{universityId}/faculties")]
+        public async Task<IEnumerable<FacultyResponseModel>> GetFaculties(int universityId)
+        {
+            var universityExists = await _uniDbContext.Universities.AnyAsync(x => x.Id == universityId);
+
+            if (!universityExists)
+            {
+                throw new NotFoundException();
+            }
+
+            var faculties = await _uniDbContext.Faculties.AsNoTracking()
+                .Where(x => x.UniversityId == universityId)
+                .Select(x => _mapper.Map<Faculty, FacultyResponseModel>(x))
+                .ToListAsync();
+
+            return faculties;
+        }
+
         [HttpPost]
         public async Task<UniversityResponseModel> Post([FromForm] UniversityRequestModel model)
         {
