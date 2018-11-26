@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -56,6 +56,9 @@ namespace Uni.WebApi
 //#endif
             });
 
+            // Automatically perform database migration
+            services.BuildServiceProvider().GetService<UniDbContext>().Database.Migrate();
+
             // Configure versions 
             services.AddApiVersioning(o =>
             {
@@ -80,6 +83,8 @@ namespace Uni.WebApi
 
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, "Uni.WebApi.xml");
                 options.IncludeXmlComments(xmlPath);
+
+                options.DescribeAllEnumsAsStrings();
 
                 options.OperationFilter<RemoveVersionFromParameter>();
 
@@ -109,6 +114,7 @@ namespace Uni.WebApi
                 app.UseHsts();
             }
 
+            app.UseDeveloperExceptionPage();
             app.UseScopedSwagger();
             app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "Uni API v1"); });
 

@@ -9,8 +9,16 @@ namespace Uni.WebApi.Validators
     {
         public FacultyRequestModelValidator()
         {
-            RuleFor(x => x.UniversityId).NotEmpty();
-            RuleFor(x => x.Name).NotEmpty();
+            RuleFor(x => x.UniversityId)
+                .NotEmpty();
+
+            RuleFor(x => x.Name)
+                .NotEmpty()
+                .MaximumLength(255);
+
+            RuleFor(x => x.ShortName)
+                .MaximumLength(16)
+                .When(x => !string.IsNullOrWhiteSpace(x.ShortName));
         }
     }
 }

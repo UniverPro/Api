@@ -9,9 +9,15 @@ namespace Uni.WebApi.Validators
     {
         public SubjectRequestModelValidator()
         {
-            RuleFor(x => x.Name).NotEmpty();
-            RuleFor(x => x.GroupId).NotEmpty();
-            RuleFor(x => x.TeacherId).NotEmpty();
+            RuleFor(x => x.Name)
+                .NotEmpty()
+                .MaximumLength(255);
+
+            RuleFor(x => x.GroupId)
+                .NotEmpty();
+
+            RuleFor(x => x.TeacherId)
+                .NotEmpty();
         }
     }
 }

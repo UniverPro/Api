@@ -17,7 +17,8 @@ namespace Uni.WebApi.Validators
 
             Include(personRequestModelValidator);
 
-            RuleFor(x => x.GroupId).NotEmpty();
+            RuleFor(x => x.GroupId)
+                .NotEmpty();
         }
     }
 }

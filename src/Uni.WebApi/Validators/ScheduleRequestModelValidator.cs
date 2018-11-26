@@ -9,7 +9,8 @@ namespace Uni.WebApi.Validators
     {
         public ScheduleRequestModelValidator()
         {
-            RuleFor(x => x.SubjectId).NotEmpty();
+            RuleFor(x => x.SubjectId)
+                .NotEmpty();
         }
     }
 }

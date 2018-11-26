@@ -9,9 +9,15 @@ namespace Uni.WebApi.Validators
     {
         public GroupRequestModelValidator()
         {
-            RuleFor(x => x.FacultyId).NotEmpty();
-            RuleFor(x => x.Name).NotEmpty();
-            RuleFor(x => x.CourseNumber).InclusiveBetween(1, 5);
+            RuleFor(x => x.FacultyId)
+                .NotEmpty();
+
+            RuleFor(x => x.Name)
+                .NotEmpty()
+                .MaximumLength(255);
+
+            RuleFor(x => x.CourseNumber)
+                .InclusiveBetween(1, 5);
         }
     }
 }

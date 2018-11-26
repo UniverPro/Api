@@ -19,8 +19,8 @@ namespace Uni.WebApi.Controllers
     [Route("api/v{version:apiVersion}/faculties")]
     public class FacultiesController : ControllerBase
     {
-        private readonly UniDbContext _uniDbContext;
         private readonly IMapper _mapper;
+        private readonly UniDbContext _uniDbContext;
 
         public FacultiesController([NotNull] UniDbContext uniDbContext, [NotNull] IMapper mapper)
         {
@@ -28,7 +28,12 @@ namespace Uni.WebApi.Controllers
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
+        /// <summary>
+        ///     Get all faculties
+        /// </summary>
+        /// <returns>List of faculty objects.</returns>
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<FacultyResponseModel>), 200)]
         public async Task<IEnumerable<FacultyResponseModel>> Get()
         {
             var faculties = await _uniDbContext.Faculties.AsNoTracking()
@@ -38,7 +43,14 @@ namespace Uni.WebApi.Controllers
             return faculties;
         }
 
+        /// <summary>
+        ///     Searches the faculty by id
+        /// </summary>
+        /// <param name="id">Faculty unique identifier</param>
+        /// <returns>Faculty object</returns>
         [HttpGet("{id}")]
+        [ProducesResponseType(typeof(FacultyResponseModel), 200)]
+        [ProducesResponseType(404)]
         public async Task<FacultyResponseModel> Get(int id)
         {
             var faculty = await _uniDbContext.Faculties.AsNoTracking()
@@ -53,7 +65,13 @@ namespace Uni.WebApi.Controllers
             return faculty;
         }
 
+        /// <summary>
+        ///     Creates a new faculty in the system
+        /// </summary>
+        /// <param name="model">Faculty object containing the data</param>
+        /// <returns>Created faculty object</returns>
         [HttpPost]
+        [ProducesResponseType(typeof(FacultyResponseModel), 200)]
         public async Task<FacultyResponseModel> Post([FromBody] FacultyRequestModel model)
         {
             var faculty = _mapper.Map<FacultyRequestModel, Faculty>(model);
@@ -69,7 +87,15 @@ namespace Uni.WebApi.Controllers
             return response;
         }
 
+        /// <summary>
+        ///     Updates the faculty by id
+        /// </summary>
+        /// <param name="id">Faculty unique identifier</param>
+        /// <param name="model">Faculty object containing the new data</param>
+        /// <returns>Updated faculty object</returns>
         [HttpPut("{id}")]
+        [ProducesResponseType(typeof(FacultyResponseModel), 200)]
+        [ProducesResponseType(404)]
         public async Task<FacultyResponseModel> Put(int id, [FromBody] FacultyRequestModel model)
         {
             var faculty = await _uniDbContext.Faculties.SingleOrDefaultAsync(x => x.Id == id);
@@ -88,7 +114,13 @@ namespace Uni.WebApi.Controllers
             return response;
         }
 
+        /// <summary>
+        ///     Deletes the faculty by id
+        /// </summary>
+        /// <param name="id">Faculty unique identifier</param>
         [HttpDelete("{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
         public async Task Delete(int id)
         {
             var faculty = await _uniDbContext.Faculties.SingleOrDefaultAsync(x => x.Id == id);
