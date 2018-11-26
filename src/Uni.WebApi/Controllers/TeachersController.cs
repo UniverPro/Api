@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -19,24 +20,20 @@ namespace Uni.WebApi.Controllers
     public class TeachersController : ControllerBase
     {
         private readonly UniDbContext _uniDbContext;
+        private readonly IMapper _mapper;
 
-        public TeachersController([NotNull] UniDbContext uniDbContext)
+        public TeachersController([NotNull] UniDbContext uniDbContext, [NotNull] IMapper mapper)
         {
             _uniDbContext = uniDbContext ?? throw new ArgumentNullException(nameof(uniDbContext));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         [HttpGet]
         public async Task<IEnumerable<TeacherResponseModel>> Get()
         {
-            var teachers = await _uniDbContext.Teachers.AsNoTracking().Select(x => new TeacherResponseModel
-            {
-                Id = x.Id,
-                AvatarPath = x.AvatarPath,
-                FirstName = x.FirstName,
-                LastName = x.LastName,
-                MiddleName = x.MiddleName,
-                FacultyId = x.FacultyId
-            }).ToListAsync();
+            var teachers = await _uniDbContext.Teachers.AsNoTracking()
+                .Select(x => _mapper.Map<Teacher, TeacherResponseModel>(x))
+                .ToListAsync();
 
             return teachers;
         }
@@ -44,15 +41,9 @@ namespace Uni.WebApi.Controllers
         [HttpGet("{id}")]
         public async Task<TeacherResponseModel> Get(int id)
         {
-            var teacher = await _uniDbContext.Teachers.AsNoTracking().Select(x => new TeacherResponseModel
-            {
-                Id = x.Id,
-                AvatarPath = x.AvatarPath,
-                FirstName = x.FirstName,
-                LastName = x.LastName,
-                MiddleName = x.MiddleName,
-                FacultyId = x.FacultyId
-            }).SingleOrDefaultAsync(x => x.Id == id);
+            var teacher = await _uniDbContext.Teachers.AsNoTracking()
+                .Select(x => _mapper.Map<Teacher, TeacherResponseModel>(x))
+                .SingleOrDefaultAsync(x => x.Id == id);
 
             if (teacher == null)
             {
@@ -65,14 +56,7 @@ namespace Uni.WebApi.Controllers
         [HttpPost]
         public async Task<TeacherResponseModel> Post([FromBody] TeacherRequestModel model)
         {
-            var teacher = new Teacher
-            {
-                AvatarPath = model.AvatarPath,
-                FirstName = model.FirstName,
-                LastName = model.LastName,
-                MiddleName = model.MiddleName,
-                FacultyId = model.FacultyId
-            };
+            var teacher = _mapper.Map<TeacherRequestModel, Teacher>(model);
 
             var entityEntry = _uniDbContext.Teachers.Add(teacher);
 
@@ -80,15 +64,7 @@ namespace Uni.WebApi.Controllers
 
             var entity = entityEntry.Entity;
 
-            var response = new TeacherResponseModel
-            {
-                Id = entity.Id,
-                AvatarPath = entity.AvatarPath,
-                FirstName = entity.FirstName,
-                LastName = entity.LastName,
-                MiddleName = entity.MiddleName,
-                FacultyId = entity.FacultyId
-            };
+            var response = _mapper.Map<Teacher, TeacherResponseModel>(entity);
 
             return response;
         }
@@ -103,22 +79,11 @@ namespace Uni.WebApi.Controllers
                 throw new NotFoundException();
             }
 
-            teacher.AvatarPath = model.AvatarPath;
-            teacher.FirstName = model.FirstName;
-            teacher.LastName = model.LastName;
-            teacher.MiddleName = model.MiddleName;
-            teacher.FacultyId = model.FacultyId;
+            _mapper.Map(model, teacher);
 
             await _uniDbContext.SaveChangesAsync();
-            var response = new TeacherResponseModel
-            {
-                Id = teacher.Id,
-                AvatarPath = teacher.AvatarPath,
-                FirstName = teacher.FirstName,
-                LastName = teacher.LastName,
-                MiddleName = teacher.MiddleName,
-                FacultyId = teacher.FacultyId
-            };
+
+            var response = _mapper.Map<Teacher, TeacherResponseModel>(teacher);
 
             return response;
         }

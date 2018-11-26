@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using AutoMapper;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using MicroElements.Swashbuckle.FluentValidation;
@@ -41,7 +42,8 @@ namespace Uni.WebApi
                     });
                 })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            
+
+            services.AddAutoMapper();
             services.AddEntityFrameworkSqlServer();
             services.AddDbContext<UniDbContext>(x =>
             {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -19,24 +20,20 @@ namespace Uni.WebApi.Controllers
     public class StudentsController : ControllerBase
     {
         private readonly UniDbContext _uniDbContext;
+        private readonly IMapper _mapper;
 
-        public StudentsController([NotNull] UniDbContext uniDbContext)
+        public StudentsController([NotNull] UniDbContext uniDbContext, [NotNull] IMapper mapper)
         {
             _uniDbContext = uniDbContext ?? throw new ArgumentNullException(nameof(uniDbContext));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         [HttpGet]
         public async Task<IEnumerable<StudentResponseModel>> Get()
         {
-            var students = await _uniDbContext.Students.AsNoTracking().Select(x => new StudentResponseModel
-            {
-                Id = x.Id,
-                AvatarPath = x.AvatarPath,
-                FirstName = x.FirstName,
-                LastName = x.LastName,
-                MiddleName = x.MiddleName,
-                GroupId = x.GroupId
-            }).ToListAsync();
+            var students = await _uniDbContext.Students.AsNoTracking()
+                .Select(x => _mapper.Map<Student, StudentResponseModel>(x))
+                .ToListAsync();
 
             return students;
         }
@@ -44,15 +41,9 @@ namespace Uni.WebApi.Controllers
         [HttpGet("{id}")]
         public async Task<StudentResponseModel> Get(int id)
         {
-            var student = await _uniDbContext.Students.AsNoTracking().Select(x => new StudentResponseModel
-            {
-                Id = x.Id,
-                AvatarPath = x.AvatarPath,
-                FirstName = x.FirstName,
-                LastName = x.LastName,
-                MiddleName = x.MiddleName,
-                GroupId = x.GroupId
-            }).SingleOrDefaultAsync(x => x.Id == id);
+            var student = await _uniDbContext.Students.AsNoTracking()
+                .Select(x => _mapper.Map<Student, StudentResponseModel>(x))
+                .SingleOrDefaultAsync(x => x.Id == id);
 
             if (student == null)
             {
@@ -65,14 +56,7 @@ namespace Uni.WebApi.Controllers
         [HttpPost]
         public async Task<StudentResponseModel> Post([FromBody] StudentRequestModel model)
         {
-            var student = new Student
-            {
-                AvatarPath = model.AvatarPath,
-                FirstName = model.FirstName,
-                LastName = model.LastName,
-                MiddleName = model.MiddleName,
-                GroupId = model.GroupId
-            };
+            var student = _mapper.Map<StudentRequestModel, Student>(model);
 
             var entityEntry = _uniDbContext.Students.Add(student);
 
@@ -80,15 +64,7 @@ namespace Uni.WebApi.Controllers
 
             var entity = entityEntry.Entity;
 
-            var response = new StudentResponseModel
-            {
-                Id = entity.Id,
-                AvatarPath = entity.AvatarPath,
-                FirstName = entity.FirstName,
-                LastName = entity.LastName,
-                MiddleName = entity.MiddleName,
-                GroupId = entity.GroupId
-            };
+            var response = _mapper.Map<Student, StudentResponseModel>(entity);
 
             return response;
         }
@@ -103,22 +79,11 @@ namespace Uni.WebApi.Controllers
                 throw new NotFoundException();
             }
 
-            student.AvatarPath = model.AvatarPath;
-            student.FirstName = model.FirstName;
-            student.LastName = model.LastName;
-            student.MiddleName = model.MiddleName;
-            student.GroupId = model.GroupId;
+            _mapper.Map(model, student);
 
             await _uniDbContext.SaveChangesAsync();
-            var response = new StudentResponseModel
-            {
-                Id = student.Id,
-                AvatarPath = student.AvatarPath,
-                FirstName = student.FirstName,
-                LastName = student.LastName,
-                MiddleName = student.MiddleName,
-                GroupId = student.GroupId
-            };
+
+            var response = _mapper.Map<Student, StudentResponseModel>(student);
 
             return response;
         }

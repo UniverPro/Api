@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -18,23 +19,21 @@ namespace Uni.WebApi.Controllers
     [Route("api/v{version:apiVersion}/universities")]
     public class UniversitiesController : ControllerBase
     {
+        private readonly IMapper _mapper;
         private readonly UniDbContext _uniDbContext;
 
-        public UniversitiesController([NotNull] UniDbContext uniDbContext)
+        public UniversitiesController([NotNull] UniDbContext uniDbContext, [NotNull] IMapper mapper)
         {
             _uniDbContext = uniDbContext ?? throw new ArgumentNullException(nameof(uniDbContext));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         [HttpGet]
         public async Task<IEnumerable<UniversityResponseModel>> Get()
         {
-            var universities = await _uniDbContext.Universities.AsNoTracking().Select(x => new UniversityResponseModel
-            {
-                Id = x.Id,
-                Description = x.Description,
-                Name = x.Name,
-                ShortName = x.ShortName
-            }).ToListAsync();
+            var universities = await _uniDbContext.Universities.AsNoTracking()
+                .Select(x => _mapper.Map<University, UniversityResponseModel>(x))
+                .ToListAsync();
 
             return universities;
         }
@@ -42,13 +41,9 @@ namespace Uni.WebApi.Controllers
         [HttpGet("{id}")]
         public async Task<UniversityResponseModel> Get(int id)
         {
-            var university = await _uniDbContext.Universities.AsNoTracking().Select(x => new UniversityResponseModel
-            {
-                Id = x.Id,
-                Description = x.Description,
-                Name = x.Name,
-                ShortName = x.ShortName
-            }).SingleOrDefaultAsync(x => x.Id == id);
+            var university = await _uniDbContext.Universities.AsNoTracking()
+                .Select(x => _mapper.Map<University, UniversityResponseModel>(x))
+                .SingleOrDefaultAsync(x => x.Id == id);
 
             if (university == null)
             {
@@ -61,12 +56,7 @@ namespace Uni.WebApi.Controllers
         [HttpPost]
         public async Task<UniversityResponseModel> Post([FromBody] UniversityRequestModel model)
         {
-            var university = new University
-            {
-                Name = model.Name,
-                ShortName = model.ShortName,
-                Description = model.Description
-            };
+            var university = _mapper.Map<UniversityRequestModel, University>(model);
 
             var entityEntry = _uniDbContext.Universities.Add(university);
 
@@ -74,13 +64,7 @@ namespace Uni.WebApi.Controllers
 
             var entity = entityEntry.Entity;
 
-            var response = new UniversityResponseModel
-            {
-                Id = entity.Id,
-                Name = entity.Name,
-                ShortName = entity.ShortName,
-                Description = entity.Description
-            };
+            var response = _mapper.Map<University, UniversityResponseModel>(entity);
 
             return response;
         }
@@ -95,18 +79,11 @@ namespace Uni.WebApi.Controllers
                 throw new NotFoundException();
             }
 
-            university.Name = model.Name;
-            university.ShortName = model.ShortName;
-            university.Description = model.Description;
+            _mapper.Map(model, university);
 
             await _uniDbContext.SaveChangesAsync();
-            var response = new UniversityResponseModel
-            {
-                Id = university.Id,
-                Name = university.Name,
-                ShortName = university.ShortName,
-                Description = university.Description
-            };
+
+            var response = _mapper.Map<University, UniversityResponseModel>(university);
 
             return response;
         }

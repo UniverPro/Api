@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -19,22 +20,20 @@ namespace Uni.WebApi.Controllers
     public class SchedulesController : ControllerBase
     {
         private readonly UniDbContext _uniDbContext;
+        private readonly IMapper _mapper;
 
-        public SchedulesController([NotNull] UniDbContext uniDbContext)
+        public SchedulesController([NotNull] UniDbContext uniDbContext, [NotNull] IMapper mapper)
         {
             _uniDbContext = uniDbContext ?? throw new ArgumentNullException(nameof(uniDbContext));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         [HttpGet]
         public async Task<IEnumerable<ScheduleResponseModel>> Get()
         {
-            var schedules = await _uniDbContext.Schedules.AsNoTracking().Select(x => new ScheduleResponseModel
-            {
-                Id = x.Id,
-                SubjectId = x.SubjectId,
-                Duration = x.Duration,
-                StartTime = x.StartTime
-            }).ToListAsync();
+            var schedules = await _uniDbContext.Schedules.AsNoTracking()
+                .Select(x => _mapper.Map<Schedule, ScheduleResponseModel>(x))
+                .ToListAsync();
 
             return schedules;
         }
@@ -42,13 +41,9 @@ namespace Uni.WebApi.Controllers
         [HttpGet("{id}")]
         public async Task<ScheduleResponseModel> Get(int id)
         {
-            var schedule = await _uniDbContext.Schedules.AsNoTracking().Select(x => new ScheduleResponseModel
-            {
-                Id = x.Id,
-                SubjectId = x.SubjectId,
-                Duration = x.Duration,
-                StartTime = x.StartTime
-            }).SingleOrDefaultAsync(x => x.Id == id);
+            var schedule = await _uniDbContext.Schedules.AsNoTracking()
+                .Select(x => _mapper.Map<Schedule, ScheduleResponseModel>(x))
+                .SingleOrDefaultAsync(x => x.Id == id);
 
             if (schedule == null)
             {
@@ -61,12 +56,7 @@ namespace Uni.WebApi.Controllers
         [HttpPost]
         public async Task<ScheduleResponseModel> Post([FromBody] ScheduleRequestModel model)
         {
-            var schedule = new Schedule
-            {
-                SubjectId = model.SubjectId,
-                StartTime = model.StartTime,
-                Duration = model.Duration
-            };
+            var schedule = _mapper.Map<ScheduleRequestModel, Schedule>(model);
 
             var entityEntry = _uniDbContext.Schedules.Add(schedule);
 
@@ -74,14 +64,8 @@ namespace Uni.WebApi.Controllers
 
             var entity = entityEntry.Entity;
 
-            var response = new ScheduleResponseModel
-            {
-                Id = entity.Id,
-                SubjectId = entity.SubjectId,
-                StartTime = entity.StartTime,
-                Duration = entity.Duration
-            };
-
+            var response = _mapper.Map<Schedule, ScheduleResponseModel>(entity);
+            
             return response;
         }
 
@@ -95,18 +79,11 @@ namespace Uni.WebApi.Controllers
                 throw new NotFoundException();
             }
 
-            schedule.SubjectId = model.SubjectId;
-            schedule.StartTime = model.StartTime;
-            schedule.Duration = model.Duration;
+            _mapper.Map(model, schedule);
 
             await _uniDbContext.SaveChangesAsync();
-            var response = new ScheduleResponseModel
-            {
-                Id = schedule.Id,
-                SubjectId = schedule.SubjectId,
-                StartTime = schedule.StartTime,
-                Duration = schedule.Duration
-            };
+
+            var response = _mapper.Map<Schedule, ScheduleResponseModel>(schedule);
 
             return response;
         }

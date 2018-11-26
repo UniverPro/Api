@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -19,22 +20,20 @@ namespace Uni.WebApi.Controllers
     public class GroupsController : ControllerBase
     {
         private readonly UniDbContext _uniDbContext;
+        private readonly IMapper _mapper;
 
-        public GroupsController([NotNull] UniDbContext uniDbContext)
+        public GroupsController([NotNull] UniDbContext uniDbContext, [NotNull] IMapper mapper)
         {
             _uniDbContext = uniDbContext ?? throw new ArgumentNullException(nameof(uniDbContext));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         [HttpGet]
         public async Task<IEnumerable<GroupResponseModel>> Get()
         {
-            var groups = await _uniDbContext.Groups.AsNoTracking().Select(x => new GroupResponseModel
-            {
-                Id = x.Id,
-                Name = x.Name,
-                CourseNumber = x.CourseNumber,
-                FacultyId = x.FacultyId
-            }).ToListAsync();
+            var groups = await _uniDbContext.Groups.AsNoTracking()
+                .Select(x => _mapper.Map<Group, GroupResponseModel>(x))
+                .ToListAsync();
 
             return groups;
         }
@@ -42,13 +41,9 @@ namespace Uni.WebApi.Controllers
         [HttpGet("{id}")]
         public async Task<GroupResponseModel> Get(int id)
         {
-            var group = await _uniDbContext.Groups.AsNoTracking().Select(x => new GroupResponseModel
-            {
-                Id = x.Id,
-                Name = x.Name,
-                CourseNumber = x.CourseNumber,
-                FacultyId = x.FacultyId
-            }).SingleOrDefaultAsync(x => x.Id == id);
+            var group = await _uniDbContext.Groups.AsNoTracking()
+                .Select(x => _mapper.Map<Group, GroupResponseModel>(x))
+                .SingleOrDefaultAsync(x => x.Id == id);
 
             if (group == null)
             {
@@ -61,12 +56,7 @@ namespace Uni.WebApi.Controllers
         [HttpPost]
         public async Task<GroupResponseModel> Post([FromBody] GroupRequestModel model)
         {
-            var group = new Group
-            {
-                Name = model.Name,
-                CourseNumber = model.CourseNumber,
-                FacultyId = model.FacultyId
-            };
+            var group = _mapper.Map<GroupRequestModel, Group>(model);
 
             var entityEntry = _uniDbContext.Groups.Add(group);
 
@@ -74,14 +64,8 @@ namespace Uni.WebApi.Controllers
 
             var entity = entityEntry.Entity;
 
-            var response = new GroupResponseModel
-            {
-                Id = entity.Id,
-                Name = entity.Name,
-                CourseNumber = entity.CourseNumber,
-                FacultyId = entity.FacultyId
-            };
-
+            var response = _mapper.Map<Group, GroupResponseModel>(entity);
+            
             return response;
         }
 
@@ -95,18 +79,11 @@ namespace Uni.WebApi.Controllers
                 throw new NotFoundException();
             }
 
-            group.Name = model.Name;
-            group.CourseNumber = model.CourseNumber;
-            group.FacultyId = model.FacultyId;
+            _mapper.Map(model, group);
 
             await _uniDbContext.SaveChangesAsync();
-            var response = new GroupResponseModel
-            {
-                Id = group.Id,
-                Name = group.Name,
-                CourseNumber = group.CourseNumber,
-                FacultyId = group.FacultyId
-            };
+
+            var response = _mapper.Map<Group, GroupResponseModel>(group);
 
             return response;
         }

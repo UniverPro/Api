@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -19,23 +20,20 @@ namespace Uni.WebApi.Controllers
     public class FacultiesController : ControllerBase
     {
         private readonly UniDbContext _uniDbContext;
+        private readonly IMapper _mapper;
 
-        public FacultiesController([NotNull] UniDbContext uniDbContext)
+        public FacultiesController([NotNull] UniDbContext uniDbContext, [NotNull] IMapper mapper)
         {
             _uniDbContext = uniDbContext ?? throw new ArgumentNullException(nameof(uniDbContext));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         [HttpGet]
         public async Task<IEnumerable<FacultyResponseModel>> Get()
         {
-            var faculties = await _uniDbContext.Faculties.AsNoTracking().Select(x => new FacultyResponseModel
-            {
-                Id = x.Id,
-                Description = x.Description,
-                Name = x.Name,
-                ShortName = x.ShortName,
-                UniversityId = x.UniversityId
-            }).ToListAsync();
+            var faculties = await _uniDbContext.Faculties.AsNoTracking()
+                .Select(x => _mapper.Map<Faculty, FacultyResponseModel>(x))
+                .ToListAsync();
 
             return faculties;
         }
@@ -43,15 +41,9 @@ namespace Uni.WebApi.Controllers
         [HttpGet("{id}")]
         public async Task<FacultyResponseModel> Get(int id)
         {
-            var faculty = await _uniDbContext.Faculties.AsNoTracking().Select(x =>
-                new FacultyResponseModel
-                {
-                    Id = x.Id,
-                    Description = x.Description,
-                    Name = x.Name,
-                    ShortName = x.ShortName,
-                    UniversityId = x.UniversityId
-                }).SingleOrDefaultAsync(x => x.Id == id);
+            var faculty = await _uniDbContext.Faculties.AsNoTracking()
+                .Select(x => _mapper.Map<Faculty, FacultyResponseModel>(x))
+                .SingleOrDefaultAsync(x => x.Id == id);
 
             if (faculty == null)
             {
@@ -64,13 +56,7 @@ namespace Uni.WebApi.Controllers
         [HttpPost]
         public async Task<FacultyResponseModel> Post([FromBody] FacultyRequestModel model)
         {
-            var faculty = new Faculty
-            {
-                UniversityId = model.UniversityId,
-                Description = model.Description,
-                Name = model.Name,
-                ShortName = model.ShortName
-            };
+            var faculty = _mapper.Map<FacultyRequestModel, Faculty>(model);
 
             var entityEntry = _uniDbContext.Faculties.Add(faculty);
 
@@ -78,13 +64,7 @@ namespace Uni.WebApi.Controllers
 
             var entity = entityEntry.Entity;
 
-            var response = new FacultyResponseModel
-            {
-                Id = entity.Id,
-                Description = entity.Description,
-                Name = entity.Name,
-                ShortName = entity.ShortName
-            };
+            var response = _mapper.Map<Faculty, FacultyResponseModel>(entity);
 
             return response;
         }
@@ -99,19 +79,11 @@ namespace Uni.WebApi.Controllers
                 throw new NotFoundException();
             }
 
-            faculty.Name = model.Name;
-            faculty.ShortName = model.ShortName;
-            faculty.Description = model.Description;
+            _mapper.Map(model, faculty);
 
             await _uniDbContext.SaveChangesAsync();
-            var response = new FacultyResponseModel
-            {
-                Id = faculty.Id,
-                Description = faculty.Description,
-                Name = faculty.Name,
-                ShortName = faculty.ShortName,
-                UniversityId = faculty.UniversityId
-            };
+
+            var response = _mapper.Map<Faculty, FacultyResponseModel>(faculty);
 
             return response;
         }
