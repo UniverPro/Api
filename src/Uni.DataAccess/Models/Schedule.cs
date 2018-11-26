@@ -8,7 +8,7 @@ namespace Uni.DataAccess.Models
         public DateTime StartTime { get; set; }
         public TimeSpan Duration { get; set; }
 
-        public int AudienceNumber { get; set; }
+        public string AudienceNumber { get; set; }
 
         public int SubjectId { get; set; }
         public Subject Subject { get; set; }

@@ -16,6 +16,6 @@ namespace Uni.WebApi.Models.Responses
 
         public TimeSpan Duration { get; set; }
 
-        public int AudienceNumber { get; set; }
+        public string AudienceNumber { get; set; }
     }
 }
