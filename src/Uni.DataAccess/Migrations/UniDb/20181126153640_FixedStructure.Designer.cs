@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Uni.DataAccess.Data;
 
 namespace Uni.DataAccess.Migrations.UniDb
 {
     [DbContext(typeof(UniDbContext))]
-    partial class UniDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181126153640_FixedStructure")]
+    partial class FixedStructure
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

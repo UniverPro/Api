@@ -99,9 +99,8 @@ namespace Uni.DataAccess.Data
                     .HasColumnType("datetime");
 
                 entity.HasOne(d => d.Subject)
-                    .WithOne(p => p.Schedule)
-                    .HasForeignKey<Schedule>(d => d.Id)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .WithMany(p => p.Schedules)
+                    .HasForeignKey(d => d.SubjectId)
                     .HasConstraintName("FK_Schedule_Subject");
 
                 entity.HasOne(d => d.Teacher)
