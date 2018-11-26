@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace Uni.WebApi
 {
-    public class ErrorHandlingMiddleware : IMiddleware
+    internal class ErrorHandlingMiddleware : IMiddleware
     {
         private static async Task HandleExceptionAsync(HttpContext context, Exception exception)
         {

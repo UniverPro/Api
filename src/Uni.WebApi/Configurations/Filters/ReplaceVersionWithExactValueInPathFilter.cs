@@ -1,10 +1,12 @@
 ﻿using System.Linq;
+using JetBrains.Annotations;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace Uni.WebApi
+namespace Uni.WebApi.Configurations.Filters
 {
-    public class ReplaceVersionWithExactValueInPath : IDocumentFilter
+    [UsedImplicitly]
+    internal sealed class ReplaceVersionWithExactValueInPath : IDocumentFilter
     {
         public void Apply(SwaggerDocument swaggerDoc, DocumentFilterContext context)
         {
