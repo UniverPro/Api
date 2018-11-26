@@ -15,7 +15,7 @@ namespace Uni.WebApi
             
             var result = JsonConvert.SerializeObject(new
             {
-                statuc = "error",
+                status = "error",
                 message = exception.Message
             });
 

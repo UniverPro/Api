@@ -8,9 +8,7 @@ namespace Uni.WebApi.Models.Responses
         public int Id { get; set; }
 
         public int GroupId { get; set; }
-
-        public int ScheduleId { get; set; }
-
+        
         public string Name { get; set; }
     }
 }

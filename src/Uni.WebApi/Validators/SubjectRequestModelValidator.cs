@@ -16,9 +16,6 @@ namespace Uni.WebApi.Validators
 
             RuleFor(x => x.GroupId)
                 .NotEmpty();
-
-            RuleFor(x => x.ScheduleId)
-                .NotEmpty();
         }
     }
 }
