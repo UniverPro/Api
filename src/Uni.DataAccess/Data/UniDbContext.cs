@@ -50,7 +50,7 @@ namespace Uni.DataAccess.Data
                     .HasMaxLength(Consts.MaxNameLength);
 
                 entity.HasOne(d => d.Faculty)
-                    .WithMany(p => p.Group)
+                    .WithMany(p => p.Groups)
                     .HasForeignKey(d => d.FacultyId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Group_Faculty");
@@ -98,7 +98,7 @@ namespace Uni.DataAccess.Data
                 entity.Property(e => e.StartTime)
                     .HasColumnType("datetime");
 
-                entity.HasOne(d => d.IdNavigation)
+                entity.HasOne(d => d.Subject)
                     .WithOne(p => p.Schedule)
                     .HasForeignKey<Schedule>(d => d.Id)
                     .OnDelete(DeleteBehavior.ClientSetNull)

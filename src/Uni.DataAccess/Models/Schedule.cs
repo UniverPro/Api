@@ -9,6 +9,6 @@ namespace Uni.DataAccess.Models
         public DateTime StartTime { get; set; }
         public TimeSpan Duration { get; set; }
 
-        public Subject IdNavigation { get; set; }
+        public Subject Subject { get; set; }
     }
 }

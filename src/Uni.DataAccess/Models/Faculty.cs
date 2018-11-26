@@ -6,7 +6,7 @@ namespace Uni.DataAccess.Models
     {
         public Faculty()
         {
-            Group = new HashSet<Group>();
+            Groups = new HashSet<Group>();
             Teachers = new HashSet<Teacher>();
         }
 
@@ -17,7 +17,7 @@ namespace Uni.DataAccess.Models
         public string Description { get; set; }
 
         public University University { get; set; }
-        public ICollection<Group> Group { get; set; }
+        public ICollection<Group> Groups { get; set; }
         public ICollection<Teacher> Teachers { get; set; }
     }
 }
