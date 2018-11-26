@@ -61,6 +61,25 @@ namespace Uni.WebApi.Controllers
 
             return schedule;
         }
+        
+        /// <summary>
+        ///     Searches the schedule by day date
+        /// </summary>
+        /// <param name="groupId"></param>
+        /// <param name="date">Date to pick the schedules</param>
+        /// <returns>List of schedule objects.</returns>
+        [HttpGet("{groupId}")]
+        public async Task<IEnumerable<ScheduleResponseModel>> GetByDate(int groupId, [FromForm] DateTime date)
+        {
+            var dayTruncated = date.Date;
+            var schedules = await _uniDbContext.Schedules.AsNoTracking()
+                .Where(x => groupId == x.Subject.GroupId)
+                .Where(x => dayTruncated == x.StartTime)
+                .Select(x => _mapper.Map<Schedule, ScheduleResponseModel>(x))
+                .ToListAsync();
+
+            return schedules;
+        }
 
         /// <summary>
         ///     Creates a new schedule
