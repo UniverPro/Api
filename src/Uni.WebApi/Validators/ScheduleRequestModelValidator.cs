@@ -14,9 +14,6 @@ namespace Uni.WebApi.Validators
 
             RuleFor(x => x.TeacherId)
                 .NotEmpty();
-
-            RuleFor(x => x.AudienceNumber)
-                .NotEmpty();
         }
     }
 }
