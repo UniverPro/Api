@@ -103,6 +103,12 @@ namespace Uni.DataAccess.Data
                     .HasForeignKey<Schedule>(d => d.Id)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Schedule_Subject");
+
+                entity.HasOne(d => d.Teacher)
+                    .WithMany(p => p.Schedules)
+                    .HasForeignKey(d => d.TeacherId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Subject_Teacher");
             });
 
             modelBuilder.Entity<Subject>(entity =>
@@ -120,12 +126,6 @@ namespace Uni.DataAccess.Data
                     .HasForeignKey(d => d.GroupId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Subject_Group");
-
-                entity.HasOne(d => d.Teacher)
-                    .WithMany(p => p.Subjects)
-                    .HasForeignKey(d => d.TeacherId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Subject_Teacher");
             });
 
             modelBuilder.Entity<University>(entity =>

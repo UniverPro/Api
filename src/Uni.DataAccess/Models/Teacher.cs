@@ -6,12 +6,12 @@ namespace Uni.DataAccess.Models
     {
         public Teacher()
         {
-            Subjects = new HashSet<Subject>();
+            Schedules = new HashSet<Schedule>();
         }
 
         public int FacultyId { get; set; }
         public Faculty Faculty { get; set; }
 
-        public ICollection<Subject> Subjects { get; set; }
+        public ICollection<Schedule> Schedules { get; set; }
     }
 }
