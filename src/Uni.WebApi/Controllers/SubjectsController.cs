@@ -62,6 +62,11 @@ namespace Uni.WebApi.Controllers
             return subject;
         }
 
+        /// <summary>
+        ///     Get all schedules for specified subject
+        /// </summary>
+        /// <param name="subjectId">Subject unique identifier</param>
+        /// <returns>List of schedule objects.</returns>
         [HttpGet("{subjectId}/schedules")]
         public async Task<IEnumerable<ScheduleResponseModel>> GetSchedules(int subjectId)
         {

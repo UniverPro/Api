@@ -62,6 +62,11 @@ namespace Uni.WebApi.Controllers
             return university;
         }
 
+        /// <summary>
+        ///     Get all faculties from specified university
+        /// </summary>
+        /// <param name="universityId">University unique identifier</param>
+        /// <returns>List of faculty objects.</returns>
         [HttpGet("{universityId}/faculties")]
         public async Task<IEnumerable<FacultyResponseModel>> GetFaculties(int universityId)
         {
