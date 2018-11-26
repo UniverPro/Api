@@ -5,10 +5,6 @@ namespace Uni.DataAccess.Data
 {
     public class UniDbContext : DbContext
     {
-        public UniDbContext()
-        {
-        }
-
         public UniDbContext(DbContextOptions<UniDbContext> options)
             : base(options)
         {
