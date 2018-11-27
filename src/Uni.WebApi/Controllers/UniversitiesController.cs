@@ -89,7 +89,7 @@ namespace Uni.WebApi.Controllers
         ///     Creates a new university
         /// </summary>
         /// <param name="model">University object containing the data</param>
-        /// <returns>Created university object</returns> 
+        /// <returns>Created university object</returns>
         [HttpPost]
         public async Task<UniversityResponseModel> Post([FromForm] UniversityRequestModel model)
         {

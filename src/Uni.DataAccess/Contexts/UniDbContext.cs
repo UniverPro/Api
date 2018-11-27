@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
+using Uni.Core.Extensions;
 using Uni.DataAccess.Configurations;
 using Uni.DataAccess.Models;
 
@@ -23,14 +24,7 @@ namespace Uni.DataAccess.Contexts
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfiguration(new FacultyConfiguration());
-            modelBuilder.ApplyConfiguration(new GroupConfiguration());
-            modelBuilder.ApplyConfiguration(new PersonConfiguration());
-            modelBuilder.ApplyConfiguration(new ScheduleConfiguration());
-            modelBuilder.ApplyConfiguration(new StudentConfiguration());
-            modelBuilder.ApplyConfiguration(new SubjectConfiguration());
-            modelBuilder.ApplyConfiguration(new TeacherConfiguration());
-            modelBuilder.ApplyConfiguration(new UniversityConfiguration());
+            modelBuilder.ApplyAllConfigurationsFromAssemblyContaining<EntityTypeConfigurationsMarker>();
         }
     }
 }

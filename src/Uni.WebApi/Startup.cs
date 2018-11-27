@@ -54,7 +54,7 @@ namespace Uni.WebApi
                 x.UseSqlServer(
                     Configuration.GetConnectionString("UniDbConnection"),
                     sql => sql.MigrationsAssembly(typeof(UniDbContext).Assembly.FullName)
-                    );
+                );
 //#if DEBUG
 //                x.EnableSensitiveDataLogging();
 //#endif

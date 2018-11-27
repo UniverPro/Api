@@ -1,6 +1,5 @@
-﻿namespace Uni.DataAccess
+﻿namespace Uni.Core
 {
-    // TODO: Move to Core project
     public static class Consts
     {
         public static readonly int MaxNameLength = 255;

@@ -1,9 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using JetBrains.Annotations;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Uni.Core;
 using Uni.DataAccess.Models;
 
 namespace Uni.DataAccess.Configurations
 {
+    [UsedImplicitly]
     public class UniversityConfiguration : IEntityTypeConfiguration<University>
     {
         public void Configure(EntityTypeBuilder<University> builder)

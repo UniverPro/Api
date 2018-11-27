@@ -6,7 +6,7 @@ namespace Uni.WebApi.Models.Requests
     public class SubjectRequestModel
     {
         public int GroupId { get; set; }
-        
+
         public string Name { get; set; }
     }
 }

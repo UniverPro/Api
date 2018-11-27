@@ -19,8 +19,8 @@ namespace Uni.WebApi.Controllers
     [Route("api/v{version:apiVersion}/groups")]
     public class GroupsController : ControllerBase
     {
-        private readonly UniDbContext _uniDbContext;
         private readonly IMapper _mapper;
+        private readonly UniDbContext _uniDbContext;
 
         public GroupsController([NotNull] UniDbContext uniDbContext, [NotNull] IMapper mapper)
         {
@@ -79,7 +79,7 @@ namespace Uni.WebApi.Controllers
             var entity = entityEntry.Entity;
 
             var response = _mapper.Map<Group, GroupResponseModel>(entity);
-            
+
             return response;
         }
 

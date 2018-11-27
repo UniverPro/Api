@@ -19,8 +19,8 @@ namespace Uni.WebApi.Controllers
     [Route("api/v{version:apiVersion}/subjects")]
     public class SubjectsController : ControllerBase
     {
-        private readonly UniDbContext _uniDbContext;
         private readonly IMapper _mapper;
+        private readonly UniDbContext _uniDbContext;
 
         public SubjectsController([NotNull] UniDbContext uniDbContext, [NotNull] IMapper mapper)
         {
@@ -100,7 +100,7 @@ namespace Uni.WebApi.Controllers
             await _uniDbContext.SaveChangesAsync();
 
             var entity = entityEntry.Entity;
-            
+
             var response = _mapper.Map<Subject, SubjectResponseModel>(entity);
 
             return response;

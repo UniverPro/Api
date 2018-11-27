@@ -19,8 +19,8 @@ namespace Uni.WebApi.Controllers
     [Route("api/v{version:apiVersion}/schedules")]
     public class SchedulesController : ControllerBase
     {
-        private readonly UniDbContext _uniDbContext;
         private readonly IMapper _mapper;
+        private readonly UniDbContext _uniDbContext;
 
         public SchedulesController([NotNull] UniDbContext uniDbContext, [NotNull] IMapper mapper)
         {
@@ -61,7 +61,7 @@ namespace Uni.WebApi.Controllers
 
             return schedule;
         }
-        
+
         /// <summary>
         ///     Searches the schedule by day date
         /// </summary>
@@ -98,7 +98,7 @@ namespace Uni.WebApi.Controllers
             var entity = entityEntry.Entity;
 
             var response = _mapper.Map<Schedule, ScheduleResponseModel>(entity);
-            
+
             return response;
         }
 

@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 using JetBrains.Annotations;
-using Uni.DataAccess;
+using Uni.Core;
 using Uni.WebApi.Models.Requests;
 
 namespace Uni.WebApi.Validators

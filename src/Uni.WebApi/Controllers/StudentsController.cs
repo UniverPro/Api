@@ -19,8 +19,8 @@ namespace Uni.WebApi.Controllers
     [Route("api/v{version:apiVersion}/students")]
     public class StudentsController : ControllerBase
     {
-        private readonly UniDbContext _uniDbContext;
         private readonly IMapper _mapper;
+        private readonly UniDbContext _uniDbContext;
 
         public StudentsController([NotNull] UniDbContext uniDbContext, [NotNull] IMapper mapper)
         {

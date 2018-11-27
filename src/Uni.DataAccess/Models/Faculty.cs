@@ -11,13 +11,19 @@ namespace Uni.DataAccess.Models
         }
 
         public int Id { get; set; }
+
         public int UniversityId { get; set; }
+
         public string Name { get; set; }
+
         public string ShortName { get; set; }
+
         public string Description { get; set; }
 
         public University University { get; set; }
+
         public ICollection<Group> Groups { get; set; }
+
         public ICollection<Teacher> Teachers { get; set; }
     }
 }

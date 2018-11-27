@@ -10,6 +10,7 @@ namespace Uni.DataAccess.Models
         }
 
         public int FacultyId { get; set; }
+
         public Faculty Faculty { get; set; }
 
         public ICollection<Schedule> Schedules { get; set; }
