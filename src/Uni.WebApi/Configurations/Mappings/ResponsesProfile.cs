@@ -14,6 +14,7 @@ namespace Uni.WebApi.Configurations.Mappings
             CreateMap<Group, GroupResponseModel>();
             CreateMap<Person, PersonResponseModel>();
             CreateMap<Schedule, ScheduleResponseModel>();
+            CreateMap<Schedule, ScheduleDetailsResponseModel>();
             CreateMap<Student, StudentResponseModel>();
             CreateMap<Subject, SubjectResponseModel>();
             CreateMap<Teacher, TeacherResponseModel>();
