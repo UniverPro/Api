@@ -60,7 +60,8 @@ namespace Uni.WebApi.Controllers
         [HttpGet("details")]
         public async Task<IEnumerable<ScheduleDetailsResponseModel>> GetDetails(int groupId, [FromForm] DateTime? date)
         {
-            var query = _uniDbContext.Schedules.AsNoTracking()
+            var query = _uniDbContext.Schedules
+                .AsNoTracking()
                 .Where(x => groupId == x.Subject.GroupId);
 
             if (date.HasValue)
@@ -70,6 +71,8 @@ namespace Uni.WebApi.Controllers
             }
 
             var schedules = await query
+                .Include(x => x.Subject)
+                .Include(x => x.Teacher)
                 .Select(x => _mapper.Map<Schedule, ScheduleDetailsResponseModel>(x))
                 .ToListAsync();
 
