@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Uni.DataAccess.Data;
+using Uni.DataAccess.Contexts;
 
 namespace Uni.DataAccess.Migrations.UniDb
 {

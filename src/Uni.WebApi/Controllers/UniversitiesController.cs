@@ -6,7 +6,7 @@ using AutoMapper;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Uni.DataAccess.Data;
+using Uni.DataAccess.Contexts;
 using Uni.DataAccess.Models;
 using Uni.Infrastructure.Exceptions;
 using Uni.WebApi.Models.Requests;

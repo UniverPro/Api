@@ -14,7 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using Uni.DataAccess.Data;
+using Uni.DataAccess.Contexts;
 using Uni.WebApi.Configurations.Filters;
 
 namespace Uni.WebApi
