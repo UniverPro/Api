@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Uni.DataAccess.Contexts;
 using Uni.DataAccess.Models;
+using Uni.Infrastructure.Exceptions;
 using Uni.WebApi.Models.Responses;
 
 namespace Uni.WebApi.Controllers
@@ -35,6 +36,13 @@ namespace Uni.WebApi.Controllers
         [HttpGet]
         public async Task<IEnumerable<ScheduleResponseModel>> Get(int groupId, [FromForm] DateTime? date)
         {
+            var groupExists = await _uniDbContext.Groups.AnyAsync(x => x.Id == groupId);
+
+            if (!groupExists)
+            {
+                throw new NotFoundException();
+            }
+
             var query = _uniDbContext.Schedules.AsNoTracking()
                 .Where(x => groupId == x.Subject.GroupId);
 
@@ -60,6 +68,13 @@ namespace Uni.WebApi.Controllers
         [HttpGet("details")]
         public async Task<IEnumerable<ScheduleDetailsResponseModel>> GetDetails(int groupId, [FromForm] DateTime? date)
         {
+            var groupExists = await _uniDbContext.Groups.AnyAsync(x => x.Id == groupId);
+
+            if (!groupExists)
+            {
+                throw new NotFoundException();
+            }
+
             var query = _uniDbContext.Schedules
                 .AsNoTracking()
                 .Where(x => groupId == x.Subject.GroupId);

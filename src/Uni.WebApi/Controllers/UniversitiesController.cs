@@ -63,29 +63,6 @@ namespace Uni.WebApi.Controllers
         }
 
         /// <summary>
-        ///     Get all faculties from specified university
-        /// </summary>
-        /// <param name="universityId">University unique identifier</param>
-        /// <returns>List of faculty objects.</returns>
-        [HttpGet("{universityId}/faculties")]
-        public async Task<IEnumerable<FacultyResponseModel>> GetFaculties(int universityId)
-        {
-            var universityExists = await _uniDbContext.Universities.AnyAsync(x => x.Id == universityId);
-
-            if (!universityExists)
-            {
-                throw new NotFoundException();
-            }
-
-            var faculties = await _uniDbContext.Faculties.AsNoTracking()
-                .Where(x => x.UniversityId == universityId)
-                .Select(x => _mapper.Map<Faculty, FacultyResponseModel>(x))
-                .ToListAsync();
-
-            return faculties;
-        }
-
-        /// <summary>
         ///     Creates a new university
         /// </summary>
         /// <param name="model">University object containing the data</param>
