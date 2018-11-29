@@ -63,29 +63,6 @@ namespace Uni.WebApi.Controllers
         }
 
         /// <summary>
-        ///     Get all schedules for specified subject
-        /// </summary>
-        /// <param name="subjectId">Subject unique identifier</param>
-        /// <returns>List of schedule objects.</returns>
-        [HttpGet("{subjectId}/schedules")]
-        public async Task<IEnumerable<ScheduleResponseModel>> GetSchedules(int subjectId)
-        {
-            var subjectExists = await _uniDbContext.Subjects.AnyAsync(x => x.Id == subjectId);
-
-            if (!subjectExists)
-            {
-                throw new NotFoundException();
-            }
-
-            var schedules = await _uniDbContext.Schedules.AsNoTracking()
-                .Where(x => x.SubjectId == subjectId)
-                .Select(x => _mapper.Map<Schedule, ScheduleResponseModel>(x))
-                .ToListAsync();
-
-            return schedules;
-        }
-
-        /// <summary>
         ///     Creates a new subject
         /// </summary>
         /// <param name="model">Schedule object containing the data</param>
