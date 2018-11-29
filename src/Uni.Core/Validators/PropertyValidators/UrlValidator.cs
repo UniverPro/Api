@@ -1,9 +1,8 @@
 ﻿using System;
 using FluentValidation.Validators;
 
-namespace Uni.WebApi.Validators
+namespace Uni.Core.Validators.PropertyValidators
 {
-    // TODO: Move this to Core project.
     public class UrlValidator : PropertyValidator
     {
         public UrlValidator()

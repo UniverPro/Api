@@ -19,6 +19,7 @@ namespace Uni.WebApi
             }
         }
 
+        // TODO: Handle exceptions with more specific message
         private static async Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
             context.Response.StatusCode = 500;
