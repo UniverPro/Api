@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Uni.Infrastructure;
 
 namespace Uni.WebApi
 {
@@ -7,6 +8,7 @@ namespace Uni.WebApi
     {
         public static void Main(string[] args)
         {
+            Initializer.Initialize();
             CreateWebHostBuilder(args).Build().Run();
         }
 

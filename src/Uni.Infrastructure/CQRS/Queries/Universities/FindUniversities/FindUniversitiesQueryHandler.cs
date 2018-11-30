@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
+using LinqKit;
 using Microsoft.EntityFrameworkCore;
 using Uni.DataAccess.Contexts;
 using Uni.DataAccess.Models;
@@ -24,7 +26,7 @@ namespace Uni.Infrastructure.CQRS.Queries.Universities.FindUniversities
         public async Task<IEnumerable<University>> Handle(
             FindUniversitiesQuery query,
             CancellationToken cancellationToken
-        )
+            )
         {
             cancellationToken.ThrowIfCancellationRequested();
             using (var transaction =
@@ -35,6 +37,8 @@ namespace Uni.Infrastructure.CQRS.Queries.Universities.FindUniversities
                     var universities = await _dbContext
                         .Universities
                         .AsNoTracking()
+                        .AsExpandable()
+                        .Where(query.ToSpecification())
                         .ToListAsync(cancellationToken);
 
                     return universities;
