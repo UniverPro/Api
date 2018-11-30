@@ -18,6 +18,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 using Uni.DataAccess.Contexts;
 using Uni.Infrastructure.CQRS.Commands;
 using Uni.Infrastructure.CQRS.Queries;
+using Uni.WebApi.Configurations;
 using Uni.WebApi.Configurations.Filters;
 
 namespace Uni.WebApi
@@ -33,18 +34,18 @@ namespace Uni.WebApi
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc()
-                .AddFluentValidation(configuration =>
-                {
-                    // Add validators
-                    AssemblyScanner.FindValidatorsInAssemblyContaining<Startup>().ForEach(pair =>
-                    {
-                        // RegisterValidatorsFromAssemblyContaining does this:
-                        services.AddTransient(pair.InterfaceType, pair.ValidatorType);
-                        // Also register it as its concrete type as well as the interface type
-                        services.AddTransient(pair.ValidatorType);
-                    });
-                })
+            services.AddMvc(
+                    options => { options.UseCentralRoutePrefix(new RouteAttribute("api/v{version:apiVersion}")); }
+                )
+                .AddFluentValidation(
+                    configuration => AssemblyScanner.FindValidatorsInAssemblyContaining<Startup>().ForEach(
+                        pair =>
+                        {
+                            services.AddTransient(pair.InterfaceType, pair.ValidatorType);
+                            services.AddTransient(pair.ValidatorType);
+                        }
+                    )
+                )
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddAutoMapper();
@@ -52,70 +53,77 @@ namespace Uni.WebApi
             services.AddMediatR(
                 typeof(QueriesMarker),
                 typeof(CommandsMarker)
-                );
+            );
 
             services.AddTransient<ErrorHandlingMiddleware>();
 
             services.AddEntityFrameworkSqlServer();
-            services.AddDbContext<UniDbContext>(x =>
-            {
-                x.UseSqlServer(
-                    Configuration.GetConnectionString("UniDbConnection"),
-                    sql => sql.MigrationsAssembly(typeof(UniDbContext).Assembly.FullName)
-                );
-                //#if DEBUG
-//                x.EnableSensitiveDataLogging();
-//#endif
-            });
+            services.AddDbContext<UniDbContext>(
+                x =>
+                {
+                    x.UseSqlServer(
+                        Configuration.GetConnectionString("UniDbConnection"),
+                        sql => sql.MigrationsAssembly(typeof(UniDbContext).Assembly.FullName)
+                    );
+                }
+            );
 
             // Automatically perform database migration
             services.BuildServiceProvider().GetService<UniDbContext>().Database.Migrate();
 
             // Configure versions 
-            services.AddApiVersioning(o =>
-            {
-                o.AssumeDefaultVersionWhenUnspecified = true;
-                o.DefaultApiVersion = new ApiVersion(1, 0);
-            });
+            services.AddApiVersioning(
+                o =>
+                {
+                    o.AssumeDefaultVersionWhenUnspecified = true;
+                    o.DefaultApiVersion = new ApiVersion(1, 0);
+                }
+            );
 
             // Configure swagger
-            services.AddSwaggerGen(options =>
-            {
-                // Specify api versions
-                options.SwaggerDoc("v1",
-                    new Info
-                    {
-                        Title = "Uni API",
-                        Version = "v1"
-                    });
-
-                options.DescribeAllEnumsAsStrings();
-                options.DescribeStringEnumsInCamelCase();
-                options.AddFluentValidationRules();
-
-                var xmlPath = Path.Combine(AppContext.BaseDirectory, "Uni.WebApi.xml");
-                options.IncludeXmlComments(xmlPath);
-
-                options.DescribeAllEnumsAsStrings();
-
-                options.OperationFilter<RemoveVersionFromParameter>();
-
-                options.DocumentFilter<ReplaceVersionWithExactValueInPath>();
-
-                options.DocInclusionPredicate((version, desc) =>
+            services.AddSwaggerGen(
+                options =>
                 {
-                    if (!desc.TryGetMethodInfo(out var methodInfo))
-                    {
-                        return false;
-                    }
+                    // Specify api versions
+                    options.SwaggerDoc(
+                        "v1",
+                        new Info
+                        {
+                            Title = "Uni API",
+                            Version = "v1"
+                        }
+                    );
 
-                    var versions = methodInfo.DeclaringType
-                        .GetCustomAttributes<ApiVersionAttribute>(true)
-                        .SelectMany(attr => attr.Versions);
+                    options.DescribeAllEnumsAsStrings();
+                    options.DescribeStringEnumsInCamelCase();
+                    options.AddFluentValidationRules();
 
-                    return versions.Any(x => $"v{x}" == version);
-                });
-            });
+                    var xmlPath = Path.Combine(AppContext.BaseDirectory, "Uni.WebApi.xml");
+                    options.IncludeXmlComments(xmlPath);
+
+                    options.DescribeAllEnumsAsStrings();
+
+                    options.OperationFilter<RemoveVersionFromParameter>();
+
+                    options.DocumentFilter<ReplaceVersionWithExactValueInPath>();
+
+                    options.DocInclusionPredicate(
+                        (version, desc) =>
+                        {
+                            if (!desc.TryGetMethodInfo(out var methodInfo))
+                            {
+                                return false;
+                            }
+
+                            var versions = methodInfo.DeclaringType
+                                .GetCustomAttributes<ApiVersionAttribute>(true)
+                                .SelectMany(attr => attr.Versions);
+
+                            return versions.Any(x => $"v{x}" == version);
+                        }
+                    );
+                }
+            );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

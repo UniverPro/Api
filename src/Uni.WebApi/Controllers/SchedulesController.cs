@@ -18,7 +18,7 @@ namespace Uni.WebApi.Controllers
 {
     [ApiController]
     [ApiVersion("1")]
-    [Route("api/v{version:apiVersion}/schedules")]
+    [Route("schedules")]
     public class SchedulesController : ControllerBase
     {
         private readonly IMapper _mapper;

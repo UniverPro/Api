@@ -15,7 +15,7 @@ namespace Uni.WebApi.Controllers
 {
     [ApiController]
     [ApiVersion("1")]
-    [Route("api/v{version:apiVersion}/universities/{universityId}/faculties")]
+    [Route("universities/{universityId}/faculties")]
     public class UniversityFacultiesController : ControllerBase
     {
         private readonly IMapper _mapper;

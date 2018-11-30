@@ -18,7 +18,7 @@ namespace Uni.WebApi.Controllers
 {
     [ApiController]
     [ApiVersion("1")]
-    [Route("api/v{version:apiVersion}/groups")]
+    [Route("groups")]
     public class GroupsController : ControllerBase
     {
         private readonly IMapper _mapper;

@@ -15,7 +15,7 @@ namespace Uni.WebApi.Controllers
 {
     [ApiController]
     [ApiVersion("1")]
-    [Route("api/v{version:apiVersion}/groups/{groupId}/schedules")]
+    [Route("groups/{groupId}/schedules")]
     public class GroupSchedulesController : ControllerBase
     {
         private readonly IMapper _mapper;
