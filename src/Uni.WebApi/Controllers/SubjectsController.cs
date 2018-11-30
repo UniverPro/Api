@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using JetBrains.Annotations;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Uni.DataAccess.Contexts;
-using Uni.DataAccess.Models;
-using Uni.Infrastructure.Exceptions;
+using Uni.Infrastructure.CQRS.Commands.Subjects.CreateSubject;
+using Uni.Infrastructure.CQRS.Commands.Subjects.RemoveSubject;
+using Uni.Infrastructure.CQRS.Commands.Subjects.UpdateSubject;
+using Uni.Infrastructure.CQRS.Queries.Subjects.FindSubjectById;
+using Uni.Infrastructure.CQRS.Queries.Subjects.FindSubjects;
 using Uni.WebApi.Models.Requests;
 using Uni.WebApi.Models.Responses;
 
@@ -20,65 +22,79 @@ namespace Uni.WebApi.Controllers
     public class SubjectsController : ControllerBase
     {
         private readonly IMapper _mapper;
-        private readonly UniDbContext _uniDbContext;
+        private readonly IMediator _mediator;
 
-        public SubjectsController([NotNull] UniDbContext uniDbContext, [NotNull] IMapper mapper)
+        public SubjectsController(
+            [NotNull] IMapper mapper,
+            [NotNull] IMediator mediator
+            )
         {
-            _uniDbContext = uniDbContext ?? throw new ArgumentNullException(nameof(uniDbContext));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
 
         /// <summary>
         ///     Get all subjects
         /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>List of subject objects.</returns>
         [HttpGet]
-        public async Task<IEnumerable<SubjectResponseModel>> Get()
+        public async Task<IEnumerable<SubjectResponseModel>> Get(CancellationToken cancellationToken)
         {
-            var subjects = await _uniDbContext.Subjects.AsNoTracking()
-                .Select(x => _mapper.Map<Subject, SubjectResponseModel>(x))
-                .ToListAsync();
+            cancellationToken.ThrowIfCancellationRequested();
 
-            return subjects;
+            var query = new FindSubjectsQuery();
+            var subjects = await _mediator.Send(query, cancellationToken);
+
+            var response = _mapper.Map<IEnumerable<SubjectResponseModel>>(subjects);
+
+            return response;
         }
 
         /// <summary>
         ///     Searches the subject by id
         /// </summary>
-        /// <param name="id">Subject unique identifier</param>
+        /// <param name="subjectId">Subject unique identifier</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Subject object</returns>
-        [HttpGet("{id}")]
-        public async Task<SubjectResponseModel> Get(int id)
+        [HttpGet("{subjectId:int:min(1)}")]
+        public async Task<SubjectResponseModel> Get(int subjectId, CancellationToken cancellationToken)
         {
-            var subject = await _uniDbContext.Subjects.AsNoTracking()
-                .Select(x => _mapper.Map<Subject, SubjectResponseModel>(x))
-                .SingleOrDefaultAsync(x => x.Id == id);
+            cancellationToken.ThrowIfCancellationRequested();
 
-            if (subject == null)
-            {
-                throw new NotFoundException();
-            }
+            var query = new FindSubjectByIdQuery(subjectId);
+            var subject = await _mediator.Send(query, cancellationToken);
 
-            return subject;
+            var response = _mapper.Map<SubjectResponseModel>(subject);
+
+            return response;
         }
 
         /// <summary>
         ///     Creates a new subject
         /// </summary>
-        /// <param name="model">Schedule object containing the data</param>
+        /// <param name="model">Subject object containing the data</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Created subject object</returns>
         [HttpPost]
-        public async Task<SubjectResponseModel> Post([FromForm] SubjectRequestModel model)
+        public async Task<SubjectResponseModel> Post(
+            [FromForm] SubjectRequestModel model,
+            CancellationToken cancellationToken
+            )
         {
-            var subject = _mapper.Map<SubjectRequestModel, Subject>(model);
+            cancellationToken.ThrowIfCancellationRequested();
 
-            var entityEntry = _uniDbContext.Subjects.Add(subject);
+            var command = new CreateSubjectCommand(
+                model.GroupId,
+                model.Name
+            );
 
-            await _uniDbContext.SaveChangesAsync();
+            var subjectId = await _mediator.Send(command, cancellationToken);
 
-            var entity = entityEntry.Entity;
+            var query = new FindSubjectByIdQuery(subjectId);
+            var subject = await _mediator.Send(query, cancellationToken);
 
-            var response = _mapper.Map<Subject, SubjectResponseModel>(entity);
+            var response = _mapper.Map<SubjectResponseModel>(subject);
 
             return response;
         }
@@ -86,24 +102,31 @@ namespace Uni.WebApi.Controllers
         /// <summary>
         ///     Updates the subject by id
         /// </summary>
-        /// <param name="id">Subject unique identifier</param>
+        /// <param name="subjectId">Subject unique identifier</param>
         /// <param name="model">Subject object containing the new data</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Updated subject object</returns>
-        [HttpPut("{id}")]
-        public async Task<SubjectResponseModel> Put(int id, [FromForm] SubjectRequestModel model)
+        [HttpPut("{subjectId:int:min(1)}")]
+        public async Task<SubjectResponseModel> Put(
+            int subjectId,
+            [FromForm] SubjectRequestModel model,
+            CancellationToken cancellationToken
+            )
         {
-            var subject = await _uniDbContext.Subjects.SingleOrDefaultAsync(x => x.Id == id);
+            cancellationToken.ThrowIfCancellationRequested();
 
-            if (subject == null)
-            {
-                throw new NotFoundException();
-            }
+            var command = new UpdateSubjectCommand(
+                subjectId,
+                model.GroupId,
+                model.Name
+            );
 
-            _mapper.Map(model, subject);
+            await _mediator.Send(command, cancellationToken);
 
-            await _uniDbContext.SaveChangesAsync();
+            var query = new FindSubjectByIdQuery(subjectId);
+            var subject = await _mediator.Send(query, cancellationToken);
 
-            var response = _mapper.Map<Subject, SubjectResponseModel>(subject);
+            var response = _mapper.Map<SubjectResponseModel>(subject);
 
             return response;
         }
@@ -111,20 +134,15 @@ namespace Uni.WebApi.Controllers
         /// <summary>
         ///     Deletes the subject by id
         /// </summary>
-        /// <param name="id">Subject unique identifier</param>
-        [HttpDelete("{id}")]
-        public async Task Delete(int id)
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <param name="subjectId">Subject unique identifier</param>
+        [HttpDelete("{subjectId:int:min(1)}")]
+        public async Task Delete(int subjectId, CancellationToken cancellationToken)
         {
-            var subject = await _uniDbContext.Subjects.SingleOrDefaultAsync(x => x.Id == id);
+            cancellationToken.ThrowIfCancellationRequested();
 
-            if (subject == null)
-            {
-                throw new NotFoundException();
-            }
-
-            _uniDbContext.Subjects.Remove(subject);
-
-            await _uniDbContext.SaveChangesAsync();
+            var command = new RemoveSubjectCommand(subjectId);
+            await _mediator.Send(command, cancellationToken);
         }
     }
 }

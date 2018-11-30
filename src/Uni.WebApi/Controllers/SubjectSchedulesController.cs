@@ -26,7 +26,7 @@ namespace Uni.WebApi.Controllers
             _uniDbContext = uniDbContext ?? throw new ArgumentNullException(nameof(uniDbContext));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
-        
+
         /// <summary>
         ///     Get all schedules for specified subject
         /// </summary>

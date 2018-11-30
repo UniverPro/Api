@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using JetBrains.Annotations;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Uni.DataAccess.Contexts;
-using Uni.DataAccess.Models;
-using Uni.Infrastructure.Exceptions;
+using Uni.Infrastructure.CQRS.Commands.Teachers.CreateTeacher;
+using Uni.Infrastructure.CQRS.Commands.Teachers.RemoveTeacher;
+using Uni.Infrastructure.CQRS.Commands.Teachers.UpdateTeacher;
+using Uni.Infrastructure.CQRS.Queries.Teachers.FindTeacherById;
+using Uni.Infrastructure.CQRS.Queries.Teachers.FindTeachers;
 using Uni.WebApi.Models.Requests;
 using Uni.WebApi.Models.Responses;
 
@@ -20,65 +22,82 @@ namespace Uni.WebApi.Controllers
     public class TeachersController : ControllerBase
     {
         private readonly IMapper _mapper;
-        private readonly UniDbContext _uniDbContext;
+        private readonly IMediator _mediator;
 
-        public TeachersController([NotNull] UniDbContext uniDbContext, [NotNull] IMapper mapper)
+        public TeachersController(
+            [NotNull] IMapper mapper,
+            [NotNull] IMediator mediator
+            )
         {
-            _uniDbContext = uniDbContext ?? throw new ArgumentNullException(nameof(uniDbContext));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
 
         /// <summary>
         ///     Get all teachers
         /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>List of teacher objects.</returns>
         [HttpGet]
-        public async Task<IEnumerable<TeacherResponseModel>> Get()
+        public async Task<IEnumerable<TeacherResponseModel>> Get(CancellationToken cancellationToken)
         {
-            var teachers = await _uniDbContext.Teachers.AsNoTracking()
-                .Select(x => _mapper.Map<Teacher, TeacherResponseModel>(x))
-                .ToListAsync();
+            cancellationToken.ThrowIfCancellationRequested();
 
-            return teachers;
+            var query = new FindTeachersQuery();
+            var teachers = await _mediator.Send(query, cancellationToken);
+
+            var response = _mapper.Map<IEnumerable<TeacherResponseModel>>(teachers);
+
+            return response;
         }
 
         /// <summary>
         ///     Searches the teacher by id
         /// </summary>
-        /// <param name="id">Teacher unique identifier</param>
+        /// <param name="teacherId">Teacher unique identifier</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Teacher object</returns>
-        [HttpGet("{id}")]
-        public async Task<TeacherResponseModel> Get(int id)
+        [HttpGet("{teacherId:int:min(1)}")]
+        public async Task<TeacherResponseModel> Get(int teacherId, CancellationToken cancellationToken)
         {
-            var teacher = await _uniDbContext.Teachers.AsNoTracking()
-                .Select(x => _mapper.Map<Teacher, TeacherResponseModel>(x))
-                .SingleOrDefaultAsync(x => x.Id == id);
+            cancellationToken.ThrowIfCancellationRequested();
 
-            if (teacher == null)
-            {
-                throw new NotFoundException();
-            }
+            var query = new FindTeacherByIdQuery(teacherId);
+            var teacher = await _mediator.Send(query, cancellationToken);
 
-            return teacher;
+            var response = _mapper.Map<TeacherResponseModel>(teacher);
+
+            return response;
         }
 
         /// <summary>
         ///     Creates a new teacher
         /// </summary>
         /// <param name="model">Teacher object containing the data</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Created teacher object</returns>
         [HttpPost]
-        public async Task<TeacherResponseModel> Post([FromForm] TeacherRequestModel model)
+        public async Task<TeacherResponseModel> Post(
+            [FromForm] TeacherRequestModel model,
+            CancellationToken cancellationToken
+            )
         {
-            var teacher = _mapper.Map<TeacherRequestModel, Teacher>(model);
+            cancellationToken.ThrowIfCancellationRequested();
 
-            var entityEntry = _uniDbContext.Teachers.Add(teacher);
+            var command = new CreateTeacherCommand(
+                model.FirstName,
+                model.LastName,
+                model.MiddleName,
+                model.AvatarPath,
+                model.FacultyId
+            );
 
-            await _uniDbContext.SaveChangesAsync();
+            var teacherId = await _mediator.Send(command, cancellationToken);
 
-            var entity = entityEntry.Entity;
+            var query = new FindTeacherByIdQuery(teacherId);
+            var teacher = await _mediator.Send(query, cancellationToken);
 
-            var response = _mapper.Map<Teacher, TeacherResponseModel>(entity);
+            var response = _mapper.Map<TeacherResponseModel>(teacher);
 
             return response;
         }
@@ -86,24 +105,34 @@ namespace Uni.WebApi.Controllers
         /// <summary>
         ///     Updates the teacher by id
         /// </summary>
-        /// <param name="id">Teacher unique identifier</param>
+        /// <param name="teacherId">Teacher unique identifier</param>
         /// <param name="model">Teacher object containing the new data</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Updated teacher object</returns>
-        [HttpPut("{id}")]
-        public async Task<TeacherResponseModel> Put(int id, [FromForm] TeacherRequestModel model)
+        [HttpPut("{teacherId:int:min(1)}")]
+        public async Task<TeacherResponseModel> Put(
+            int teacherId,
+            [FromForm] TeacherRequestModel model,
+            CancellationToken cancellationToken
+            )
         {
-            var teacher = await _uniDbContext.Teachers.SingleOrDefaultAsync(x => x.Id == id);
+            cancellationToken.ThrowIfCancellationRequested();
 
-            if (teacher == null)
-            {
-                throw new NotFoundException();
-            }
+            var command = new UpdateTeacherCommand(
+                teacherId,
+                model.FirstName,
+                model.LastName,
+                model.MiddleName,
+                model.AvatarPath,
+                model.FacultyId
+            );
 
-            _mapper.Map(model, teacher);
+            await _mediator.Send(command, cancellationToken);
 
-            await _uniDbContext.SaveChangesAsync();
+            var query = new FindTeacherByIdQuery(teacherId);
+            var teacher = await _mediator.Send(query, cancellationToken);
 
-            var response = _mapper.Map<Teacher, TeacherResponseModel>(teacher);
+            var response = _mapper.Map<TeacherResponseModel>(teacher);
 
             return response;
         }
@@ -111,20 +140,15 @@ namespace Uni.WebApi.Controllers
         /// <summary>
         ///     Deletes the teacher by id
         /// </summary>
-        /// <param name="id">Teacher unique identifier</param>
-        [HttpDelete("{id}")]
-        public async Task Delete(int id)
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <param name="teacherId">Teacher unique identifier</param>
+        [HttpDelete("{teacherId:int:min(1)}")]
+        public async Task Delete(int teacherId, CancellationToken cancellationToken)
         {
-            var teacher = await _uniDbContext.Teachers.SingleOrDefaultAsync(x => x.Id == id);
+            cancellationToken.ThrowIfCancellationRequested();
 
-            if (teacher == null)
-            {
-                throw new NotFoundException();
-            }
-
-            _uniDbContext.Teachers.Remove(teacher);
-
-            await _uniDbContext.SaveChangesAsync();
+            var command = new RemoveTeacherCommand(teacherId);
+            await _mediator.Send(command, cancellationToken);
         }
     }
 }

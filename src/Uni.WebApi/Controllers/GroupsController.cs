@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using JetBrains.Annotations;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Uni.DataAccess.Contexts;
-using Uni.DataAccess.Models;
-using Uni.Infrastructure.Exceptions;
+using Uni.Infrastructure.CQRS.Commands.Groups.CreateGroup;
+using Uni.Infrastructure.CQRS.Commands.Groups.RemoveGroup;
+using Uni.Infrastructure.CQRS.Commands.Groups.UpdateGroup;
+using Uni.Infrastructure.CQRS.Queries.Groups.FindGroupById;
+using Uni.Infrastructure.CQRS.Queries.Groups.FindGroups;
 using Uni.WebApi.Models.Requests;
 using Uni.WebApi.Models.Responses;
 
@@ -20,65 +22,87 @@ namespace Uni.WebApi.Controllers
     public class GroupsController : ControllerBase
     {
         private readonly IMapper _mapper;
-        private readonly UniDbContext _uniDbContext;
+        private readonly IMediator _mediator;
 
-        public GroupsController([NotNull] UniDbContext uniDbContext, [NotNull] IMapper mapper)
+        public GroupsController(
+            [NotNull] IMapper mapper,
+            [NotNull] IMediator mediator
+            )
         {
-            _uniDbContext = uniDbContext ?? throw new ArgumentNullException(nameof(uniDbContext));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
 
         /// <summary>
         ///     Get all groups
         /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>List of group objects.</returns>
         [HttpGet]
-        public async Task<IEnumerable<GroupResponseModel>> Get()
+        [ProducesResponseType(typeof(IEnumerable<GroupResponseModel>), 200)]
+        public async Task<IEnumerable<GroupResponseModel>> Get(CancellationToken cancellationToken)
         {
-            var groups = await _uniDbContext.Groups.AsNoTracking()
-                .Select(x => _mapper.Map<Group, GroupResponseModel>(x))
-                .ToListAsync();
+            cancellationToken.ThrowIfCancellationRequested();
 
-            return groups;
+            var query = new FindGroupsQuery();
+            var groups = await _mediator.Send(query, cancellationToken);
+
+            var response = _mapper.Map<IEnumerable<GroupResponseModel>>(groups);
+
+            return response;
         }
 
         /// <summary>
         ///     Searches the group by id
         /// </summary>
-        /// <param name="id">Group unique identifier</param>
+        /// <param name="groupId">Group unique identifier</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Group object</returns>
-        [HttpGet("{id}")]
-        public async Task<GroupResponseModel> Get(int id)
+        [HttpGet("{groupId:int:min(1)}")]
+        [ProducesResponseType(typeof(GroupResponseModel), 200)]
+        [ProducesResponseType(404)]
+        public async Task<GroupResponseModel> Get(
+            int groupId,
+            CancellationToken cancellationToken
+            )
         {
-            var group = await _uniDbContext.Groups.AsNoTracking()
-                .Select(x => _mapper.Map<Group, GroupResponseModel>(x))
-                .SingleOrDefaultAsync(x => x.Id == id);
+            cancellationToken.ThrowIfCancellationRequested();
 
-            if (group == null)
-            {
-                throw new NotFoundException();
-            }
+            var query = new FindGroupByIdQuery(groupId);
+            var group = await _mediator.Send(query, cancellationToken);
 
-            return group;
+            var response = _mapper.Map<GroupResponseModel>(group);
+
+            return response;
         }
 
         /// <summary>
         ///     Creates a new group
         /// </summary>
         /// <param name="model">Group object containing the data</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Created group object</returns>
         [HttpPost]
-        public async Task<GroupResponseModel> Post([FromForm] GroupRequestModel model)
+        [ProducesResponseType(typeof(GroupResponseModel), 200)]
+        public async Task<GroupResponseModel> Post(
+            [FromForm] GroupRequestModel model,
+            CancellationToken cancellationToken
+            )
         {
-            var group = _mapper.Map<GroupRequestModel, Group>(model);
+            cancellationToken.ThrowIfCancellationRequested();
 
-            var entityEntry = _uniDbContext.Groups.Add(group);
+            var command = new CreateGroupCommand(
+                model.Name,
+                model.FacultyId,
+                model.CourseNumber
+            );
 
-            await _uniDbContext.SaveChangesAsync();
+            var groupId = await _mediator.Send(command, cancellationToken);
 
-            var entity = entityEntry.Entity;
+            var query = new FindGroupByIdQuery(groupId);
+            var group = await _mediator.Send(query, cancellationToken);
 
-            var response = _mapper.Map<Group, GroupResponseModel>(entity);
+            var response = _mapper.Map<GroupResponseModel>(group);
 
             return response;
         }
@@ -86,24 +110,34 @@ namespace Uni.WebApi.Controllers
         /// <summary>
         ///     Updates the group by id
         /// </summary>
-        /// <param name="id">Group unique identifier</param>
+        /// <param name="groupId">Group unique identifier</param>
         /// <param name="model">Group object containing the new data</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Updated group object</returns>
-        [HttpPut("{id}")]
-        public async Task<GroupResponseModel> Put(int id, [FromForm] GroupRequestModel model)
+        [HttpPut("{groupId:int:min(1)}")]
+        [ProducesResponseType(typeof(GroupResponseModel), 200)]
+        [ProducesResponseType(404)]
+        public async Task<GroupResponseModel> Put(
+            int groupId,
+            [FromForm] GroupRequestModel model,
+            CancellationToken cancellationToken
+            )
         {
-            var group = await _uniDbContext.Groups.SingleOrDefaultAsync(x => x.Id == id);
+            cancellationToken.ThrowIfCancellationRequested();
 
-            if (group == null)
-            {
-                throw new NotFoundException();
-            }
+            var command = new UpdateGroupCommand(
+                groupId,
+                model.Name,
+                model.FacultyId,
+                model.CourseNumber
+            );
 
-            _mapper.Map(model, group);
+            await _mediator.Send(command, cancellationToken);
 
-            await _uniDbContext.SaveChangesAsync();
+            var query = new FindGroupByIdQuery(groupId);
+            var group = await _mediator.Send(query, cancellationToken);
 
-            var response = _mapper.Map<Group, GroupResponseModel>(group);
+            var response = _mapper.Map<GroupResponseModel>(group);
 
             return response;
         }
@@ -111,20 +145,20 @@ namespace Uni.WebApi.Controllers
         /// <summary>
         ///     Deletes the group by id
         /// </summary>
-        /// <param name="id">Group unique identifier</param>
-        [HttpDelete("{id}")]
-        public async Task Delete(int id)
+        /// <param name="groupId">Group unique identifier</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        [HttpDelete("{groupId:int:min(1)}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        public async Task Delete(
+            int groupId,
+            CancellationToken cancellationToken
+            )
         {
-            var group = await _uniDbContext.Groups.SingleOrDefaultAsync(x => x.Id == id);
+            cancellationToken.ThrowIfCancellationRequested();
 
-            if (group == null)
-            {
-                throw new NotFoundException();
-            }
-
-            _uniDbContext.Groups.Remove(group);
-
-            await _uniDbContext.SaveChangesAsync();
+            var command = new RemoveGroupCommand(groupId);
+            await _mediator.Send(command, cancellationToken);
         }
     }
 }

@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using JetBrains.Annotations;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Uni.DataAccess.Contexts;
-using Uni.DataAccess.Models;
-using Uni.Infrastructure.Exceptions;
+using Uni.Infrastructure.CQRS.Commands.Faculties.CreateFaculty;
+using Uni.Infrastructure.CQRS.Commands.Faculties.RemoveFaculty;
+using Uni.Infrastructure.CQRS.Commands.Faculties.UpdateFaculty;
+using Uni.Infrastructure.CQRS.Queries.Faculties.FindFaculties;
+using Uni.Infrastructure.CQRS.Queries.Faculties.FindFacultyById;
 using Uni.WebApi.Models.Requests;
 using Uni.WebApi.Models.Responses;
 
@@ -20,69 +22,88 @@ namespace Uni.WebApi.Controllers
     public class FacultiesController : ControllerBase
     {
         private readonly IMapper _mapper;
-        private readonly UniDbContext _uniDbContext;
+        private readonly IMediator _mediator;
 
-        public FacultiesController([NotNull] UniDbContext uniDbContext, [NotNull] IMapper mapper)
+        public FacultiesController(
+            [NotNull] IMapper mapper,
+            [NotNull] IMediator mediator
+            )
         {
-            _uniDbContext = uniDbContext ?? throw new ArgumentNullException(nameof(uniDbContext));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
 
         /// <summary>
         ///     Get all faculties
         /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>List of faculty objects.</returns>
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<FacultyResponseModel>), 200)]
-        public async Task<IEnumerable<FacultyResponseModel>> Get()
+        public async Task<IEnumerable<FacultyResponseModel>> Get(CancellationToken cancellationToken)
         {
-            var faculties = await _uniDbContext.Faculties.AsNoTracking()
-                .Select(x => _mapper.Map<Faculty, FacultyResponseModel>(x))
-                .ToListAsync();
+            cancellationToken.ThrowIfCancellationRequested();
 
-            return faculties;
+            var query = new FindFacultiesQuery();
+            var faculties = await _mediator.Send(query, cancellationToken);
+
+            var response = _mapper.Map<IEnumerable<FacultyResponseModel>>(faculties);
+
+            return response;
         }
 
         /// <summary>
         ///     Searches the faculty by id
         /// </summary>
-        /// <param name="id">Faculty unique identifier</param>
+        /// <param name="facultyId">Faculty unique identifier</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Faculty object</returns>
-        [HttpGet("{id}")]
+        [HttpGet("{facultyId:int:min(1)}")]
         [ProducesResponseType(typeof(FacultyResponseModel), 200)]
         [ProducesResponseType(404)]
-        public async Task<FacultyResponseModel> Get(int id)
+        public async Task<FacultyResponseModel> Get(
+            int facultyId,
+            CancellationToken cancellationToken
+            )
         {
-            var faculty = await _uniDbContext.Faculties.AsNoTracking()
-                .Select(x => _mapper.Map<Faculty, FacultyResponseModel>(x))
-                .SingleOrDefaultAsync(x => x.Id == id);
+            cancellationToken.ThrowIfCancellationRequested();
 
-            if (faculty == null)
-            {
-                throw new NotFoundException();
-            }
+            var query = new FindFacultyByIdQuery(facultyId);
+            var faculty = await _mediator.Send(query, cancellationToken);
 
-            return faculty;
+            var response = _mapper.Map<FacultyResponseModel>(faculty);
+
+            return response;
         }
 
         /// <summary>
         ///     Creates a new faculty
         /// </summary>
         /// <param name="model">Faculty object containing the data</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Created faculty object</returns>
         [HttpPost]
         [ProducesResponseType(typeof(FacultyResponseModel), 200)]
-        public async Task<FacultyResponseModel> Post([FromForm] FacultyRequestModel model)
+        public async Task<FacultyResponseModel> Post(
+            [FromForm] FacultyRequestModel model,
+            CancellationToken cancellationToken
+            )
         {
-            var faculty = _mapper.Map<FacultyRequestModel, Faculty>(model);
+            cancellationToken.ThrowIfCancellationRequested();
 
-            var entityEntry = _uniDbContext.Faculties.Add(faculty);
+            var command = new CreateFacultyCommand(
+                model.Name,
+                model.ShortName,
+                model.Description,
+                model.UniversityId
+            );
 
-            await _uniDbContext.SaveChangesAsync();
+            var facultyId = await _mediator.Send(command, cancellationToken);
 
-            var entity = entityEntry.Entity;
+            var query = new FindFacultyByIdQuery(facultyId);
+            var faculty = await _mediator.Send(query, cancellationToken);
 
-            var response = _mapper.Map<Faculty, FacultyResponseModel>(entity);
+            var response = _mapper.Map<FacultyResponseModel>(faculty);
 
             return response;
         }
@@ -90,26 +111,35 @@ namespace Uni.WebApi.Controllers
         /// <summary>
         ///     Updates the faculty by id
         /// </summary>
-        /// <param name="id">Faculty unique identifier</param>
+        /// <param name="facultyId">Faculty unique identifier</param>
         /// <param name="model">Faculty object containing the new data</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Updated faculty object</returns>
-        [HttpPut("{id}")]
+        [HttpPut("{facultyId:int:min(1)}")]
         [ProducesResponseType(typeof(FacultyResponseModel), 200)]
         [ProducesResponseType(404)]
-        public async Task<FacultyResponseModel> Put(int id, [FromForm] FacultyRequestModel model)
+        public async Task<FacultyResponseModel> Put(
+            int facultyId,
+            [FromForm] FacultyRequestModel model,
+            CancellationToken cancellationToken
+            )
         {
-            var faculty = await _uniDbContext.Faculties.SingleOrDefaultAsync(x => x.Id == id);
+            cancellationToken.ThrowIfCancellationRequested();
 
-            if (faculty == null)
-            {
-                throw new NotFoundException();
-            }
+            var command = new UpdateFacultyCommand(
+                facultyId,
+                model.Name,
+                model.ShortName,
+                model.Description,
+                model.UniversityId
+            );
 
-            _mapper.Map(model, faculty);
+            await _mediator.Send(command, cancellationToken);
 
-            await _uniDbContext.SaveChangesAsync();
+            var query = new FindFacultyByIdQuery(facultyId);
+            var faculty = await _mediator.Send(query, cancellationToken);
 
-            var response = _mapper.Map<Faculty, FacultyResponseModel>(faculty);
+            var response = _mapper.Map<FacultyResponseModel>(faculty);
 
             return response;
         }
@@ -117,22 +147,20 @@ namespace Uni.WebApi.Controllers
         /// <summary>
         ///     Deletes the faculty by id
         /// </summary>
-        /// <param name="id">Faculty unique identifier</param>
-        [HttpDelete("{id}")]
+        /// <param name="facultyId">Faculty unique identifier</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        [HttpDelete("{facultyId:int:min(1)}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
-        public async Task Delete(int id)
+        public async Task Delete(
+            int facultyId,
+            CancellationToken cancellationToken
+            )
         {
-            var faculty = await _uniDbContext.Faculties.SingleOrDefaultAsync(x => x.Id == id);
+            cancellationToken.ThrowIfCancellationRequested();
 
-            if (faculty == null)
-            {
-                throw new NotFoundException();
-            }
-
-            _uniDbContext.Faculties.Remove(faculty);
-
-            await _uniDbContext.SaveChangesAsync();
+            var command = new RemoveFacultyCommand(facultyId);
+            await _mediator.Send(command, cancellationToken);
         }
     }
 }

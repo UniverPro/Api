@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using JetBrains.Annotations;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Uni.DataAccess.Contexts;
-using Uni.DataAccess.Models;
-using Uni.Infrastructure.Exceptions;
+using Uni.Infrastructure.CQRS.Commands.Universities.CreateUniversity;
+using Uni.Infrastructure.CQRS.Commands.Universities.RemoveUniversity;
+using Uni.Infrastructure.CQRS.Commands.Universities.UpdateUniversity;
+using Uni.Infrastructure.CQRS.Queries.Universities.FindUniversities;
+using Uni.Infrastructure.CQRS.Queries.Universities.FindUniversityById;
 using Uni.WebApi.Models.Requests;
 using Uni.WebApi.Models.Responses;
 
@@ -20,65 +22,82 @@ namespace Uni.WebApi.Controllers
     public class UniversitiesController : ControllerBase
     {
         private readonly IMapper _mapper;
-        private readonly UniDbContext _uniDbContext;
+        private readonly IMediator _mediator;
 
-        public UniversitiesController([NotNull] UniDbContext uniDbContext, [NotNull] IMapper mapper)
+        public UniversitiesController(
+            [NotNull] IMapper mapper,
+            [NotNull] IMediator mediator
+            )
         {
-            _uniDbContext = uniDbContext ?? throw new ArgumentNullException(nameof(uniDbContext));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
 
         /// <summary>
         ///     Get all universities
         /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>List of university objects.</returns>
         [HttpGet]
-        public async Task<IEnumerable<UniversityResponseModel>> Get()
+        [ProducesResponseType(typeof(IEnumerable<UniversityResponseModel>), 200)]
+        public async Task<IEnumerable<UniversityResponseModel>> Get(CancellationToken cancellationToken)
         {
-            var universities = await _uniDbContext.Universities.AsNoTracking()
-                .Select(x => _mapper.Map<University, UniversityResponseModel>(x))
-                .ToListAsync();
+            cancellationToken.ThrowIfCancellationRequested();
 
-            return universities;
+            var query = new FindUniversitiesQuery();
+            var universities = await _mediator.Send(query, cancellationToken);
+
+            var response = _mapper.Map<IEnumerable<UniversityResponseModel>>(universities);
+
+            return response;
         }
 
         /// <summary>
         ///     Searches the university by id
         /// </summary>
-        /// <param name="id">University unique identifier</param>
+        /// <param name="universityId">University unique identifier</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>University object</returns>
-        [HttpGet("{id}")]
-        public async Task<UniversityResponseModel> Get(int id)
+        [HttpGet("{universityId:int:min(1)}")]
+        [ProducesResponseType(typeof(UniversityResponseModel), 200)]
+        [ProducesResponseType(404)]
+        public async Task<UniversityResponseModel> Get(
+            int universityId,
+            CancellationToken cancellationToken
+            )
         {
-            var university = await _uniDbContext.Universities.AsNoTracking()
-                .Select(x => _mapper.Map<University, UniversityResponseModel>(x))
-                .SingleOrDefaultAsync(x => x.Id == id);
+            cancellationToken.ThrowIfCancellationRequested();
 
-            if (university == null)
-            {
-                throw new NotFoundException();
-            }
+            var query = new FindUniversityByIdQuery(universityId);
+            var university = await _mediator.Send(query, cancellationToken);
 
-            return university;
+            var response = _mapper.Map<UniversityResponseModel>(university);
+
+            return response;
         }
 
         /// <summary>
         ///     Creates a new university
         /// </summary>
         /// <param name="model">University object containing the data</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Created university object</returns>
         [HttpPost]
-        public async Task<UniversityResponseModel> Post([FromForm] UniversityRequestModel model)
+        [ProducesResponseType(typeof(UniversityResponseModel), 200)]
+        public async Task<UniversityResponseModel> Post(
+            [FromForm] UniversityRequestModel model,
+            CancellationToken cancellationToken
+            )
         {
-            var university = _mapper.Map<UniversityRequestModel, University>(model);
+            cancellationToken.ThrowIfCancellationRequested();
 
-            var entityEntry = _uniDbContext.Universities.Add(university);
+            var command = new CreateUniversityCommand(model.Name, model.ShortName, model.Description);
+            var universityId = await _mediator.Send(command, cancellationToken);
 
-            await _uniDbContext.SaveChangesAsync();
+            var query = new FindUniversityByIdQuery(universityId);
+            var university = await _mediator.Send(query, cancellationToken);
 
-            var entity = entityEntry.Entity;
-
-            var response = _mapper.Map<University, UniversityResponseModel>(entity);
+            var response = _mapper.Map<UniversityResponseModel>(university);
 
             return response;
         }
@@ -86,24 +105,34 @@ namespace Uni.WebApi.Controllers
         /// <summary>
         ///     Updates the university by id
         /// </summary>
-        /// <param name="id">University unique identifier</param>
+        /// <param name="universityId">University unique identifier</param>
         /// <param name="model">University object containing the new data</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Updated university object</returns>
-        [HttpPut("{id}")]
-        public async Task<UniversityResponseModel> Put(int id, [FromForm] UniversityRequestModel model)
+        [HttpPut("{universityId:int:min(1)}")]
+        [ProducesResponseType(typeof(UniversityResponseModel), 200)]
+        [ProducesResponseType(404)]
+        public async Task<UniversityResponseModel> Put(
+            int universityId,
+            [FromForm] UniversityRequestModel model,
+            CancellationToken cancellationToken
+            )
         {
-            var university = await _uniDbContext.Universities.SingleOrDefaultAsync(x => x.Id == id);
+            cancellationToken.ThrowIfCancellationRequested();
 
-            if (university == null)
-            {
-                throw new NotFoundException();
-            }
+            var command = new UpdateUniversityCommand(
+                universityId,
+                model.Name,
+                model.ShortName,
+                model.Description
+            );
 
-            _mapper.Map(model, university);
+            await _mediator.Send(command, cancellationToken);
 
-            await _uniDbContext.SaveChangesAsync();
+            var query = new FindUniversityByIdQuery(universityId);
+            var university = await _mediator.Send(query, cancellationToken);
 
-            var response = _mapper.Map<University, UniversityResponseModel>(university);
+            var response = _mapper.Map<UniversityResponseModel>(university);
 
             return response;
         }
@@ -111,20 +140,20 @@ namespace Uni.WebApi.Controllers
         /// <summary>
         ///     Deletes the university by id
         /// </summary>
-        /// <param name="id">University unique identifier</param>
-        [HttpDelete("{id}")]
-        public async Task Delete(int id)
+        /// <param name="universityId">University unique identifier</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        [HttpDelete("{universityId:int:min(1)}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        public async Task Delete(
+            int universityId,
+            CancellationToken cancellationToken
+            )
         {
-            var university = await _uniDbContext.Universities.SingleOrDefaultAsync(x => x.Id == id);
+            cancellationToken.ThrowIfCancellationRequested();
 
-            if (university == null)
-            {
-                throw new NotFoundException();
-            }
-
-            _uniDbContext.Universities.Remove(university);
-
-            await _uniDbContext.SaveChangesAsync();
+            var command = new RemoveUniversityCommand(universityId);
+            await _mediator.Send(command, cancellationToken);
         }
     }
 }

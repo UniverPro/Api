@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using JetBrains.Annotations;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Uni.DataAccess.Contexts;
-using Uni.DataAccess.Models;
-using Uni.Infrastructure.Exceptions;
+using Uni.Infrastructure.CQRS.Commands.Students.CreateStudent;
+using Uni.Infrastructure.CQRS.Commands.Students.RemoveStudent;
+using Uni.Infrastructure.CQRS.Commands.Students.UpdateStudent;
+using Uni.Infrastructure.CQRS.Queries.Students.FindStudentById;
+using Uni.Infrastructure.CQRS.Queries.Students.FindStudents;
 using Uni.WebApi.Models.Requests;
 using Uni.WebApi.Models.Responses;
 
@@ -20,65 +22,82 @@ namespace Uni.WebApi.Controllers
     public class StudentsController : ControllerBase
     {
         private readonly IMapper _mapper;
-        private readonly UniDbContext _uniDbContext;
+        private readonly IMediator _mediator;
 
-        public StudentsController([NotNull] UniDbContext uniDbContext, [NotNull] IMapper mapper)
+        public StudentsController(
+            [NotNull] IMapper mapper,
+            [NotNull] IMediator mediator
+            )
         {
-            _uniDbContext = uniDbContext ?? throw new ArgumentNullException(nameof(uniDbContext));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
 
         /// <summary>
         ///     Get all students
         /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>List of student objects.</returns>
         [HttpGet]
-        public async Task<IEnumerable<StudentResponseModel>> Get()
+        public async Task<IEnumerable<StudentResponseModel>> Get(CancellationToken cancellationToken)
         {
-            var students = await _uniDbContext.Students.AsNoTracking()
-                .Select(x => _mapper.Map<Student, StudentResponseModel>(x))
-                .ToListAsync();
+            cancellationToken.ThrowIfCancellationRequested();
 
-            return students;
+            var query = new FindStudentsQuery();
+            var students = await _mediator.Send(query, cancellationToken);
+
+            var response = _mapper.Map<IEnumerable<StudentResponseModel>>(students);
+
+            return response;
         }
 
         /// <summary>
         ///     Searches the student by id
         /// </summary>
-        /// <param name="id">Student unique identifier</param>
+        /// <param name="studentId">Student unique identifier</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Student object</returns>
-        [HttpGet("{id}")]
-        public async Task<StudentResponseModel> Get(int id)
+        [HttpGet("{studentId:int:min(1)}")]
+        public async Task<StudentResponseModel> Get(int studentId, CancellationToken cancellationToken)
         {
-            var student = await _uniDbContext.Students.AsNoTracking()
-                .Select(x => _mapper.Map<Student, StudentResponseModel>(x))
-                .SingleOrDefaultAsync(x => x.Id == id);
+            cancellationToken.ThrowIfCancellationRequested();
 
-            if (student == null)
-            {
-                throw new NotFoundException();
-            }
+            var query = new FindStudentByIdQuery(studentId);
+            var student = await _mediator.Send(query, cancellationToken);
 
-            return student;
+            var response = _mapper.Map<StudentResponseModel>(student);
+
+            return response;
         }
 
         /// <summary>
         ///     Creates a new student
         /// </summary>
         /// <param name="model">Student object containing the data</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Created student object</returns>
         [HttpPost]
-        public async Task<StudentResponseModel> Post([FromForm] StudentRequestModel model)
+        public async Task<StudentResponseModel> Post(
+            [FromForm] StudentRequestModel model,
+            CancellationToken cancellationToken
+            )
         {
-            var student = _mapper.Map<StudentRequestModel, Student>(model);
+            cancellationToken.ThrowIfCancellationRequested();
 
-            var entityEntry = _uniDbContext.Students.Add(student);
+            var command = new CreateStudentCommand(
+                model.FirstName,
+                model.LastName,
+                model.MiddleName,
+                model.AvatarPath,
+                model.GroupId
+            );
 
-            await _uniDbContext.SaveChangesAsync();
+            var studentId = await _mediator.Send(command, cancellationToken);
 
-            var entity = entityEntry.Entity;
+            var query = new FindStudentByIdQuery(studentId);
+            var student = await _mediator.Send(query, cancellationToken);
 
-            var response = _mapper.Map<Student, StudentResponseModel>(entity);
+            var response = _mapper.Map<StudentResponseModel>(student);
 
             return response;
         }
@@ -86,24 +105,34 @@ namespace Uni.WebApi.Controllers
         /// <summary>
         ///     Updates the student by id
         /// </summary>
-        /// <param name="id">Student unique identifier</param>
+        /// <param name="studentId">Student unique identifier</param>
         /// <param name="model">Student object containing the new data</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Updated student object</returns>
-        [HttpPut("{id}")]
-        public async Task<StudentResponseModel> Put(int id, [FromForm] StudentRequestModel model)
+        [HttpPut("{studentId:int:min(1)}")]
+        public async Task<StudentResponseModel> Put(
+            int studentId,
+            [FromForm] StudentRequestModel model,
+            CancellationToken cancellationToken
+            )
         {
-            var student = await _uniDbContext.Students.SingleOrDefaultAsync(x => x.Id == id);
+            cancellationToken.ThrowIfCancellationRequested();
 
-            if (student == null)
-            {
-                throw new NotFoundException();
-            }
+            var command = new UpdateStudentCommand(
+                studentId,
+                model.FirstName,
+                model.LastName,
+                model.MiddleName,
+                model.AvatarPath,
+                model.GroupId
+            );
 
-            _mapper.Map(model, student);
+            await _mediator.Send(command, cancellationToken);
 
-            await _uniDbContext.SaveChangesAsync();
+            var query = new FindStudentByIdQuery(studentId);
+            var student = await _mediator.Send(query, cancellationToken);
 
-            var response = _mapper.Map<Student, StudentResponseModel>(student);
+            var response = _mapper.Map<StudentResponseModel>(student);
 
             return response;
         }
@@ -111,20 +140,15 @@ namespace Uni.WebApi.Controllers
         /// <summary>
         ///     Deletes the student by id
         /// </summary>
-        /// <param name="id">Student unique identifier</param>
-        [HttpDelete("{id}")]
-        public async Task Delete(int id)
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <param name="studentId">Student unique identifier</param>
+        [HttpDelete("{studentId:int:min(1)}")]
+        public async Task Delete(int studentId, CancellationToken cancellationToken)
         {
-            var student = await _uniDbContext.Students.SingleOrDefaultAsync(x => x.Id == id);
+            cancellationToken.ThrowIfCancellationRequested();
 
-            if (student == null)
-            {
-                throw new NotFoundException();
-            }
-
-            _uniDbContext.Students.Remove(student);
-
-            await _uniDbContext.SaveChangesAsync();
+            var command = new RemoveStudentCommand(studentId);
+            await _mediator.Send(command, cancellationToken);
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Reflection;
 using AutoMapper;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using MediatR;
 using MicroElements.Swashbuckle.FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -15,6 +16,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Uni.DataAccess.Contexts;
+using Uni.Infrastructure.CQRS.Commands;
+using Uni.Infrastructure.CQRS.Queries;
 using Uni.WebApi.Configurations.Filters;
 
 namespace Uni.WebApi
@@ -46,6 +49,11 @@ namespace Uni.WebApi
 
             services.AddAutoMapper();
 
+            services.AddMediatR(
+                typeof(QueriesMarker),
+                typeof(CommandsMarker)
+                );
+
             services.AddTransient<ErrorHandlingMiddleware>();
 
             services.AddEntityFrameworkSqlServer();
@@ -55,7 +63,7 @@ namespace Uni.WebApi
                     Configuration.GetConnectionString("UniDbConnection"),
                     sql => sql.MigrationsAssembly(typeof(UniDbContext).Assembly.FullName)
                 );
-//#if DEBUG
+                //#if DEBUG
 //                x.EnableSensitiveDataLogging();
 //#endif
             });
