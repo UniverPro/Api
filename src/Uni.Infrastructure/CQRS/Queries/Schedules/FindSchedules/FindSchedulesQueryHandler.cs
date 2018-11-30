@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
@@ -35,6 +36,7 @@ namespace Uni.Infrastructure.CQRS.Queries.Schedules.FindSchedules
                     var schedules = await _dbContext
                         .Schedules
                         .AsNoTracking()
+                        .OrderBy(x => x.StartTime)
                         .ToListAsync(cancellationToken);
 
                     return schedules;
