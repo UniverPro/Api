@@ -4,9 +4,11 @@ using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
+using LinqBuilder.Core;
 using Microsoft.EntityFrameworkCore;
 using Uni.DataAccess.Contexts;
 using Uni.DataAccess.Models;
+using Uni.Infrastructure.Exceptions;
 using Uni.Infrastructure.Interfaces.CQRS.Queries;
 
 namespace Uni.Infrastructure.CQRS.Queries.Groups.FindGroups
@@ -27,14 +29,31 @@ namespace Uni.Infrastructure.CQRS.Queries.Groups.FindGroups
             )
         {
             cancellationToken.ThrowIfCancellationRequested();
+
+            var specification = query.ToSpecification();
+
             using (var transaction =
                 await _dbContext.Database.BeginTransactionAsync(IsolationLevel.RepeatableRead, cancellationToken))
             {
                 try
                 {
+                    if (query.FacultyId != null)
+                    {
+                        var facultyExists = await _dbContext
+                            .Faculties
+                            .AsNoTracking()
+                            .AnyAsync(x => x.Id == query.FacultyId, cancellationToken);
+
+                        if (!facultyExists)
+                        {
+                            throw new NotFoundException();
+                        }
+                    }
+
                     var groups = await _dbContext
                         .Groups
                         .AsNoTracking()
+                        .ExeSpec(specification)
                         .ToListAsync(cancellationToken);
                     
                     transaction.Commit();
