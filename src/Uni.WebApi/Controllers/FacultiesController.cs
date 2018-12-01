@@ -11,7 +11,6 @@ using Uni.Infrastructure.CQRS.Commands.Faculties.RemoveFaculty;
 using Uni.Infrastructure.CQRS.Commands.Faculties.UpdateFaculty;
 using Uni.Infrastructure.CQRS.Queries.Faculties.FindFaculties;
 using Uni.Infrastructure.CQRS.Queries.Faculties.FindFacultyById;
-using Uni.Infrastructure.CQRS.Queries.Universities.CheckUniversityExists;
 using Uni.Infrastructure.Exceptions;
 using Uni.WebApi.Models.Requests;
 using Uni.WebApi.Models.Responses;
@@ -56,18 +55,6 @@ namespace Uni.WebApi.Controllers
             )
         {
             cancellationToken.ThrowIfCancellationRequested();
-
-            if (universityId != null)
-            {
-                var universityQuery = new CheckUniversityExistsQuery(universityId.Value);
-
-                var universityExists = await _mediator.Send(universityQuery, cancellationToken);
-
-                if (!universityExists)
-                {
-                    throw new NotFoundException();
-                }
-            }
 
             var query = new FindFacultiesQuery(
                 universityId,

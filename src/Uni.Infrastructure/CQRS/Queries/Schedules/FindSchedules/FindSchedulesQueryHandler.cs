@@ -8,6 +8,7 @@ using LinqBuilder.Core;
 using Microsoft.EntityFrameworkCore;
 using Uni.DataAccess.Contexts;
 using Uni.DataAccess.Models;
+using Uni.Infrastructure.Exceptions;
 using Uni.Infrastructure.Interfaces.CQRS.Queries;
 
 namespace Uni.Infrastructure.CQRS.Queries.Schedules.FindSchedules
@@ -36,6 +37,32 @@ namespace Uni.Infrastructure.CQRS.Queries.Schedules.FindSchedules
             {
                 try
                 {
+                    if (query.TeacherId != null)
+                    {
+                        var teacherExists = await _dbContext
+                            .Teachers
+                            .AsNoTracking()
+                            .AnyAsync(x => x.Id == query.TeacherId, cancellationToken);
+                        
+                        if (!teacherExists)
+                        {
+                            throw new NotFoundException();
+                        }
+                    }
+
+                    if (query.SubjectId != null)
+                    {
+                        var subjectExists = await _dbContext
+                            .Subjects
+                            .AsNoTracking()
+                            .AnyAsync(x => x.Id == query.SubjectId, cancellationToken);
+                        
+                        if (!subjectExists)
+                        {
+                            throw new NotFoundException();
+                        }
+                    }
+
                     var schedules = await _dbContext
                         .Schedules
                         .AsNoTracking()

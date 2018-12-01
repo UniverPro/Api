@@ -11,8 +11,6 @@ using Uni.Infrastructure.CQRS.Commands.Schedules.RemoveSchedule;
 using Uni.Infrastructure.CQRS.Commands.Schedules.UpdateSchedule;
 using Uni.Infrastructure.CQRS.Queries.Schedules.FindScheduleById;
 using Uni.Infrastructure.CQRS.Queries.Schedules.FindSchedules;
-using Uni.Infrastructure.CQRS.Queries.Subjects.CheckSubjectExists;
-using Uni.Infrastructure.CQRS.Queries.Teachers.CheckTeacherExists;
 using Uni.Infrastructure.Exceptions;
 using Uni.WebApi.Models.Requests;
 using Uni.WebApi.Models.Responses;
@@ -60,30 +58,6 @@ namespace Uni.WebApi.Controllers
         {
             cancellationToken.ThrowIfCancellationRequested();
             
-            if (teacherId != null)
-            {
-                var teacherQuery = new CheckTeacherExistsQuery(teacherId.Value);
-
-                var teacherExists = await _mediator.Send(teacherQuery, cancellationToken);
-
-                if (!teacherExists)
-                {
-                    throw new NotFoundException();
-                }
-            }
-
-            if (subjectId != null)
-            {
-                var subjectQuery = new CheckSubjectExistsQuery(subjectId.Value);
-
-                var subjectExists = await _mediator.Send(subjectQuery, cancellationToken);
-
-                if (!subjectExists)
-                {
-                    throw new NotFoundException();
-                }
-            }
-
             var query = new FindSchedulesQuery(
                 startTime,
                 duration,

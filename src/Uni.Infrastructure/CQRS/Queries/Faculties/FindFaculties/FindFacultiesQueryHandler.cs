@@ -8,6 +8,7 @@ using LinqBuilder.Core;
 using Microsoft.EntityFrameworkCore;
 using Uni.DataAccess.Contexts;
 using Uni.DataAccess.Models;
+using Uni.Infrastructure.Exceptions;
 using Uni.Infrastructure.Interfaces.CQRS.Queries;
 
 namespace Uni.Infrastructure.CQRS.Queries.Faculties.FindFaculties
@@ -36,12 +37,25 @@ namespace Uni.Infrastructure.CQRS.Queries.Faculties.FindFaculties
             {
                 try
                 {
+                    if (query.UniversityId != null)
+                    {
+                        var universityExists = await _dbContext
+                            .Universities
+                            .AsNoTracking()
+                            .AnyAsync(x => x.Id == query.UniversityId, cancellationToken);
+                        
+                        if (!universityExists)
+                        {
+                            throw new NotFoundException();
+                        }
+                    }
+
                     var faculties = await _dbContext
                         .Faculties
                         .AsNoTracking()
                         .ExeSpec(specification)
                         .ToListAsync(cancellationToken);
-                    
+
                     transaction.Commit();
                     return faculties;
                 }

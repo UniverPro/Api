@@ -88,6 +88,7 @@ namespace Uni.WebApi.Controllers
             var schedules = await query
                 .Include(x => x.Subject)
                 .Include(x => x.Teacher)
+                .OrderBy(x => x.StartTime)
                 .Select(x => _mapper.Map<Schedule, ScheduleDetailsResponseModel>(x))
                 .ToListAsync();
 
