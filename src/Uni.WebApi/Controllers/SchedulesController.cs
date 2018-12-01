@@ -37,35 +37,18 @@ namespace Uni.WebApi.Controllers
         /// <summary>
         ///     Get all schedules
         /// </summary>
-        /// <param name="teacherId">Filter results by teacher</param>
-        /// <param name="subjectId">Filter results by subject</param>
-        /// <param name="lessonType">Filter results by lesson type</param>
-        /// <param name="audienceNumber">Filter results by audience number</param>
-        /// <param name="duration">Filter results by duration</param>
-        /// <param name="startTime">Filter results by start time</param>
+        /// <param name="model">Query specific filters</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>List of schedule objects.</returns>
         [HttpGet]
         public async Task<IEnumerable<ScheduleResponseModel>> Get(
-            int? teacherId,
-            int? subjectId,
-            string lessonType,
-            string audienceNumber,
-            TimeSpan? duration,
-            DateTime? startTime,
+            [FromQuery] ListSchedulesRequestModel model,
             CancellationToken cancellationToken
             )
         {
             cancellationToken.ThrowIfCancellationRequested();
             
-            var query = new FindSchedulesQuery(
-                startTime,
-                duration,
-                audienceNumber,
-                lessonType,
-                subjectId,
-                teacherId
-            );
+            var query = _mapper.Map<FindSchedulesQuery>(model);
 
             var schedules = await _mediator.Send(query, cancellationToken);
 

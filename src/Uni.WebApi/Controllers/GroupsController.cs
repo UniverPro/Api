@@ -37,23 +37,20 @@ namespace Uni.WebApi.Controllers
         /// <summary>
         ///     Get all groups
         /// </summary>
-        /// <param name="facultyId"></param>
-        /// <param name="name"></param>
-        /// <param name="courseNumber"></param>
+        /// <param name="model">Query specific filters</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>List of group objects.</returns>
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<GroupResponseModel>), 200)]
         public async Task<IEnumerable<GroupResponseModel>> Get(
-            int? facultyId,
-            string name,
-            int? courseNumber,
+            [FromQuery] ListGroupsRequestModel model,
             CancellationToken cancellationToken
             )
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var query = new FindGroupsQuery(facultyId, name, courseNumber);
+            var query = _mapper.Map<FindGroupsQuery>(model);
+
             var groups = await _mediator.Send(query, cancellationToken);
 
             var response = _mapper.Map<IEnumerable<GroupResponseModel>>(groups);

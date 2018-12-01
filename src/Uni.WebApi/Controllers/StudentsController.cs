@@ -37,32 +37,18 @@ namespace Uni.WebApi.Controllers
         /// <summary>
         ///     Get all students
         /// </summary>
-        /// <param name="groupId"></param>
-        /// <param name="firstName"></param>
-        /// <param name="lastName"></param>
-        /// <param name="middleName"></param>
-        /// <param name="avatarPath"></param>
+        /// <param name="model">Query specific filters</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>List of student objects.</returns>
         [HttpGet]
         public async Task<IEnumerable<StudentResponseModel>> Get(
-            int? groupId,
-            string firstName,
-            string lastName,
-            string middleName,
-            string avatarPath,
+            [FromQuery] ListStudentsRequestModel model,
             CancellationToken cancellationToken
             )
         {
             cancellationToken.ThrowIfCancellationRequested();
-
-            var query = new FindStudentsQuery(
-                groupId,
-                firstName,
-                lastName,
-                middleName,
-                avatarPath
-            );
+            
+            var query = _mapper.Map<FindStudentsQuery>(model);
 
             var students = await _mediator.Send(query, cancellationToken);
 

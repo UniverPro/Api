@@ -37,31 +37,20 @@ namespace Uni.WebApi.Controllers
         /// <summary>
         ///     Get all faculties
         /// </summary>
-        /// <param name="universityId">Filter results by university</param>
-        /// <param name="name">Filter results by Name</param>
-        /// <param name="shortName">Filter results by ShortName</param>
-        /// <param name="description">Filter results by Description</param>
+        /// <param name="model">Query specific filters</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>List of faculty objects.</returns>
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<FacultyResponseModel>), 200)]
         [ProducesResponseType(404)]
         public async Task<IEnumerable<FacultyResponseModel>> Get(
-            int? universityId,
-            string name,
-            string shortName,
-            string description,
+            [FromQuery] ListFacultiesRequestModel model,
             CancellationToken cancellationToken
             )
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var query = new FindFacultiesQuery(
-                universityId,
-                name,
-                shortName,
-                description
-            );
+            var query = _mapper.Map<FindFacultiesQuery>(model);
 
             var faculties = await _mediator.Send(query, cancellationToken);
 
@@ -93,7 +82,7 @@ namespace Uni.WebApi.Controllers
             {
                 throw new NotFoundException();
             }
-            
+
             var response = _mapper.Map<FacultyResponseModel>(faculty);
 
             return response;

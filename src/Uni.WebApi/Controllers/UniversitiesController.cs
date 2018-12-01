@@ -37,23 +37,20 @@ namespace Uni.WebApi.Controllers
         /// <summary>
         ///     Get all universities
         /// </summary>
+        /// <param name="model">Query specific filters</param>
         /// <param name="cancellationToken">Cancellation token</param>
-        /// <param name="name">Filter results by Name</param>
-        /// <param name="shortName">Filter results by ShortName</param>
-        /// <param name="description">Filter results by Description</param>
         /// <returns>List of university objects.</returns>
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<UniversityResponseModel>), 200)]
         public async Task<IEnumerable<UniversityResponseModel>> Get(
-            CancellationToken cancellationToken,
-            string name,
-            string shortName,
-            string description
+            [FromQuery] ListUniversitiesRequestModel model,
+            CancellationToken cancellationToken
             )
         {
             cancellationToken.ThrowIfCancellationRequested();
+            
+            var query = _mapper.Map<FindUniversitiesQuery>(model);
 
-            var query = new FindUniversitiesQuery(name, shortName, description);
             var universities = await _mediator.Send(query, cancellationToken);
 
             var response = _mapper.Map<IEnumerable<UniversityResponseModel>>(universities);

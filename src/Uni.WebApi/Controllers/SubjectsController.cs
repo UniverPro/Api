@@ -37,20 +37,18 @@ namespace Uni.WebApi.Controllers
         /// <summary>
         ///     Get all subjects
         /// </summary>
-        /// <param name="groupId"></param>
-        /// <param name="name"></param>
+        /// <param name="model">Query specific filters</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>List of subject objects.</returns>
         [HttpGet]
         public async Task<IEnumerable<SubjectResponseModel>> Get(
-            int? groupId,
-            string name,
+            [FromQuery] ListSubjectsRequestModel model,
             CancellationToken cancellationToken
             )
         {
             cancellationToken.ThrowIfCancellationRequested();
-
-            var query = new FindSubjectsQuery(groupId, name);
+            
+            var query = _mapper.Map<FindSubjectsQuery>(model);
 
             var subjects = await _mediator.Send(query, cancellationToken);
 

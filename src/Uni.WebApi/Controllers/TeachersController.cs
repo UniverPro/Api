@@ -37,32 +37,18 @@ namespace Uni.WebApi.Controllers
         /// <summary>
         ///     Get all teachers
         /// </summary>
-        /// <param name="facultyId"></param>
-        /// <param name="firstName"></param>
-        /// <param name="lastName"></param>
-        /// <param name="middleName"></param>
-        /// <param name="avatarPath"></param>
+        /// <param name="model">Query specific filters</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>List of teacher objects.</returns>
         [HttpGet]
         public async Task<IEnumerable<TeacherResponseModel>> Get(
-            int? facultyId,
-            string firstName,
-            string lastName,
-            string middleName,
-            string avatarPath,
+            [FromQuery] ListTeachersRequestModel model,
             CancellationToken cancellationToken
             )
         {
             cancellationToken.ThrowIfCancellationRequested();
-
-            var query = new FindTeachersQuery(
-                facultyId,
-                firstName,
-                lastName,
-                middleName,
-                avatarPath
-            );
+            
+            var query = _mapper.Map<FindTeachersQuery>(model);
 
             var teachers = await _mediator.Send(query, cancellationToken);
 
