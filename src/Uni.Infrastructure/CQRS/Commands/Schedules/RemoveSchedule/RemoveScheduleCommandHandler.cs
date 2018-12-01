@@ -35,7 +35,7 @@ namespace Uni.Infrastructure.CQRS.Commands.Schedules.RemoveSchedule
 
                     if (schedule == null)
                     {
-                        throw new NotFoundException();
+                        throw new NotFoundException(nameof(schedule), command.Id);
                     }
 
                     _dbContext.Remove(schedule);

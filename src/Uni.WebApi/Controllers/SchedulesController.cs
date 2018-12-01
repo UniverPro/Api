@@ -96,7 +96,7 @@ namespace Uni.WebApi.Controllers
 
             if (schedule == null)
             {
-                throw new NotFoundException();
+                throw new NotFoundException(nameof(schedule), scheduleId);
             }
 
             var response = _mapper.Map<ScheduleResponseModel>(schedule);

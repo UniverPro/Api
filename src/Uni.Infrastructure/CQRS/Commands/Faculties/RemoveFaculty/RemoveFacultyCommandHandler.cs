@@ -35,7 +35,7 @@ namespace Uni.Infrastructure.CQRS.Commands.Faculties.RemoveFaculty
 
                     if (faculty == null)
                     {
-                        throw new NotFoundException();
+                        throw new NotFoundException(nameof(faculty), command.Id);
                     }
 
                     _dbContext.Remove(faculty);

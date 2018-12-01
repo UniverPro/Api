@@ -39,14 +39,16 @@ namespace Uni.Infrastructure.CQRS.Queries.Faculties.FindFaculties
                 {
                     if (query.UniversityId != null)
                     {
+                        var universityId = query.UniversityId.Value;
+
                         var universityExists = await _dbContext
                             .Universities
                             .AsNoTracking()
-                            .AnyAsync(x => x.Id == query.UniversityId, cancellationToken);
+                            .AnyAsync(x => x.Id == universityId, cancellationToken);
 
                         if (!universityExists)
                         {
-                            throw new NotFoundException();
+                            throw new NotFoundException("university", universityId);
                         }
                     }
 

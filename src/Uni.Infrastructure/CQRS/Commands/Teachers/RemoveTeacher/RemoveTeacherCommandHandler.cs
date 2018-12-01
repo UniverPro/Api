@@ -35,7 +35,7 @@ namespace Uni.Infrastructure.CQRS.Commands.Teachers.RemoveTeacher
 
                     if (teacher == null)
                     {
-                        throw new NotFoundException();
+                        throw new NotFoundException(nameof(teacher), command.Id);
                     }
 
                     _dbContext.Remove(teacher);

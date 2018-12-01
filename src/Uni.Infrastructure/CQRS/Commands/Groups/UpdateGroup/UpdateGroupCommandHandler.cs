@@ -37,7 +37,7 @@ namespace Uni.Infrastructure.CQRS.Commands.Groups.UpdateGroup
 
                     if (group == null)
                     {
-                        throw new NotFoundException();
+                        throw new NotFoundException(nameof(group), command.Id);
                     }
 
                     group.Name = command.Name;

@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
+using Uni.Infrastructure.Exceptions;
 
 namespace Uni.WebApi
 {
@@ -13,28 +14,36 @@ namespace Uni.WebApi
             {
                 await next(context);
             }
+            catch (HttpStatusCodeException ex)
+            {
+                context.Response.StatusCode = (int) ex.StatusCode;
+                context.Response.ContentType = "application/json";
+
+                var result = JsonConvert.SerializeObject(
+                    new
+                    {
+                        status = "error",
+                        message = ex.Message
+                    }
+                );
+
+                await context.Response.WriteAsync(result);
+            }
             catch (Exception ex)
             {
-                await HandleExceptionAsync(context, ex);
+                context.Response.StatusCode = 500;
+                context.Response.ContentType = "application/json";
+
+                var result = JsonConvert.SerializeObject(
+                    new
+                    {
+                        status = "error",
+                        message = ex.Message
+                    }
+                );
+
+                await context.Response.WriteAsync(result);
             }
-        }
-
-        // TODO: Handle exceptions with more specific message
-        private static async Task HandleExceptionAsync(HttpContext context, Exception exception)
-        {
-            context.Response.StatusCode = 500;
-
-            context.Response.ContentType = "application/json";
-
-            var result = JsonConvert.SerializeObject(
-                new
-                {
-                    status = "error",
-                    message = exception.Message
-                }
-            );
-
-            await context.Response.WriteAsync(result);
         }
     }
 }

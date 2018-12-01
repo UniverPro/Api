@@ -35,7 +35,7 @@ namespace Uni.Infrastructure.CQRS.Commands.Groups.RemoveGroup
 
                     if (group == null)
                     {
-                        throw new NotFoundException();
+                        throw new NotFoundException(nameof(group), command.Id);
                     }
 
                     _dbContext.Remove(group);

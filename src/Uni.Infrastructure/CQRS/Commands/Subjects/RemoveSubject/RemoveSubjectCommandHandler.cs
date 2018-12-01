@@ -35,7 +35,7 @@ namespace Uni.Infrastructure.CQRS.Commands.Subjects.RemoveSubject
 
                     if (subject == null)
                     {
-                        throw new NotFoundException();
+                        throw new NotFoundException(nameof(subject), command.Id);
                     }
 
                     _dbContext.Remove(subject);

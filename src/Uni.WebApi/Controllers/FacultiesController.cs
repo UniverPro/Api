@@ -80,7 +80,7 @@ namespace Uni.WebApi.Controllers
 
             if (faculty == null)
             {
-                throw new NotFoundException();
+                throw new NotFoundException(nameof(faculty), facultyId);
             }
 
             var response = _mapper.Map<FacultyResponseModel>(faculty);

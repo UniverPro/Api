@@ -39,14 +39,16 @@ namespace Uni.Infrastructure.CQRS.Queries.Teachers.FindTeachers
                 {
                     if (query.FacultyId != null)
                     {
+                        var facultyId = query.FacultyId.Value;
+
                         var facultyExists = await _dbContext
                             .Faculties
                             .AsNoTracking()
-                            .AnyAsync(x => x.Id == query.FacultyId, cancellationToken);
+                            .AnyAsync(x => x.Id == facultyId, cancellationToken);
 
                         if (!facultyExists)
                         {
-                            throw new NotFoundException();
+                            throw new NotFoundException("faculty", facultyId);
                         }
                     }
 

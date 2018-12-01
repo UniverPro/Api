@@ -73,7 +73,7 @@ namespace Uni.WebApi.Controllers
 
             if (subject == null)
             {
-                throw new NotFoundException();
+                throw new NotFoundException(nameof(subject), subjectId);
             }
 
             var response = _mapper.Map<SubjectResponseModel>(subject);

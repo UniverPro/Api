@@ -37,7 +37,7 @@ namespace Uni.Infrastructure.CQRS.Commands.Universities.UpdateUniversity
 
                     if (university == null)
                     {
-                        throw new NotFoundException();
+                        throw new NotFoundException(nameof(university), command.Id);
                     }
 
                     university.Description = command.Description;

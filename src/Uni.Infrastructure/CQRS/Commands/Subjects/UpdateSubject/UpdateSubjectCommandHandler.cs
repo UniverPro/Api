@@ -37,7 +37,7 @@ namespace Uni.Infrastructure.CQRS.Commands.Subjects.UpdateSubject
 
                     if (subject == null)
                     {
-                        throw new NotFoundException();
+                        throw new NotFoundException(nameof(subject), command.Id);
                     }
 
                     subject.Name = command.Name;

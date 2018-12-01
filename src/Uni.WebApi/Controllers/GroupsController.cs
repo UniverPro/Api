@@ -79,7 +79,7 @@ namespace Uni.WebApi.Controllers
 
             if (group == null)
             {
-                throw new NotFoundException();
+                throw new NotFoundException(nameof(group), groupId);
             }
 
             var response = _mapper.Map<GroupResponseModel>(group);

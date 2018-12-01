@@ -39,40 +39,46 @@ namespace Uni.Infrastructure.CQRS.Queries.Schedules.FindSchedules
                 {
                     if (query.TeacherId != null)
                     {
+                        var teacherId = query.TeacherId.Value;
+
                         var teacherExists = await _dbContext
                             .Teachers
                             .AsNoTracking()
-                            .AnyAsync(x => x.Id == query.TeacherId, cancellationToken);
+                            .AnyAsync(x => x.Id == teacherId, cancellationToken);
 
                         if (!teacherExists)
                         {
-                            throw new NotFoundException();
+                            throw new NotFoundException("teacher", teacherId);
                         }
                     }
 
                     if (query.SubjectId != null)
                     {
+                        var subjectId = query.SubjectId.Value;
+
                         var subjectExists = await _dbContext
                             .Subjects
                             .AsNoTracking()
-                            .AnyAsync(x => x.Id == query.SubjectId, cancellationToken);
+                            .AnyAsync(x => x.Id == subjectId, cancellationToken);
 
                         if (!subjectExists)
                         {
-                            throw new NotFoundException();
+                            throw new NotFoundException("teacher", subjectId);
                         }
                     }
                     
                     if (query.GroupId != null)
                     {
+                        var groupId = query.GroupId.Value;
+
                         var groupExists = await _dbContext
                             .Groups
                             .AsNoTracking()
-                            .AnyAsync(x => x.Id == query.GroupId, cancellationToken);
+                            .AnyAsync(x => x.Id == groupId, cancellationToken);
 
                         if (!groupExists)
                         {
-                            throw new NotFoundException();
+                            throw new NotFoundException("group", groupId);
                         }
                     }
 

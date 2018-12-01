@@ -37,7 +37,7 @@ namespace Uni.Infrastructure.CQRS.Commands.Teachers.UpdateTeacher
 
                     if (teacher == null)
                     {
-                        throw new NotFoundException();
+                        throw new NotFoundException(nameof(teacher), command.Id);
                     }
 
                     teacher.FirstName = command.FirstName;

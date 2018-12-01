@@ -37,7 +37,7 @@ namespace Uni.Infrastructure.CQRS.Commands.Schedules.UpdateSchedule
 
                     if (schedule == null)
                     {
-                        throw new NotFoundException();
+                        throw new NotFoundException(nameof(schedule), command.Id);
                     }
 
                     schedule.SubjectId = command.SubjectId;

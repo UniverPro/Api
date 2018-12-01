@@ -37,14 +37,16 @@ namespace Uni.Infrastructure.CQRS.Queries.Students.FindStudents
             {
                 if (query.GroupId != null)
                 {
+                    var groupId = query.GroupId.Value;
+
                     var groupExists = await _dbContext
                         .Groups
                         .AsNoTracking()
-                        .AnyAsync(x => x.Id == query.GroupId, cancellationToken);
+                        .AnyAsync(x => x.Id == groupId, cancellationToken);
 
                     if (!groupExists)
                     {
-                        throw new NotFoundException();
+                        throw new NotFoundException("group", groupId);
                     }
                 }
 

@@ -37,7 +37,7 @@ namespace Uni.Infrastructure.CQRS.Commands.Students.UpdateStudent
 
                     if (student == null)
                     {
-                        throw new NotFoundException();
+                        throw new NotFoundException(nameof(student), command.Id);
                     }
 
                     student.FirstName = command.FirstName;
