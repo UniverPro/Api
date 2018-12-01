@@ -11,6 +11,7 @@ using Uni.Infrastructure.CQRS.Commands.Subjects.RemoveSubject;
 using Uni.Infrastructure.CQRS.Commands.Subjects.UpdateSubject;
 using Uni.Infrastructure.CQRS.Queries.Subjects.FindSubjectById;
 using Uni.Infrastructure.CQRS.Queries.Subjects.FindSubjects;
+using Uni.Infrastructure.Exceptions;
 using Uni.WebApi.Models.Requests;
 using Uni.WebApi.Models.Responses;
 
@@ -64,6 +65,11 @@ namespace Uni.WebApi.Controllers
 
             var query = new FindSubjectByIdQuery(subjectId);
             var subject = await _mediator.Send(query, cancellationToken);
+            
+            if (subject == null)
+            {
+                throw new NotFoundException();
+            }
 
             var response = _mapper.Map<SubjectResponseModel>(subject);
 

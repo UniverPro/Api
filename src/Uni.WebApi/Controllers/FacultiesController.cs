@@ -102,6 +102,11 @@ namespace Uni.WebApi.Controllers
             var query = new FindFacultyByIdQuery(facultyId);
             var faculty = await _mediator.Send(query, cancellationToken);
 
+            if (faculty == null)
+            {
+                throw new NotFoundException();
+            }
+            
             var response = _mapper.Map<FacultyResponseModel>(faculty);
 
             return response;

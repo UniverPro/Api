@@ -11,6 +11,7 @@ using Uni.Infrastructure.CQRS.Commands.Students.RemoveStudent;
 using Uni.Infrastructure.CQRS.Commands.Students.UpdateStudent;
 using Uni.Infrastructure.CQRS.Queries.Students.FindStudentById;
 using Uni.Infrastructure.CQRS.Queries.Students.FindStudents;
+using Uni.Infrastructure.Exceptions;
 using Uni.WebApi.Models.Requests;
 using Uni.WebApi.Models.Responses;
 
@@ -64,6 +65,11 @@ namespace Uni.WebApi.Controllers
 
             var query = new FindStudentByIdQuery(studentId);
             var student = await _mediator.Send(query, cancellationToken);
+            
+            if (student == null)
+            {
+                throw new NotFoundException();
+            }
 
             var response = _mapper.Map<StudentResponseModel>(student);
 

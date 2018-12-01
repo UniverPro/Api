@@ -11,6 +11,7 @@ using Uni.Infrastructure.CQRS.Commands.Universities.RemoveUniversity;
 using Uni.Infrastructure.CQRS.Commands.Universities.UpdateUniversity;
 using Uni.Infrastructure.CQRS.Queries.Universities.FindUniversities;
 using Uni.Infrastructure.CQRS.Queries.Universities.FindUniversityById;
+using Uni.Infrastructure.Exceptions;
 using Uni.WebApi.Models.Requests;
 using Uni.WebApi.Models.Responses;
 
@@ -78,6 +79,11 @@ namespace Uni.WebApi.Controllers
 
             var query = new FindUniversityByIdQuery(universityId);
             var university = await _mediator.Send(query, cancellationToken);
+            
+            if (university == null)
+            {
+                throw new NotFoundException();
+            }
 
             var response = _mapper.Map<UniversityResponseModel>(university);
 

@@ -11,6 +11,7 @@ using Uni.Infrastructure.CQRS.Commands.Teachers.RemoveTeacher;
 using Uni.Infrastructure.CQRS.Commands.Teachers.UpdateTeacher;
 using Uni.Infrastructure.CQRS.Queries.Teachers.FindTeacherById;
 using Uni.Infrastructure.CQRS.Queries.Teachers.FindTeachers;
+using Uni.Infrastructure.Exceptions;
 using Uni.WebApi.Models.Requests;
 using Uni.WebApi.Models.Responses;
 
@@ -64,6 +65,11 @@ namespace Uni.WebApi.Controllers
 
             var query = new FindTeacherByIdQuery(teacherId);
             var teacher = await _mediator.Send(query, cancellationToken);
+            
+            if (teacher == null)
+            {
+                throw new NotFoundException();
+            }
 
             var response = _mapper.Map<TeacherResponseModel>(teacher);
 

@@ -11,6 +11,7 @@ using Uni.Infrastructure.CQRS.Commands.Schedules.RemoveSchedule;
 using Uni.Infrastructure.CQRS.Commands.Schedules.UpdateSchedule;
 using Uni.Infrastructure.CQRS.Queries.Schedules.FindScheduleById;
 using Uni.Infrastructure.CQRS.Queries.Schedules.FindSchedules;
+using Uni.Infrastructure.Exceptions;
 using Uni.WebApi.Models.Requests;
 using Uni.WebApi.Models.Responses;
 
@@ -64,6 +65,11 @@ namespace Uni.WebApi.Controllers
 
             var query = new FindScheduleByIdQuery(scheduleId);
             var schedule = await _mediator.Send(query, cancellationToken);
+            
+            if (schedule == null)
+            {
+                throw new NotFoundException();
+            }
 
             var response = _mapper.Map<ScheduleResponseModel>(schedule);
 

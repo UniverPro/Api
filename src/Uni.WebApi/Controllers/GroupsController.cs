@@ -11,6 +11,7 @@ using Uni.Infrastructure.CQRS.Commands.Groups.RemoveGroup;
 using Uni.Infrastructure.CQRS.Commands.Groups.UpdateGroup;
 using Uni.Infrastructure.CQRS.Queries.Groups.FindGroupById;
 using Uni.Infrastructure.CQRS.Queries.Groups.FindGroups;
+using Uni.Infrastructure.Exceptions;
 using Uni.WebApi.Models.Requests;
 using Uni.WebApi.Models.Responses;
 
@@ -70,6 +71,11 @@ namespace Uni.WebApi.Controllers
 
             var query = new FindGroupByIdQuery(groupId);
             var group = await _mediator.Send(query, cancellationToken);
+            
+            if (group == null)
+            {
+                throw new NotFoundException();
+            }
 
             var response = _mapper.Map<GroupResponseModel>(group);
 

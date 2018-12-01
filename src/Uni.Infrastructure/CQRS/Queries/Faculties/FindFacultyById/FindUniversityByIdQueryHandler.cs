@@ -6,7 +6,6 @@ using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 using Uni.DataAccess.Contexts;
 using Uni.DataAccess.Models;
-using Uni.Infrastructure.Exceptions;
 using Uni.Infrastructure.Interfaces.CQRS.Queries;
 
 namespace Uni.Infrastructure.CQRS.Queries.Faculties.FindFacultyById
@@ -37,11 +36,6 @@ namespace Uni.Infrastructure.CQRS.Queries.Faculties.FindFacultyById
                         .AsNoTracking()
                         .SingleOrDefaultAsync(x => x.Id == query.FacultyId, cancellationToken);
                     
-                    if (faculty == null)
-                    {
-                        throw new NotFoundException();
-                    }
-
                     return faculty;
                 }
                 catch
