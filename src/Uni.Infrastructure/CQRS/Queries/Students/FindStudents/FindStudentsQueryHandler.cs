@@ -4,9 +4,11 @@ using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
+using LinqBuilder.Core;
 using Microsoft.EntityFrameworkCore;
 using Uni.DataAccess.Contexts;
 using Uni.DataAccess.Models;
+using Uni.Infrastructure.Exceptions;
 using Uni.Infrastructure.Interfaces.CQRS.Queries;
 
 namespace Uni.Infrastructure.CQRS.Queries.Students.FindStudents
@@ -27,14 +29,31 @@ namespace Uni.Infrastructure.CQRS.Queries.Students.FindStudents
             )
         {
             cancellationToken.ThrowIfCancellationRequested();
+
+            var specification = query.ToSpecification();
+
             using (var transaction =
                 await _dbContext.Database.BeginTransactionAsync(IsolationLevel.RepeatableRead, cancellationToken))
             {
+                if (query.GroupId != null)
+                {
+                    var groupExists = await _dbContext
+                        .Groups
+                        .AsNoTracking()
+                        .AnyAsync(x => x.Id == query.GroupId, cancellationToken);
+
+                    if (!groupExists)
+                    {
+                        throw new NotFoundException();
+                    }
+                }
+
                 try
                 {
                     var students = await _dbContext
                         .Students
                         .AsNoTracking()
+                        .ExeSpec(specification)
                         .ToListAsync(cancellationToken);
                     
                     transaction.Commit();

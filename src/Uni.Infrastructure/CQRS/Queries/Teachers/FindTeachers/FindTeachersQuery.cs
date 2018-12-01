@@ -64,7 +64,7 @@ namespace Uni.Infrastructure.CQRS.Queries.Teachers.FindTeachers
 
             if (!string.IsNullOrEmpty(AvatarPath))
             {
-                specification = specification.And(Spec<Teacher>.New(x => EF.Functions.Like(x.MiddleName, $"%{AvatarPath}%")));
+                specification = specification.And(Spec<Teacher>.New(x => EF.Functions.Like(x.AvatarPath, $"%{AvatarPath}%")));
             }
             
             var lastNameAscending = OrderSpec<Teacher, string>.New(p => p.LastName);

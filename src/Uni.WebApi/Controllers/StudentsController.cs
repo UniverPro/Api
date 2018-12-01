@@ -37,14 +37,33 @@ namespace Uni.WebApi.Controllers
         /// <summary>
         ///     Get all students
         /// </summary>
+        /// <param name="groupId"></param>
+        /// <param name="firstName"></param>
+        /// <param name="lastName"></param>
+        /// <param name="middleName"></param>
+        /// <param name="avatarPath"></param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>List of student objects.</returns>
         [HttpGet]
-        public async Task<IEnumerable<StudentResponseModel>> Get(CancellationToken cancellationToken)
+        public async Task<IEnumerable<StudentResponseModel>> Get(
+            int? groupId,
+            string firstName,
+            string lastName,
+            string middleName,
+            string avatarPath,
+            CancellationToken cancellationToken
+            )
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var query = new FindStudentsQuery();
+            var query = new FindStudentsQuery(
+                groupId,
+                firstName,
+                lastName,
+                middleName,
+                avatarPath
+            );
+
             var students = await _mediator.Send(query, cancellationToken);
 
             var response = _mapper.Map<IEnumerable<StudentResponseModel>>(students);
@@ -65,7 +84,7 @@ namespace Uni.WebApi.Controllers
 
             var query = new FindStudentByIdQuery(studentId);
             var student = await _mediator.Send(query, cancellationToken);
-            
+
             if (student == null)
             {
                 throw new NotFoundException();

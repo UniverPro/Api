@@ -10,7 +10,7 @@ namespace Uni.Infrastructure.CQRS.Queries.Subjects.FindSubjects
 {
     public class FindSubjectsQuery : IQuery<IEnumerable<Subject>>
     {
-        public FindSubjectsQuery(int? groupId, string name)
+        public FindSubjectsQuery(int? groupId, [CanBeNull] string name)
         {
             GroupId = groupId;
             Name = name;
@@ -24,7 +24,7 @@ namespace Uni.Infrastructure.CQRS.Queries.Subjects.FindSubjects
         public ISpecification<Subject> ToSpecification()
         {
             var specification = Spec<Subject>.New();
-            
+
             if (GroupId != null)
             {
                 var groupId = GroupId.Value;
