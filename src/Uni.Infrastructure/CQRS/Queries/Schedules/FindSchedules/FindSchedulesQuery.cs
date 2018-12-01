@@ -19,7 +19,8 @@ namespace Uni.Infrastructure.CQRS.Queries.Schedules.FindSchedules
             [CanBeNull] string audienceNumber,
             [CanBeNull] string lessonType,
             int? subjectId,
-            int? teacherId
+            int? teacherId,
+            int? groupId
             )
         {
             DateFrom = dateFrom;
@@ -29,6 +30,7 @@ namespace Uni.Infrastructure.CQRS.Queries.Schedules.FindSchedules
             LessonType = lessonType;
             SubjectId = subjectId;
             TeacherId = teacherId;
+            GroupId = groupId;
         }
 
         public DateTime? DateFrom { get; }
@@ -44,6 +46,8 @@ namespace Uni.Infrastructure.CQRS.Queries.Schedules.FindSchedules
         public int? SubjectId { get; }
 
         public int? TeacherId { get; }
+
+        public int? GroupId { get; }
 
         [NotNull]
         public ISpecification<Schedule> ToSpecification()
@@ -66,6 +70,12 @@ namespace Uni.Infrastructure.CQRS.Queries.Schedules.FindSchedules
             {
                 var subjectId = SubjectId.Value;
                 specification = specification.And(Spec<Schedule>.New(x => x.SubjectId == subjectId));
+            }
+            
+            if (GroupId != null)
+            {
+                var groupId = GroupId.Value;
+                specification = specification.And(Spec<Schedule>.New(x => x.Subject.GroupId == groupId));
             }
 
             if (TeacherId != null)

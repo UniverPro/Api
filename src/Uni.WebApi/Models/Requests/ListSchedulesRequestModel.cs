@@ -38,5 +38,10 @@ namespace Uni.WebApi.Models.Requests
         ///     Filters results by teacher if value set
         /// </summary>
         public int? TeacherId { get; set; }
+        
+        /// <summary>
+        ///     Filters results by subject's group if value set
+        /// </summary>
+        public int? GroupId { get; set; }
     }
 }

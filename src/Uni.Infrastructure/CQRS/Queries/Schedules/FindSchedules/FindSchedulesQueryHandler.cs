@@ -62,6 +62,19 @@ namespace Uni.Infrastructure.CQRS.Queries.Schedules.FindSchedules
                             throw new NotFoundException();
                         }
                     }
+                    
+                    if (query.GroupId != null)
+                    {
+                        var groupExists = await _dbContext
+                            .Groups
+                            .AsNoTracking()
+                            .AnyAsync(x => x.Id == query.GroupId, cancellationToken);
+
+                        if (!groupExists)
+                        {
+                            throw new NotFoundException();
+                        }
+                    }
 
                     var schedules = await _dbContext
                         .Schedules

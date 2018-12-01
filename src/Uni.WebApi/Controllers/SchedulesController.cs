@@ -56,7 +56,6 @@ namespace Uni.WebApi.Controllers
 
             return response;
         }
-
         
         /// <summary>
         ///     Get all schedules with details
