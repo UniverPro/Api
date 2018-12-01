@@ -36,7 +36,8 @@ namespace Uni.Infrastructure.CQRS.Queries.Subjects.FindSubjects
                         .Subjects
                         .AsNoTracking()
                         .ToListAsync(cancellationToken);
-
+                    
+                    transaction.Commit();
                     return subjects;
                 }
                 catch

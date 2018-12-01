@@ -41,7 +41,8 @@ namespace Uni.Infrastructure.CQRS.Queries.Universities.FindUniversities
                         .AsNoTracking()
                         .ExeSpec(specification)
                         .ToListAsync(cancellationToken);
-
+                    
+                    transaction.Commit();
                     return universities;
                 }
                 catch

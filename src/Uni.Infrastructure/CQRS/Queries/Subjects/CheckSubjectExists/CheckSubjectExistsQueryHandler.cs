@@ -5,23 +5,22 @@ using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 using Uni.DataAccess.Contexts;
-using Uni.DataAccess.Models;
 using Uni.Infrastructure.Interfaces.CQRS.Queries;
 
-namespace Uni.Infrastructure.CQRS.Queries.Groups.FindGroupById
+namespace Uni.Infrastructure.CQRS.Queries.Subjects.CheckSubjectExists
 {
     [UsedImplicitly]
-    public class FindGroupByIdQueryHandler : IQueryHandler<FindGroupByIdQuery, Group>
+    public class CheckSubjectExistsQueryHandler : IQueryHandler<CheckSubjectExistsQuery, bool>
     {
         private readonly UniDbContext _dbContext;
 
-        public FindGroupByIdQueryHandler([NotNull] UniDbContext dbContext)
+        public CheckSubjectExistsQueryHandler([NotNull] UniDbContext dbContext)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         }
 
-        public async Task<Group> Handle(
-            FindGroupByIdQuery query,
+        public async Task<bool> Handle(
+            CheckSubjectExistsQuery query,
             CancellationToken cancellationToken
         )
         {
@@ -31,13 +30,13 @@ namespace Uni.Infrastructure.CQRS.Queries.Groups.FindGroupById
             {
                 try
                 {
-                    var group = await _dbContext
-                        .Groups
+                    var subject = await _dbContext
+                        .Subjects
                         .AsNoTracking()
-                        .SingleOrDefaultAsync(x => x.Id == query.GroupId, cancellationToken);
-                    
+                        .AnyAsync(x => x.Id == query.SubjectId, cancellationToken);
+
                     transaction.Commit();
-                    return group;
+                    return subject;
                 }
                 catch
                 {

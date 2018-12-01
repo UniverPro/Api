@@ -36,7 +36,8 @@ namespace Uni.Infrastructure.CQRS.Queries.Groups.FindGroups
                         .Groups
                         .AsNoTracking()
                         .ToListAsync(cancellationToken);
-
+                    
+                    transaction.Commit();
                     return groups;
                 }
                 catch

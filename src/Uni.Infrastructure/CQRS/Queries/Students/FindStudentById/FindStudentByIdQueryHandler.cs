@@ -36,6 +36,7 @@ namespace Uni.Infrastructure.CQRS.Queries.Students.FindStudentById
                         .AsNoTracking()
                         .SingleOrDefaultAsync(x => x.Id == query.StudentId, cancellationToken);
                     
+                    transaction.Commit();
                     return student;
                 }
                 catch

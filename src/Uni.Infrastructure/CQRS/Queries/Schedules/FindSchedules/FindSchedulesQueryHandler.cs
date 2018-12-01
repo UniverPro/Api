@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
+using LinqBuilder.Core;
 using Microsoft.EntityFrameworkCore;
 using Uni.DataAccess.Contexts;
 using Uni.DataAccess.Models;
@@ -28,6 +28,9 @@ namespace Uni.Infrastructure.CQRS.Queries.Schedules.FindSchedules
             )
         {
             cancellationToken.ThrowIfCancellationRequested();
+
+            var specification = query.ToSpecification();
+
             using (var transaction =
                 await _dbContext.Database.BeginTransactionAsync(IsolationLevel.RepeatableRead, cancellationToken))
             {
@@ -36,9 +39,10 @@ namespace Uni.Infrastructure.CQRS.Queries.Schedules.FindSchedules
                     var schedules = await _dbContext
                         .Schedules
                         .AsNoTracking()
-                        .OrderBy(x => x.StartTime)
+                        .ExeSpec(specification)
                         .ToListAsync(cancellationToken);
-
+                    
+                    transaction.Commit();
                     return schedules;
                 }
                 catch

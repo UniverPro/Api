@@ -36,6 +36,7 @@ namespace Uni.Infrastructure.CQRS.Queries.Schedules.FindScheduleById
                         .AsNoTracking()
                         .SingleOrDefaultAsync(x => x.Id == query.ScheduleId, cancellationToken);
                     
+                    transaction.Commit();
                     return schedule;
                 }
                 catch

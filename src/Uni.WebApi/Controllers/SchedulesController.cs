@@ -11,6 +11,8 @@ using Uni.Infrastructure.CQRS.Commands.Schedules.RemoveSchedule;
 using Uni.Infrastructure.CQRS.Commands.Schedules.UpdateSchedule;
 using Uni.Infrastructure.CQRS.Queries.Schedules.FindScheduleById;
 using Uni.Infrastructure.CQRS.Queries.Schedules.FindSchedules;
+using Uni.Infrastructure.CQRS.Queries.Subjects.CheckSubjectExists;
+using Uni.Infrastructure.CQRS.Queries.Teachers.CheckTeacherExists;
 using Uni.Infrastructure.Exceptions;
 using Uni.WebApi.Models.Requests;
 using Uni.WebApi.Models.Responses;
@@ -37,14 +39,60 @@ namespace Uni.WebApi.Controllers
         /// <summary>
         ///     Get all schedules
         /// </summary>
+        /// <param name="teacherId">Filter results by teacher</param>
+        /// <param name="subjectId">Filter results by subject</param>
+        /// <param name="lessonType">Filter results by lesson type</param>
+        /// <param name="audienceNumber">Filter results by audience number</param>
+        /// <param name="duration">Filter results by duration</param>
+        /// <param name="startTime">Filter results by start time</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>List of schedule objects.</returns>
         [HttpGet]
-        public async Task<IEnumerable<ScheduleResponseModel>> Get(CancellationToken cancellationToken)
+        public async Task<IEnumerable<ScheduleResponseModel>> Get(
+            int? teacherId,
+            int? subjectId,
+            string lessonType,
+            string audienceNumber,
+            TimeSpan? duration,
+            DateTime? startTime,
+            CancellationToken cancellationToken
+            )
         {
             cancellationToken.ThrowIfCancellationRequested();
+            
+            if (teacherId != null)
+            {
+                var teacherQuery = new CheckTeacherExistsQuery(teacherId.Value);
 
-            var query = new FindSchedulesQuery();
+                var teacherExists = await _mediator.Send(teacherQuery, cancellationToken);
+
+                if (!teacherExists)
+                {
+                    throw new NotFoundException();
+                }
+            }
+
+            if (subjectId != null)
+            {
+                var subjectQuery = new CheckSubjectExistsQuery(subjectId.Value);
+
+                var subjectExists = await _mediator.Send(subjectQuery, cancellationToken);
+
+                if (!subjectExists)
+                {
+                    throw new NotFoundException();
+                }
+            }
+
+            var query = new FindSchedulesQuery(
+                startTime,
+                duration,
+                audienceNumber,
+                lessonType,
+                subjectId,
+                teacherId
+            );
+
             var schedules = await _mediator.Send(query, cancellationToken);
 
             var response = _mapper.Map<IEnumerable<ScheduleResponseModel>>(schedules);
@@ -65,7 +113,7 @@ namespace Uni.WebApi.Controllers
 
             var query = new FindScheduleByIdQuery(scheduleId);
             var schedule = await _mediator.Send(query, cancellationToken);
-            
+
             if (schedule == null)
             {
                 throw new NotFoundException();

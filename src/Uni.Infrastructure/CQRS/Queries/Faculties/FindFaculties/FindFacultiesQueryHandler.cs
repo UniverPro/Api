@@ -41,7 +41,8 @@ namespace Uni.Infrastructure.CQRS.Queries.Faculties.FindFaculties
                         .AsNoTracking()
                         .ExeSpec(specification)
                         .ToListAsync(cancellationToken);
-
+                    
+                    transaction.Commit();
                     return faculties;
                 }
                 catch

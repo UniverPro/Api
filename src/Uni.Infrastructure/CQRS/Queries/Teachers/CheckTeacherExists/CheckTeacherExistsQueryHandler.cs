@@ -7,20 +7,20 @@ using Microsoft.EntityFrameworkCore;
 using Uni.DataAccess.Contexts;
 using Uni.Infrastructure.Interfaces.CQRS.Queries;
 
-namespace Uni.Infrastructure.CQRS.Queries.Universities.ContainsUniversityWithIdQuery
+namespace Uni.Infrastructure.CQRS.Queries.Teachers.CheckTeacherExists
 {
     [UsedImplicitly]
-    public class ContainsUniversityWithIdQueryHandler : IQueryHandler<ContainsUniversityWithIdQuery, bool>
+    public class CheckTeacherExistsQueryHandler : IQueryHandler<CheckTeacherExistsQuery, bool>
     {
         private readonly UniDbContext _dbContext;
 
-        public ContainsUniversityWithIdQueryHandler([NotNull] UniDbContext dbContext)
+        public CheckTeacherExistsQueryHandler([NotNull] UniDbContext dbContext)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         }
 
         public async Task<bool> Handle(
-            ContainsUniversityWithIdQuery query,
+            CheckTeacherExistsQuery query,
             CancellationToken cancellationToken
         )
         {
@@ -30,12 +30,13 @@ namespace Uni.Infrastructure.CQRS.Queries.Universities.ContainsUniversityWithIdQ
             {
                 try
                 {
-                    var contains = await _dbContext
-                        .Universities
+                    var teacher = await _dbContext
+                        .Teachers
                         .AsNoTracking()
-                        .AnyAsync(x => x.Id == query.UniversityId, cancellationToken);
+                        .AnyAsync(x => x.Id == query.TeacherId, cancellationToken);
                     
-                    return contains;
+                    transaction.Commit();
+                    return teacher;
                 }
                 catch
                 {

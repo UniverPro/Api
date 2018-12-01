@@ -36,7 +36,8 @@ namespace Uni.Infrastructure.CQRS.Queries.Teachers.FindTeachers
                         .Teachers
                         .AsNoTracking()
                         .ToListAsync(cancellationToken);
-
+                    
+                    transaction.Commit();
                     return teachers;
                 }
                 catch
