@@ -40,7 +40,7 @@ namespace Uni.Infrastructure.CQRS.Queries.Schedules.FindSchedules
         public int? SubjectId { get; }
 
         public int? TeacherId { get; }
-        
+
         [NotNull]
         public ISpecification<Schedule> ToSpecification()
         {
@@ -85,7 +85,7 @@ namespace Uni.Infrastructure.CQRS.Queries.Schedules.FindSchedules
             }
 
             specification = specification.OrderBy(OrderSpec<Schedule, DateTime>.New(x => x.StartTime));
-            
+
             return specification;
         }
     }

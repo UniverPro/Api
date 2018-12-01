@@ -23,14 +23,17 @@ namespace Uni.Infrastructure.CQRS.Commands.Groups.UpdateGroup
         public async Task<Unit> Handle(
             UpdateGroupCommand command,
             CancellationToken cancellationToken
-        )
+            )
         {
             cancellationToken.ThrowIfCancellationRequested();
             using (var transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken))
             {
                 try
                 {
-                    var group = await _dbContext.Groups.SingleOrDefaultAsync(x => x.Id == command.Id, cancellationToken);
+                    var group = await _dbContext.Groups.SingleOrDefaultAsync(
+                        x => x.Id == command.Id,
+                        cancellationToken
+                    );
 
                     if (group == null)
                     {

@@ -55,7 +55,7 @@ namespace Uni.Infrastructure.CQRS.Queries.Groups.FindGroups
                         .AsNoTracking()
                         .ExeSpec(specification)
                         .ToListAsync(cancellationToken);
-                    
+
                     transaction.Commit();
                     return groups;
                 }

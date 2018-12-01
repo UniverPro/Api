@@ -30,7 +30,10 @@ namespace Uni.Infrastructure.CQRS.Commands.Universities.RemoveUniversity
             {
                 try
                 {
-                    var university = await _dbContext.Universities.SingleOrDefaultAsync(x => x.Id == command.Id, cancellationToken);
+                    var university = await _dbContext.Universities.SingleOrDefaultAsync(
+                        x => x.Id == command.Id,
+                        cancellationToken
+                    );
 
                     if (university == null)
                     {

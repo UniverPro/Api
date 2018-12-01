@@ -23,14 +23,17 @@ namespace Uni.Infrastructure.CQRS.Commands.Schedules.UpdateSchedule
         public async Task<Unit> Handle(
             UpdateScheduleCommand command,
             CancellationToken cancellationToken
-        )
+            )
         {
             cancellationToken.ThrowIfCancellationRequested();
             using (var transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken))
             {
                 try
                 {
-                    var schedule = await _dbContext.Schedules.SingleOrDefaultAsync(x => x.Id == command.Id, cancellationToken);
+                    var schedule = await _dbContext.Schedules.SingleOrDefaultAsync(
+                        x => x.Id == command.Id,
+                        cancellationToken
+                    );
 
                     if (schedule == null)
                     {

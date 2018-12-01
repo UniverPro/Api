@@ -17,13 +17,19 @@ namespace Uni.DataAccess.Contexts
         }
 
         public virtual DbSet<Faculty> Faculties { get; set; }
+
         public virtual DbSet<Group> Groups { get; set; }
+
         public virtual DbSet<Student> Students { get; set; }
+
         public virtual DbSet<Teacher> Teachers { get; set; }
+
         public virtual DbSet<Schedule> Schedules { get; set; }
+
         public virtual DbSet<Subject> Subjects { get; set; }
+
         public virtual DbSet<University> Universities { get; set; }
-        
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyAllConfigurationsFromAssemblyContaining<EntityTypeConfigurationsMarker>();

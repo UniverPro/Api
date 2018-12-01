@@ -23,7 +23,7 @@ namespace Uni.Infrastructure.CQRS.Queries.Subjects.FindSubjectById
         public async Task<Subject> Handle(
             FindSubjectByIdQuery query,
             CancellationToken cancellationToken
-        )
+            )
         {
             cancellationToken.ThrowIfCancellationRequested();
             using (var transaction =
@@ -35,7 +35,7 @@ namespace Uni.Infrastructure.CQRS.Queries.Subjects.FindSubjectById
                         .Subjects
                         .AsNoTracking()
                         .SingleOrDefaultAsync(x => x.Id == query.SubjectId, cancellationToken);
-                    
+
                     transaction.Commit();
                     return subject;
                 }

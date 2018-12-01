@@ -43,7 +43,7 @@ namespace Uni.Infrastructure.CQRS.Queries.Schedules.FindSchedules
                             .Teachers
                             .AsNoTracking()
                             .AnyAsync(x => x.Id == query.TeacherId, cancellationToken);
-                        
+
                         if (!teacherExists)
                         {
                             throw new NotFoundException();
@@ -56,7 +56,7 @@ namespace Uni.Infrastructure.CQRS.Queries.Schedules.FindSchedules
                             .Subjects
                             .AsNoTracking()
                             .AnyAsync(x => x.Id == query.SubjectId, cancellationToken);
-                        
+
                         if (!subjectExists)
                         {
                             throw new NotFoundException();
@@ -68,7 +68,7 @@ namespace Uni.Infrastructure.CQRS.Queries.Schedules.FindSchedules
                         .AsNoTracking()
                         .ExeSpec(specification)
                         .ToListAsync(cancellationToken);
-                    
+
                     transaction.Commit();
                     return schedules;
                 }

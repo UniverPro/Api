@@ -23,14 +23,17 @@ namespace Uni.Infrastructure.CQRS.Commands.Subjects.UpdateSubject
         public async Task<Unit> Handle(
             UpdateSubjectCommand command,
             CancellationToken cancellationToken
-        )
+            )
         {
             cancellationToken.ThrowIfCancellationRequested();
             using (var transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken))
             {
                 try
                 {
-                    var subject = await _dbContext.Subjects.SingleOrDefaultAsync(x => x.Id == command.Id, cancellationToken);
+                    var subject = await _dbContext.Subjects.SingleOrDefaultAsync(
+                        x => x.Id == command.Id,
+                        cancellationToken
+                    );
 
                     if (subject == null)
                     {

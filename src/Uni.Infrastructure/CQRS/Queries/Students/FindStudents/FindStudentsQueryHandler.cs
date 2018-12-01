@@ -55,7 +55,7 @@ namespace Uni.Infrastructure.CQRS.Queries.Students.FindStudents
                         .AsNoTracking()
                         .ExeSpec(specification)
                         .ToListAsync(cancellationToken);
-                    
+
                     transaction.Commit();
                     return students;
                 }

@@ -21,7 +21,7 @@ namespace Uni.Infrastructure.CQRS.Commands.Universities.CreateUniversity
         public async Task<int> Handle(
             CreateUniversityCommand command,
             CancellationToken cancellationToken
-        )
+            )
         {
             cancellationToken.ThrowIfCancellationRequested();
             using (var transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken))

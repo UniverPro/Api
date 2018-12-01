@@ -23,7 +23,7 @@ namespace Uni.Infrastructure.CQRS.Queries.Students.FindStudentById
         public async Task<Student> Handle(
             FindStudentByIdQuery query,
             CancellationToken cancellationToken
-        )
+            )
         {
             cancellationToken.ThrowIfCancellationRequested();
             using (var transaction =
@@ -35,7 +35,7 @@ namespace Uni.Infrastructure.CQRS.Queries.Students.FindStudentById
                         .Students
                         .AsNoTracking()
                         .SingleOrDefaultAsync(x => x.Id == query.StudentId, cancellationToken);
-                    
+
                     transaction.Commit();
                     return student;
                 }

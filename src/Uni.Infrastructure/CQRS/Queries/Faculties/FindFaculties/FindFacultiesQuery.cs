@@ -49,12 +49,16 @@ namespace Uni.Infrastructure.CQRS.Queries.Faculties.FindFaculties
 
             if (!string.IsNullOrEmpty(ShortName))
             {
-                specification = specification.And(Spec<Faculty>.New(x => EF.Functions.Like(x.ShortName, $"%{ShortName}%")));
+                specification = specification.And(
+                    Spec<Faculty>.New(x => EF.Functions.Like(x.ShortName, $"%{ShortName}%"))
+                );
             }
 
             if (!string.IsNullOrEmpty(Description))
             {
-                specification = specification.And(Spec<Faculty>.New(x => EF.Functions.Like(x.Description, $"%{Description}%")));
+                specification = specification.And(
+                    Spec<Faculty>.New(x => EF.Functions.Like(x.Description, $"%{Description}%"))
+                );
             }
 
             return specification;

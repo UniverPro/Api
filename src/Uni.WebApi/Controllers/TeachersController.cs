@@ -47,7 +47,7 @@ namespace Uni.WebApi.Controllers
             )
         {
             cancellationToken.ThrowIfCancellationRequested();
-            
+
             var query = _mapper.Map<FindTeachersQuery>(model);
 
             var teachers = await _mediator.Send(query, cancellationToken);

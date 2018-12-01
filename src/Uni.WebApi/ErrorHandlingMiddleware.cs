@@ -26,11 +26,13 @@ namespace Uni.WebApi
 
             context.Response.ContentType = "application/json";
 
-            var result = JsonConvert.SerializeObject(new
-            {
-                status = "error",
-                message = exception.Message
-            });
+            var result = JsonConvert.SerializeObject(
+                new
+                {
+                    status = "error",
+                    message = exception.Message
+                }
+            );
 
             await context.Response.WriteAsync(result);
         }

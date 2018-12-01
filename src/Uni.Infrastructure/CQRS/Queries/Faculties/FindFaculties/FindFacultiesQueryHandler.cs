@@ -43,7 +43,7 @@ namespace Uni.Infrastructure.CQRS.Queries.Faculties.FindFaculties
                             .Universities
                             .AsNoTracking()
                             .AnyAsync(x => x.Id == query.UniversityId, cancellationToken);
-                        
+
                         if (!universityExists)
                         {
                             throw new NotFoundException();

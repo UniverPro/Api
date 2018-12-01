@@ -23,7 +23,7 @@ namespace Uni.Infrastructure.CQRS.Queries.Teachers.FindTeacherById
         public async Task<Teacher> Handle(
             FindTeacherByIdQuery query,
             CancellationToken cancellationToken
-        )
+            )
         {
             cancellationToken.ThrowIfCancellationRequested();
             using (var transaction =
@@ -35,7 +35,7 @@ namespace Uni.Infrastructure.CQRS.Queries.Teachers.FindTeacherById
                         .Teachers
                         .AsNoTracking()
                         .SingleOrDefaultAsync(x => x.Id == query.TeacherId, cancellationToken);
-                    
+
                     transaction.Commit();
                     return teacher;
                 }

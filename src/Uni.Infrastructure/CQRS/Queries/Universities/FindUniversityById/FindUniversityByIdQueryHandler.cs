@@ -23,7 +23,7 @@ namespace Uni.Infrastructure.CQRS.Queries.Universities.FindUniversityById
         public async Task<University> Handle(
             FindUniversityByIdQuery query,
             CancellationToken cancellationToken
-        )
+            )
         {
             cancellationToken.ThrowIfCancellationRequested();
             using (var transaction =
@@ -35,7 +35,7 @@ namespace Uni.Infrastructure.CQRS.Queries.Universities.FindUniversityById
                         .Universities
                         .AsNoTracking()
                         .SingleOrDefaultAsync(x => x.Id == query.UniversityId, cancellationToken);
-                    
+
                     transaction.Commit();
                     return university;
                 }

@@ -23,20 +23,23 @@ namespace Uni.Infrastructure.CQRS.Commands.Teachers.UpdateTeacher
         public async Task<Unit> Handle(
             UpdateTeacherCommand command,
             CancellationToken cancellationToken
-        )
+            )
         {
             cancellationToken.ThrowIfCancellationRequested();
             using (var transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken))
             {
                 try
                 {
-                    var teacher = await _dbContext.Teachers.SingleOrDefaultAsync(x => x.Id == command.Id, cancellationToken);
+                    var teacher = await _dbContext.Teachers.SingleOrDefaultAsync(
+                        x => x.Id == command.Id,
+                        cancellationToken
+                    );
 
                     if (teacher == null)
                     {
                         throw new NotFoundException();
                     }
-                    
+
                     teacher.FirstName = command.FirstName;
                     teacher.LastName = command.LastName;
                     teacher.MiddleName = command.MiddleName;

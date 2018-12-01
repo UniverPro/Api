@@ -4,7 +4,11 @@ namespace Uni.Infrastructure.CQRS.Commands.Universities.CreateUniversity
 {
     public class CreateUniversityCommand : ICommand<int>
     {
-        public CreateUniversityCommand(string name, string shortName, string description)
+        public CreateUniversityCommand(
+            string name,
+            string shortName,
+            string description
+            )
         {
             Name = name;
             ShortName = shortName;

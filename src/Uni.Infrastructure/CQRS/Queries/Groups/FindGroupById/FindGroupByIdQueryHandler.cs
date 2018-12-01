@@ -23,7 +23,7 @@ namespace Uni.Infrastructure.CQRS.Queries.Groups.FindGroupById
         public async Task<Group> Handle(
             FindGroupByIdQuery query,
             CancellationToken cancellationToken
-        )
+            )
         {
             cancellationToken.ThrowIfCancellationRequested();
             using (var transaction =
@@ -35,7 +35,7 @@ namespace Uni.Infrastructure.CQRS.Queries.Groups.FindGroupById
                         .Groups
                         .AsNoTracking()
                         .SingleOrDefaultAsync(x => x.Id == query.GroupId, cancellationToken);
-                    
+
                     transaction.Commit();
                     return group;
                 }

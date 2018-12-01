@@ -48,7 +48,7 @@ namespace Uni.WebApi.Controllers
             )
         {
             cancellationToken.ThrowIfCancellationRequested();
-            
+
             var query = _mapper.Map<FindUniversitiesQuery>(model);
 
             var universities = await _mediator.Send(query, cancellationToken);
@@ -76,7 +76,7 @@ namespace Uni.WebApi.Controllers
 
             var query = new FindUniversityByIdQuery(universityId);
             var university = await _mediator.Send(query, cancellationToken);
-            
+
             if (university == null)
             {
                 throw new NotFoundException();

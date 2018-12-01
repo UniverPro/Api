@@ -23,14 +23,17 @@ namespace Uni.Infrastructure.CQRS.Commands.Faculties.UpdateFaculty
         public async Task<Unit> Handle(
             UpdateFacultyCommand command,
             CancellationToken cancellationToken
-        )
+            )
         {
             cancellationToken.ThrowIfCancellationRequested();
             using (var transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken))
             {
                 try
                 {
-                    var faculty = await _dbContext.Faculties.SingleOrDefaultAsync(x => x.Id == command.Id, cancellationToken);
+                    var faculty = await _dbContext.Faculties.SingleOrDefaultAsync(
+                        x => x.Id == command.Id,
+                        cancellationToken
+                    );
 
                     if (faculty == null)
                     {

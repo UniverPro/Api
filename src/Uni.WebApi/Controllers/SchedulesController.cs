@@ -47,7 +47,7 @@ namespace Uni.WebApi.Controllers
             )
         {
             cancellationToken.ThrowIfCancellationRequested();
-            
+
             var query = _mapper.Map<FindSchedulesQuery>(model);
 
             var schedules = await _mediator.Send(query, cancellationToken);

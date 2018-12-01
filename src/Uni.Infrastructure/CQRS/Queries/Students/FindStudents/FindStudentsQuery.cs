@@ -49,24 +49,31 @@ namespace Uni.Infrastructure.CQRS.Queries.Students.FindStudents
 
             if (!string.IsNullOrEmpty(FirstName))
             {
-                specification = specification.And(Spec<Student>.New(x => EF.Functions.Like(x.FirstName, $"%{FirstName}%")));
+                specification = specification.And(
+                    Spec<Student>.New(x => EF.Functions.Like(x.FirstName, $"%{FirstName}%"))
+                );
             }
 
             if (!string.IsNullOrEmpty(LastName))
             {
-                specification = specification.And(Spec<Student>.New(x => EF.Functions.Like(x.LastName, $"%{LastName}%")));
+                specification =
+                    specification.And(Spec<Student>.New(x => EF.Functions.Like(x.LastName, $"%{LastName}%")));
             }
-            
+
             if (!string.IsNullOrEmpty(MiddleName))
             {
-                specification = specification.And(Spec<Student>.New(x => EF.Functions.Like(x.MiddleName, $"%{MiddleName}%")));
+                specification = specification.And(
+                    Spec<Student>.New(x => EF.Functions.Like(x.MiddleName, $"%{MiddleName}%"))
+                );
             }
 
             if (!string.IsNullOrEmpty(AvatarPath))
             {
-                specification = specification.And(Spec<Student>.New(x => EF.Functions.Like(x.AvatarPath, $"%{AvatarPath}%")));
+                specification = specification.And(
+                    Spec<Student>.New(x => EF.Functions.Like(x.AvatarPath, $"%{AvatarPath}%"))
+                );
             }
-            
+
             var lastNameAscending = OrderSpec<Student, string>.New(p => p.LastName);
             var firstNameAscending = OrderSpec<Student, string>.New(p => p.FirstName);
             var orderSpecification = lastNameAscending.ThenBy(firstNameAscending);

@@ -23,7 +23,7 @@ namespace Uni.Infrastructure.CQRS.Queries.Schedules.FindScheduleById
         public async Task<Schedule> Handle(
             FindScheduleByIdQuery query,
             CancellationToken cancellationToken
-        )
+            )
         {
             cancellationToken.ThrowIfCancellationRequested();
             using (var transaction =
@@ -35,7 +35,7 @@ namespace Uni.Infrastructure.CQRS.Queries.Schedules.FindScheduleById
                         .Schedules
                         .AsNoTracking()
                         .SingleOrDefaultAsync(x => x.Id == query.ScheduleId, cancellationToken);
-                    
+
                     transaction.Commit();
                     return schedule;
                 }

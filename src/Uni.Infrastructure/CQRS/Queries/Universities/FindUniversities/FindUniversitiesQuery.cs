@@ -39,12 +39,16 @@ namespace Uni.Infrastructure.CQRS.Queries.Universities.FindUniversities
 
             if (!string.IsNullOrEmpty(ShortName))
             {
-                specification = specification.And(Spec<University>.New(x => EF.Functions.Like(x.ShortName, $"%{ShortName}%")));
+                specification = specification.And(
+                    Spec<University>.New(x => EF.Functions.Like(x.ShortName, $"%{ShortName}%"))
+                );
             }
 
             if (!string.IsNullOrEmpty(Description))
             {
-                specification = specification.And(Spec<University>.New(x => EF.Functions.Like(x.Description, $"%{Description}%")));
+                specification = specification.And(
+                    Spec<University>.New(x => EF.Functions.Like(x.Description, $"%{Description}%"))
+                );
             }
 
             return specification;

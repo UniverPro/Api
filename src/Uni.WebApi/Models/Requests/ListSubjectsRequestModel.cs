@@ -6,7 +6,7 @@
         ///     Filters results by group if value set
         /// </summary>
         public int? GroupId { get; set; }
-        
+
         /// <summary>
         ///     Filters results by name if value set
         /// </summary>

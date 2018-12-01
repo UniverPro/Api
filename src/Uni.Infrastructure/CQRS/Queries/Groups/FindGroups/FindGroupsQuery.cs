@@ -42,7 +42,7 @@ namespace Uni.Infrastructure.CQRS.Queries.Groups.FindGroups
             {
                 specification = specification.And(Spec<Group>.New(x => EF.Functions.Like(x.Name, $"%{Name}%")));
             }
-            
+
             if (CourseNumber != null)
             {
                 var courseNumber = CourseNumber.Value;

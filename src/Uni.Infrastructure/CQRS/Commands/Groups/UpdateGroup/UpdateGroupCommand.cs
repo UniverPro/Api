@@ -18,7 +18,7 @@ namespace Uni.Infrastructure.CQRS.Commands.Groups.UpdateGroup
         }
 
         public int Id { get; }
-        
+
         public string Name { get; }
 
         public int FacultyId { get; }

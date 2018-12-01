@@ -19,10 +19,13 @@ namespace Uni.WebApi.Validators
                 .NotEmpty()
                 .MaximumLength(Consts.MaxNameLength);
 
-            When(x => !string.IsNullOrEmpty(x.MiddleName), () =>
-                RuleFor(x => x.MiddleName)
-                    .NotEmpty()
-                    .MaximumLength(Consts.MaxNameLength));
+            When(
+                x => !string.IsNullOrEmpty(x.MiddleName),
+                () =>
+                    RuleFor(x => x.MiddleName)
+                        .NotEmpty()
+                        .MaximumLength(Consts.MaxNameLength)
+            );
 
             RuleFor(x => x.AvatarPath)
                 .IsValidUrl().When(x => !string.IsNullOrEmpty(x.AvatarPath));

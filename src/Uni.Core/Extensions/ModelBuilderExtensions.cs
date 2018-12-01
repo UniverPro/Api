@@ -8,8 +8,7 @@ namespace Uni.Core.Extensions
 {
     public static class ModelBuilderExtensions
     {
-        public static void ApplyAllConfigurationsFromAssemblyContaining<T>(
-            [NotNull] this ModelBuilder modelBuilder)
+        public static void ApplyAllConfigurationsFromAssemblyContaining<T>([NotNull] this ModelBuilder modelBuilder)
         {
             if (modelBuilder == null)
             {
@@ -31,26 +30,31 @@ namespace Uni.Core.Extensions
 
             var applyConfigurationMethod = methods
                 .Where(methodInfo => methodInfo.Name == applyConfigurationMethodName)
-                .Single(methodInfo =>
-                {
-                    var parameters = methodInfo.GetParameters();
-                    if (parameters.Length != 1)
+                .Single(
+                    methodInfo =>
                     {
-                        return false;
+                        var parameters = methodInfo.GetParameters();
+                        if (parameters.Length != 1)
+                        {
+                            return false;
+                        }
+
+
+                        var type = parameters[0].ParameterType.GetGenericTypeDefinition();
+
+                        return type == entityTypeConfigurationInterfaceType;
                     }
-
-
-                    var type = parameters[0].ParameterType.GetGenericTypeDefinition();
-
-                    return type == entityTypeConfigurationInterfaceType;
-                });
+                );
 
             var nonAbstractNeitherGenericClassTypes = assembly.GetTypes()
                 .Where(x => x.IsClass && !x.IsAbstract && !x.ContainsGenericParameters);
 
             foreach (var type in nonAbstractNeitherGenericClassTypes)
             {
-                var @class = type.GetInterfaces().SingleOrDefault(x => x.IsConstructedGenericType && x.GetGenericTypeDefinition() == entityTypeConfigurationInterfaceType);
+                var @class = type.GetInterfaces().SingleOrDefault(
+                    x => x.IsConstructedGenericType &&
+                         x.GetGenericTypeDefinition() == entityTypeConfigurationInterfaceType
+                );
 
                 if (@class == null)
                 {
