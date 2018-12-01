@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
-using LinqKit;
+using LinqBuilder.Core;
 using Microsoft.EntityFrameworkCore;
 using Uni.DataAccess.Contexts;
 using Uni.DataAccess.Models;
@@ -34,11 +33,12 @@ namespace Uni.Infrastructure.CQRS.Queries.Universities.FindUniversities
             {
                 try
                 {
+                    var specification = query.ToSpecification();
+
                     var universities = await _dbContext
                         .Universities
                         .AsNoTracking()
-                        .AsExpandable()
-                        .Where(query.ToSpecification())
+                        .ExeSpec(specification)
                         .ToListAsync(cancellationToken);
 
                     return universities;

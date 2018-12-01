@@ -7,7 +7,9 @@
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="2018.2.1" />
     <PackageReference Include="Linq.Expression.Optimizer" Version="1.0.12" />
-    <PackageReference Include="LinqKit.Microsoft.EntityFrameworkCore" Version="1.1.15" />
+    <PackageReference Include="LinqBuilder" Version="0.13.0" />
+    <PackageReference Include="LinqBuilder.EFCore" Version="0.13.0" />
+    <PackageReference Include="LinqBuilder.OrderBy" Version="0.13.0" />
     <PackageReference Include="MediatR" Version="5.1.0" />
   </ItemGroup>
 

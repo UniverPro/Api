@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using LinqKit;
+﻿using System.Collections.Generic;
+using JetBrains.Annotations;
+using LinqBuilder;
+using LinqBuilder.Core;
 using Microsoft.EntityFrameworkCore;
 using Uni.DataAccess.Models;
 using Uni.Infrastructure.Interfaces.CQRS.Queries;
@@ -11,9 +11,9 @@ namespace Uni.Infrastructure.CQRS.Queries.Universities.FindUniversities
     public class FindUniversitiesQuery : IQuery<IEnumerable<University>>
     {
         public FindUniversitiesQuery(
-            string name,
-            string shortName,
-            string description
+            [CanBeNull] string name,
+            [CanBeNull] string shortName,
+            [CanBeNull] string description
             )
         {
             Name = name;
@@ -27,26 +27,27 @@ namespace Uni.Infrastructure.CQRS.Queries.Universities.FindUniversities
 
         public string Description { get; }
 
-        public Expression<Func<University, bool>> ToSpecification()
+        [NotNull]
+        public ISpecification<University> ToSpecification()
         {
-            var predicate = PredicateBuilder.New<University>(true);
+            var specification = Spec<University>.New();
 
             if (!string.IsNullOrEmpty(Name))
             {
-                predicate = predicate.And(x => EF.Functions.Like(x.Name, $"%{Name}%"));
+                specification.And(Spec<University>.New(x => EF.Functions.Like(x.Name, $"%{Name}%")));
             }
 
             if (!string.IsNullOrEmpty(ShortName))
             {
-                predicate = predicate.And(x => EF.Functions.Like(x.ShortName, $"%{ShortName}%"));
+                specification.And(Specification<University>.New(x => EF.Functions.Like(x.ShortName, $"%{ShortName}%")));
             }
 
             if (!string.IsNullOrEmpty(Description))
             {
-                predicate = predicate.And(x => EF.Functions.Like(x.Description, $"%{Description}%"));
+                specification.And(Specification<University>.New(x => EF.Functions.Like(x.Description, $"%{Description}%")));
             }
 
-            return predicate;
+            return specification;
         }
     }
 }
