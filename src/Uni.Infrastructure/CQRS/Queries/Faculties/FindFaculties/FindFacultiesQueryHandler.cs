@@ -4,6 +4,7 @@ using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
+using LinqBuilder.Core;
 using Microsoft.EntityFrameworkCore;
 using Uni.DataAccess.Contexts;
 using Uni.DataAccess.Models;
@@ -27,6 +28,9 @@ namespace Uni.Infrastructure.CQRS.Queries.Faculties.FindFaculties
             )
         {
             cancellationToken.ThrowIfCancellationRequested();
+
+            var specification = query.ToSpecification();
+
             using (var transaction =
                 await _dbContext.Database.BeginTransactionAsync(IsolationLevel.RepeatableRead, cancellationToken))
             {
@@ -35,6 +39,7 @@ namespace Uni.Infrastructure.CQRS.Queries.Faculties.FindFaculties
                     var faculties = await _dbContext
                         .Faculties
                         .AsNoTracking()
+                        .ExeSpec(specification)
                         .ToListAsync(cancellationToken);
 
                     return faculties;

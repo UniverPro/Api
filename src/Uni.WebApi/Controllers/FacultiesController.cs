@@ -11,6 +11,8 @@ using Uni.Infrastructure.CQRS.Commands.Faculties.RemoveFaculty;
 using Uni.Infrastructure.CQRS.Commands.Faculties.UpdateFaculty;
 using Uni.Infrastructure.CQRS.Queries.Faculties.FindFaculties;
 using Uni.Infrastructure.CQRS.Queries.Faculties.FindFacultyById;
+using Uni.Infrastructure.CQRS.Queries.Universities.ContainsUniversityWithIdQuery;
+using Uni.Infrastructure.Exceptions;
 using Uni.WebApi.Models.Requests;
 using Uni.WebApi.Models.Responses;
 
@@ -36,15 +38,44 @@ namespace Uni.WebApi.Controllers
         /// <summary>
         ///     Get all faculties
         /// </summary>
+        /// <param name="universityId">Filter results by university</param>
+        /// <param name="name">Filter results by Name</param>
+        /// <param name="shortName">Filter results by ShortName</param>
+        /// <param name="description">Filter results by Description</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>List of faculty objects.</returns>
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<FacultyResponseModel>), 200)]
-        public async Task<IEnumerable<FacultyResponseModel>> Get(CancellationToken cancellationToken)
+        [ProducesResponseType(404)]
+        public async Task<IEnumerable<FacultyResponseModel>> Get(
+            int? universityId,
+            string name,
+            string shortName,
+            string description,
+            CancellationToken cancellationToken
+            )
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var query = new FindFacultiesQuery();
+            if (universityId != null)
+            {
+                var universityQuery = new ContainsUniversityWithIdQuery(universityId.Value);
+
+                var universityExists = await _mediator.Send(universityQuery, cancellationToken);
+
+                if (!universityExists)
+                {
+                    throw new NotFoundException();
+                }
+            }
+
+            var query = new FindFacultiesQuery(
+                universityId,
+                name,
+                shortName,
+                description
+            );
+
             var faculties = await _mediator.Send(query, cancellationToken);
 
             var response = _mapper.Map<IEnumerable<FacultyResponseModel>>(faculties);

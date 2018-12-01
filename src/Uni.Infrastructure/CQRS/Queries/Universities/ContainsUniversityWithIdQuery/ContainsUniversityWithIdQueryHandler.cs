@@ -1,48 +1,41 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
-using LinqBuilder.Core;
 using Microsoft.EntityFrameworkCore;
 using Uni.DataAccess.Contexts;
-using Uni.DataAccess.Models;
 using Uni.Infrastructure.Interfaces.CQRS.Queries;
 
-namespace Uni.Infrastructure.CQRS.Queries.Universities.FindUniversities
+namespace Uni.Infrastructure.CQRS.Queries.Universities.ContainsUniversityWithIdQuery
 {
     [UsedImplicitly]
-    public class FindUniversitiesQueryHandler : IQueryHandler<FindUniversitiesQuery, IEnumerable<University>>
+    public class ContainsUniversityWithIdQueryHandler : IQueryHandler<ContainsUniversityWithIdQuery, bool>
     {
         private readonly UniDbContext _dbContext;
 
-        public FindUniversitiesQueryHandler([NotNull] UniDbContext dbContext)
+        public ContainsUniversityWithIdQueryHandler([NotNull] UniDbContext dbContext)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         }
 
-        public async Task<IEnumerable<University>> Handle(
-            FindUniversitiesQuery query,
+        public async Task<bool> Handle(
+            ContainsUniversityWithIdQuery query,
             CancellationToken cancellationToken
-            )
+        )
         {
             cancellationToken.ThrowIfCancellationRequested();
-
-            var specification = query.ToSpecification();
-
             using (var transaction =
                 await _dbContext.Database.BeginTransactionAsync(IsolationLevel.RepeatableRead, cancellationToken))
             {
                 try
                 {
-                    var universities = await _dbContext
+                    var contains = await _dbContext
                         .Universities
                         .AsNoTracking()
-                        .ExeSpec(specification)
-                        .ToListAsync(cancellationToken);
-
-                    return universities;
+                        .AnyAsync(x => x.Id == query.UniversityId, cancellationToken);
+                    
+                    return contains;
                 }
                 catch
                 {
