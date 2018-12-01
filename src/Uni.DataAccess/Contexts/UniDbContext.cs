@@ -6,6 +6,8 @@ using Uni.DataAccess.Models;
 
 namespace Uni.DataAccess.Contexts
 {
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+    [SuppressMessage("ReSharper", "ClassWithVirtualMembersNeverInherited.Global")]
     public class UniDbContext : DbContext
     {
         [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter", Justification = "This should be strong-typed")]
