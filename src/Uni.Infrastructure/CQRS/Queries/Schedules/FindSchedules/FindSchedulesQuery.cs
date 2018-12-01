@@ -13,7 +13,8 @@ namespace Uni.Infrastructure.CQRS.Queries.Schedules.FindSchedules
     public class FindSchedulesQuery : IQuery<IEnumerable<Schedule>>
     {
         public FindSchedulesQuery(
-            DateTime? startTime,
+            DateTime? dateFrom,
+            DateTime? dateTo,
             TimeSpan? duration,
             [CanBeNull] string audienceNumber,
             [CanBeNull] string lessonType,
@@ -21,7 +22,8 @@ namespace Uni.Infrastructure.CQRS.Queries.Schedules.FindSchedules
             int? teacherId
             )
         {
-            StartTime = startTime;
+            DateFrom = dateFrom;
+            DateTo = dateTo;
             Duration = duration;
             AudienceNumber = audienceNumber;
             LessonType = lessonType;
@@ -29,7 +31,9 @@ namespace Uni.Infrastructure.CQRS.Queries.Schedules.FindSchedules
             TeacherId = teacherId;
         }
 
-        public DateTime? StartTime { get; }
+        public DateTime? DateFrom { get; }
+
+        public DateTime? DateTo { get; }
 
         public TimeSpan? Duration { get; }
 
@@ -45,6 +49,18 @@ namespace Uni.Infrastructure.CQRS.Queries.Schedules.FindSchedules
         public ISpecification<Schedule> ToSpecification()
         {
             var specification = Spec<Schedule>.New();
+            
+            if (DateFrom != null)
+            {
+                var dateFrom = DateFrom.Value.Date;
+                specification = specification.And(Spec<Schedule>.New(x => x.StartTime.Date <= dateFrom));
+            }
+
+            if (DateTo != null)
+            {
+                var dateTo = DateTo.Value.Date;
+                specification = specification.And(Spec<Schedule>.New(x => x.StartTime.Date >= dateTo));
+            }
 
             if (SubjectId != null)
             {
@@ -76,12 +92,6 @@ namespace Uni.Infrastructure.CQRS.Queries.Schedules.FindSchedules
             {
                 var duration = Duration.Value;
                 specification = specification.And(Spec<Schedule>.New(x => x.Duration == duration));
-            }
-
-            if (StartTime != null)
-            {
-                var startTime = StartTime.Value;
-                specification = specification.And(Spec<Schedule>.New(x => x.StartTime == startTime));
             }
 
             specification = specification.OrderBy(OrderSpec<Schedule, DateTime>.New(x => x.StartTime));

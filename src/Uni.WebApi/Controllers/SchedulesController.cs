@@ -57,6 +57,30 @@ namespace Uni.WebApi.Controllers
             return response;
         }
 
+        
+        /// <summary>
+        ///     Get all schedules with details
+        /// </summary>
+        /// <param name="model">Query specific filters</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>List of schedule objects with details.</returns>
+        [HttpGet("details")]
+        public async Task<IEnumerable<ScheduleDetailsResponseModel>> GetDetails(
+            [FromQuery] ListSchedulesRequestModel model,
+            CancellationToken cancellationToken
+            )
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var query = _mapper.Map<FindSchedulesQuery>(model);
+
+            var schedules = await _mediator.Send(query, cancellationToken);
+
+            var response = _mapper.Map<IEnumerable<ScheduleDetailsResponseModel>>(schedules);
+
+            return response;
+        }
+
         /// <summary>
         ///     Searches the schedule by id
         /// </summary>

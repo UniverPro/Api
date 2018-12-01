@@ -5,9 +5,14 @@ namespace Uni.WebApi.Models.Requests
     public class ListSchedulesRequestModel
     {
         /// <summary>
-        ///     Filters results by start time if value set
+        ///     Filters results by start time from date if value set
         /// </summary>
-        public DateTime? StartTime { get; set; }
+        public DateTime? DateFrom { get; set; }
+
+        /// <summary>
+        ///     Filters results by start time to date if value set
+        /// </summary>
+        public DateTime? DateTo { get; set; }
 
         /// <summary>
         ///     Filters results by duration if value set

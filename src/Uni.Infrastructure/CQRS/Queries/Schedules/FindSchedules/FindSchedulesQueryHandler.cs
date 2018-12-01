@@ -66,6 +66,8 @@ namespace Uni.Infrastructure.CQRS.Queries.Schedules.FindSchedules
                     var schedules = await _dbContext
                         .Schedules
                         .AsNoTracking()
+                        .Include(x => x.Subject)
+                        .Include(x => x.Teacher)
                         .ExeSpec(specification)
                         .ToListAsync(cancellationToken);
 
