@@ -19,7 +19,7 @@ namespace Uni.Infrastructure.Services
             _cloudStorageAccount = CloudStorageAccount.Parse(storageConnectionString);
         }
 
-        public async Task<Uri> UploadImageToStorageAsync(IFormFile file, CancellationToken cancellationToken = default)
+        public async Task<string> UploadImageToStorageAsync(IFormFile file, CancellationToken cancellationToken = default)
         {
             if (file == null)
             {
@@ -50,7 +50,7 @@ namespace Uni.Infrastructure.Services
                     cancellationToken
                 );
 
-                return cloudBlockBlob.Uri;
+                return blobName;
             }
         }
     }
