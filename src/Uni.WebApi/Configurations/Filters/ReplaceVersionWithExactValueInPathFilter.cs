@@ -10,11 +10,13 @@ namespace Uni.WebApi.Configurations.Filters
     {
         public void Apply(SwaggerDocument swaggerDoc, DocumentFilterContext context)
         {
-            swaggerDoc.Paths = swaggerDoc.Paths
-                .ToDictionary(
-                    path => path.Key.Replace("v{version}", swaggerDoc.Info.Version),
-                    path => path.Value
-                );
+            var swaggerVersion = swaggerDoc.Info.Version;
+            const string versionPlainText = "v{version}";
+
+            swaggerDoc.Paths = swaggerDoc.Paths.ToDictionary(
+                path => path.Key.Replace(versionPlainText, swaggerVersion),
+                path => path.Value
+            );
         }
     }
 }

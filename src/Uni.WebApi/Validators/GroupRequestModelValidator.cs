@@ -18,6 +18,7 @@ namespace Uni.WebApi.Validators
                 .MaximumLength(Consts.MaxNameLength);
 
             RuleFor(x => x.CourseNumber)
+                .NotEmpty()
                 .InclusiveBetween(1, 5);
         }
     }
