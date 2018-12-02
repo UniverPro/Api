@@ -13,11 +13,15 @@ namespace Uni.Infrastructure.Exceptions
         {
         }
 
-        public HttpStatusCodeException(HttpStatusCode statusCode, string message, Exception innerException) : base(message, innerException)
+        public HttpStatusCodeException(
+            HttpStatusCode statusCode,
+            string message,
+            Exception innerException
+            ) : base(message, innerException)
         {
             StatusCode = statusCode;
         }
-        
+
         public HttpStatusCode StatusCode { get; }
     }
 }

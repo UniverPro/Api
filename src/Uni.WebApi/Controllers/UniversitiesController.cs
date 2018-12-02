@@ -75,6 +75,7 @@ namespace Uni.WebApi.Controllers
             cancellationToken.ThrowIfCancellationRequested();
 
             var query = new FindUniversityByIdQuery(universityId);
+
             var university = await _mediator.Send(query, cancellationToken);
 
             if (university == null)
@@ -103,9 +104,11 @@ namespace Uni.WebApi.Controllers
             cancellationToken.ThrowIfCancellationRequested();
 
             var command = new CreateUniversityCommand(model.Name, model.ShortName, model.Description);
+
             var universityId = await _mediator.Send(command, cancellationToken);
 
             var query = new FindUniversityByIdQuery(universityId);
+
             var university = await _mediator.Send(query, cancellationToken);
 
             var response = _mapper.Map<UniversityResponseModel>(university);
@@ -141,6 +144,7 @@ namespace Uni.WebApi.Controllers
             await _mediator.Send(command, cancellationToken);
 
             var query = new FindUniversityByIdQuery(universityId);
+
             var university = await _mediator.Send(query, cancellationToken);
 
             var response = _mapper.Map<UniversityResponseModel>(university);
@@ -164,6 +168,7 @@ namespace Uni.WebApi.Controllers
             cancellationToken.ThrowIfCancellationRequested();
 
             var command = new RemoveUniversityCommand(universityId);
+
             await _mediator.Send(command, cancellationToken);
         }
     }

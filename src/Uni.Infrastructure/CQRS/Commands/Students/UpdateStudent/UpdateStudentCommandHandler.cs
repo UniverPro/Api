@@ -7,17 +7,20 @@ using Microsoft.EntityFrameworkCore;
 using Uni.DataAccess.Contexts;
 using Uni.Infrastructure.Exceptions;
 using Uni.Infrastructure.Interfaces.CQRS.Commands;
+using Uni.Infrastructure.Interfaces.Services;
 
 namespace Uni.Infrastructure.CQRS.Commands.Students.UpdateStudent
 {
     [UsedImplicitly]
     public class UpdateStudentCommandHandler : ICommandHandler<UpdateStudentCommand>
     {
+        private readonly IBlobStorageUploader _blobStorageUploader;
         private readonly UniDbContext _dbContext;
 
-        public UpdateStudentCommandHandler([NotNull] UniDbContext dbContext)
+        public UpdateStudentCommandHandler([NotNull] UniDbContext dbContext, IBlobStorageUploader blobStorageUploader)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+            _blobStorageUploader = blobStorageUploader;
         }
 
         public async Task<Unit> Handle(
@@ -43,10 +46,21 @@ namespace Uni.Infrastructure.CQRS.Commands.Students.UpdateStudent
                     student.FirstName = command.FirstName;
                     student.LastName = command.LastName;
                     student.MiddleName = command.MiddleName;
-                    student.AvatarPath = command.AvatarPath;
                     student.GroupId = command.GroupId;
 
                     await _dbContext.SaveChangesAsync(cancellationToken);
+
+                    if (command.Avatar != null)
+                    {
+                        var avatarUri = await _blobStorageUploader.UploadImageToStorageAsync(
+                            command.Avatar,
+                            cancellationToken
+                        );
+
+                        student.AvatarPath = avatarUri.ToString();
+
+                        await _dbContext.SaveChangesAsync(cancellationToken);
+                    }
 
                     transaction.Commit();
 

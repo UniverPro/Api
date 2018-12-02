@@ -76,6 +76,7 @@ namespace Uni.WebApi.Controllers
             cancellationToken.ThrowIfCancellationRequested();
 
             var query = new FindFacultyByIdQuery(facultyId);
+
             var faculty = await _mediator.Send(query, cancellationToken);
 
             if (faculty == null)
@@ -149,6 +150,7 @@ namespace Uni.WebApi.Controllers
             await _mediator.Send(command, cancellationToken);
 
             var query = new FindFacultyByIdQuery(facultyId);
+
             var faculty = await _mediator.Send(query, cancellationToken);
 
             var response = _mapper.Map<FacultyResponseModel>(faculty);
@@ -172,6 +174,7 @@ namespace Uni.WebApi.Controllers
             cancellationToken.ThrowIfCancellationRequested();
 
             var command = new RemoveFacultyCommand(facultyId);
+
             await _mediator.Send(command, cancellationToken);
         }
     }

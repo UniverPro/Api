@@ -69,6 +69,7 @@ namespace Uni.WebApi.Controllers
             cancellationToken.ThrowIfCancellationRequested();
 
             var query = new FindTeacherByIdQuery(teacherId);
+
             var teacher = await _mediator.Send(query, cancellationToken);
 
             if (teacher == null)
@@ -99,13 +100,14 @@ namespace Uni.WebApi.Controllers
                 model.FirstName,
                 model.LastName,
                 model.MiddleName,
-                model.AvatarPath,
+                model.Avatar,
                 model.FacultyId
             );
 
             var teacherId = await _mediator.Send(command, cancellationToken);
 
             var query = new FindTeacherByIdQuery(teacherId);
+
             var teacher = await _mediator.Send(query, cancellationToken);
 
             var response = _mapper.Map<TeacherResponseModel>(teacher);
@@ -134,13 +136,14 @@ namespace Uni.WebApi.Controllers
                 model.FirstName,
                 model.LastName,
                 model.MiddleName,
-                model.AvatarPath,
+                model.Avatar,
                 model.FacultyId
             );
 
             await _mediator.Send(command, cancellationToken);
 
             var query = new FindTeacherByIdQuery(teacherId);
+
             var teacher = await _mediator.Send(query, cancellationToken);
 
             var response = _mapper.Map<TeacherResponseModel>(teacher);
@@ -159,6 +162,7 @@ namespace Uni.WebApi.Controllers
             cancellationToken.ThrowIfCancellationRequested();
 
             var command = new RemoveTeacherCommand(teacherId);
+
             await _mediator.Send(command, cancellationToken);
         }
     }

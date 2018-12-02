@@ -1,4 +1,5 @@
-﻿using Uni.Infrastructure.Interfaces.CQRS.Commands;
+﻿using Microsoft.AspNetCore.Http;
+using Uni.Infrastructure.Interfaces.CQRS.Commands;
 
 namespace Uni.Infrastructure.CQRS.Commands.Teachers.UpdateTeacher
 {
@@ -9,7 +10,7 @@ namespace Uni.Infrastructure.CQRS.Commands.Teachers.UpdateTeacher
             string firstName,
             string lastName,
             string middleName,
-            string avatarPath,
+            IFormFile avatar,
             int facultyId
             )
         {
@@ -17,7 +18,7 @@ namespace Uni.Infrastructure.CQRS.Commands.Teachers.UpdateTeacher
             FirstName = firstName;
             LastName = lastName;
             MiddleName = middleName;
-            AvatarPath = avatarPath;
+            Avatar = avatar;
             FacultyId = facultyId;
         }
 
@@ -29,7 +30,7 @@ namespace Uni.Infrastructure.CQRS.Commands.Teachers.UpdateTeacher
 
         public string MiddleName { get; }
 
-        public string AvatarPath { get; }
+        public IFormFile Avatar { get; }
 
         public int FacultyId { get; }
     }

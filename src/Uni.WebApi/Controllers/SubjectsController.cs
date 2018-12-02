@@ -69,6 +69,7 @@ namespace Uni.WebApi.Controllers
             cancellationToken.ThrowIfCancellationRequested();
 
             var query = new FindSubjectByIdQuery(subjectId);
+
             var subject = await _mediator.Send(query, cancellationToken);
 
             if (subject == null)
@@ -103,6 +104,7 @@ namespace Uni.WebApi.Controllers
             var subjectId = await _mediator.Send(command, cancellationToken);
 
             var query = new FindSubjectByIdQuery(subjectId);
+
             var subject = await _mediator.Send(query, cancellationToken);
 
             var response = _mapper.Map<SubjectResponseModel>(subject);
@@ -135,6 +137,7 @@ namespace Uni.WebApi.Controllers
             await _mediator.Send(command, cancellationToken);
 
             var query = new FindSubjectByIdQuery(subjectId);
+
             var subject = await _mediator.Send(query, cancellationToken);
 
             var response = _mapper.Map<SubjectResponseModel>(subject);
@@ -153,6 +156,7 @@ namespace Uni.WebApi.Controllers
             cancellationToken.ThrowIfCancellationRequested();
 
             var command = new RemoveSubjectCommand(subjectId);
+
             await _mediator.Send(command, cancellationToken);
         }
     }

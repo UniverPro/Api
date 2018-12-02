@@ -7,17 +7,23 @@ using Microsoft.EntityFrameworkCore;
 using Uni.DataAccess.Contexts;
 using Uni.Infrastructure.Exceptions;
 using Uni.Infrastructure.Interfaces.CQRS.Commands;
+using Uni.Infrastructure.Interfaces.Services;
 
 namespace Uni.Infrastructure.CQRS.Commands.Teachers.UpdateTeacher
 {
     [UsedImplicitly]
     public class UpdateTeacherCommandHandler : ICommandHandler<UpdateTeacherCommand>
     {
+        private readonly IBlobStorageUploader _blobStorageUploader;
         private readonly UniDbContext _dbContext;
 
-        public UpdateTeacherCommandHandler([NotNull] UniDbContext dbContext)
+        public UpdateTeacherCommandHandler(
+            [NotNull] UniDbContext dbContext,
+            [NotNull] IBlobStorageUploader blobStorageUploader
+            )
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+            _blobStorageUploader = blobStorageUploader ?? throw new ArgumentNullException(nameof(blobStorageUploader));
         }
 
         public async Task<Unit> Handle(
@@ -43,10 +49,21 @@ namespace Uni.Infrastructure.CQRS.Commands.Teachers.UpdateTeacher
                     teacher.FirstName = command.FirstName;
                     teacher.LastName = command.LastName;
                     teacher.MiddleName = command.MiddleName;
-                    teacher.AvatarPath = command.AvatarPath;
                     teacher.FacultyId = command.FacultyId;
 
                     await _dbContext.SaveChangesAsync(cancellationToken);
+
+                    if (command.Avatar != null)
+                    {
+                        var avatarUri = await _blobStorageUploader.UploadImageToStorageAsync(
+                            command.Avatar,
+                            cancellationToken
+                        );
+
+                        teacher.AvatarPath = avatarUri.ToString();
+
+                        await _dbContext.SaveChangesAsync(cancellationToken);
+                    }
 
                     transaction.Commit();
 

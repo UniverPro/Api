@@ -66,7 +66,7 @@ namespace Uni.Infrastructure.CQRS.Queries.Schedules.FindSchedules
                             throw new NotFoundException("teacher", subjectId);
                         }
                     }
-                    
+
                     if (query.GroupId != null)
                     {
                         var groupId = query.GroupId.Value;

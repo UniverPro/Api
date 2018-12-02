@@ -56,7 +56,7 @@ namespace Uni.WebApi.Controllers
 
             return response;
         }
-        
+
         /// <summary>
         ///     Get all schedules with details
         /// </summary>
@@ -92,6 +92,7 @@ namespace Uni.WebApi.Controllers
             cancellationToken.ThrowIfCancellationRequested();
 
             var query = new FindScheduleByIdQuery(scheduleId);
+
             var schedule = await _mediator.Send(query, cancellationToken);
 
             if (schedule == null)
@@ -130,6 +131,7 @@ namespace Uni.WebApi.Controllers
             var scheduleId = await _mediator.Send(command, cancellationToken);
 
             var query = new FindScheduleByIdQuery(scheduleId);
+
             var schedule = await _mediator.Send(query, cancellationToken);
 
             var response = _mapper.Map<ScheduleResponseModel>(schedule);
@@ -166,6 +168,7 @@ namespace Uni.WebApi.Controllers
             await _mediator.Send(command, cancellationToken);
 
             var query = new FindScheduleByIdQuery(scheduleId);
+
             var schedule = await _mediator.Send(query, cancellationToken);
 
             var response = _mapper.Map<ScheduleResponseModel>(schedule);
@@ -184,6 +187,7 @@ namespace Uni.WebApi.Controllers
             cancellationToken.ThrowIfCancellationRequested();
 
             var command = new RemoveScheduleCommand(scheduleId);
+
             await _mediator.Send(command, cancellationToken);
         }
     }

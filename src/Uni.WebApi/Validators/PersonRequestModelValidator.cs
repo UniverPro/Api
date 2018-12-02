@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
 using JetBrains.Annotations;
 using Uni.Core;
-using Uni.Core.Extensions;
 using Uni.WebApi.Models.Requests;
 
 namespace Uni.WebApi.Validators
@@ -26,9 +25,6 @@ namespace Uni.WebApi.Validators
                         .NotEmpty()
                         .MaximumLength(Consts.MaxNameLength)
             );
-
-            RuleFor(x => x.AvatarPath)
-                .IsValidUrl().When(x => !string.IsNullOrEmpty(x.AvatarPath));
         }
     }
 }

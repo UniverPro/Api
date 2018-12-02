@@ -75,6 +75,7 @@ namespace Uni.WebApi.Controllers
             cancellationToken.ThrowIfCancellationRequested();
 
             var query = new FindGroupByIdQuery(groupId);
+
             var group = await _mediator.Send(query, cancellationToken);
 
             if (group == null)
@@ -111,6 +112,7 @@ namespace Uni.WebApi.Controllers
             var groupId = await _mediator.Send(command, cancellationToken);
 
             var query = new FindGroupByIdQuery(groupId);
+
             var group = await _mediator.Send(query, cancellationToken);
 
             var response = _mapper.Map<GroupResponseModel>(group);
@@ -146,6 +148,7 @@ namespace Uni.WebApi.Controllers
             await _mediator.Send(command, cancellationToken);
 
             var query = new FindGroupByIdQuery(groupId);
+
             var group = await _mediator.Send(query, cancellationToken);
 
             var response = _mapper.Map<GroupResponseModel>(group);
@@ -169,6 +172,7 @@ namespace Uni.WebApi.Controllers
             cancellationToken.ThrowIfCancellationRequested();
 
             var command = new RemoveGroupCommand(groupId);
+
             await _mediator.Send(command, cancellationToken);
         }
     }

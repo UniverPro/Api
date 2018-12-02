@@ -53,7 +53,7 @@ namespace Uni.Infrastructure.CQRS.Queries.Schedules.FindSchedules
         public ISpecification<Schedule> ToSpecification()
         {
             var specification = Spec<Schedule>.New();
-            
+
             if (DateFrom != null)
             {
                 var dateFrom = DateFrom.Value.Date;
@@ -71,7 +71,7 @@ namespace Uni.Infrastructure.CQRS.Queries.Schedules.FindSchedules
                 var subjectId = SubjectId.Value;
                 specification = specification.And(Spec<Schedule>.New(x => x.SubjectId == subjectId));
             }
-            
+
             if (GroupId != null)
             {
                 var groupId = GroupId.Value;

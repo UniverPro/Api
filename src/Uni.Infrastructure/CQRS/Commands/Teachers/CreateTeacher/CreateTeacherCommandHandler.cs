@@ -5,17 +5,23 @@ using JetBrains.Annotations;
 using Uni.DataAccess.Contexts;
 using Uni.DataAccess.Models;
 using Uni.Infrastructure.Interfaces.CQRS.Commands;
+using Uni.Infrastructure.Interfaces.Services;
 
 namespace Uni.Infrastructure.CQRS.Commands.Teachers.CreateTeacher
 {
     [UsedImplicitly]
     public class CreateTeacherCommandHandler : ICommandHandler<CreateTeacherCommand, int>
     {
+        private readonly IBlobStorageUploader _blobStorageUploader;
         private readonly UniDbContext _dbContext;
 
-        public CreateTeacherCommandHandler([NotNull] UniDbContext dbContext)
+        public CreateTeacherCommandHandler(
+            [NotNull] UniDbContext dbContext,
+            [NotNull] IBlobStorageUploader blobStorageUploader
+            )
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+            _blobStorageUploader = blobStorageUploader ?? throw new ArgumentNullException(nameof(blobStorageUploader));
         }
 
         public async Task<int> Handle(
@@ -33,13 +39,24 @@ namespace Uni.Infrastructure.CQRS.Commands.Teachers.CreateTeacher
                         FirstName = command.FirstName,
                         LastName = command.LastName,
                         MiddleName = command.MiddleName,
-                        AvatarPath = command.AvatarPath,
                         FacultyId = command.FacultyId
                     };
 
                     _dbContext.Teachers.Add(teacher);
 
                     await _dbContext.SaveChangesAsync(cancellationToken);
+
+                    if (command.Avatar != null)
+                    {
+                        var avatarUri = await _blobStorageUploader.UploadImageToStorageAsync(
+                            command.Avatar,
+                            cancellationToken
+                        );
+
+                        teacher.AvatarPath = avatarUri.ToString();
+
+                        await _dbContext.SaveChangesAsync(cancellationToken);
+                    }
 
                     transaction.Commit();
 

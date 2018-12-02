@@ -18,6 +18,8 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 using Uni.DataAccess.Contexts;
 using Uni.Infrastructure.CQRS.Commands;
 using Uni.Infrastructure.CQRS.Queries;
+using Uni.Infrastructure.Interfaces.Services;
+using Uni.Infrastructure.Services;
 using Uni.WebApi.Configurations;
 using Uni.WebApi.Configurations.Filters;
 
@@ -56,6 +58,7 @@ namespace Uni.WebApi
             );
 
             services.AddTransient<ErrorHandlingMiddleware>();
+            services.AddTransient<IBlobStorageUploader, AzureBlobStorageUploader>();
 
             services.AddEntityFrameworkSqlServer();
             services.AddDbContext<UniDbContext>(
