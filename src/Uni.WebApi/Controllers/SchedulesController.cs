@@ -41,7 +41,7 @@ namespace Uni.WebApi.Controllers
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>List of schedule objects.</returns>
         [HttpGet]
-        public async Task<IEnumerable<ScheduleResponseModel>> Get(
+        public async Task<IEnumerable<ScheduleResponseModel>> GetList(
             [FromQuery] ListSchedulesRequestModel model,
             CancellationToken cancellationToken
             )

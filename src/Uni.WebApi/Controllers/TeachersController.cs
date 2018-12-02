@@ -41,7 +41,7 @@ namespace Uni.WebApi.Controllers
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>List of teacher objects.</returns>
         [HttpGet]
-        public async Task<IEnumerable<TeacherResponseModel>> Get(
+        public async Task<IEnumerable<TeacherResponseModel>> GetList(
             [FromQuery] ListTeachersRequestModel model,
             CancellationToken cancellationToken
             )

@@ -42,7 +42,7 @@ namespace Uni.WebApi.Controllers
         /// <returns>List of group objects.</returns>
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<GroupResponseModel>), 200)]
-        public async Task<IEnumerable<GroupResponseModel>> Get(
+        public async Task<IEnumerable<GroupResponseModel>> GetList(
             [FromQuery] ListGroupsRequestModel model,
             CancellationToken cancellationToken
             )

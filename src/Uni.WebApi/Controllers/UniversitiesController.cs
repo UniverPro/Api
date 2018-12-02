@@ -42,7 +42,7 @@ namespace Uni.WebApi.Controllers
         /// <returns>List of university objects.</returns>
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<UniversityResponseModel>), 200)]
-        public async Task<IEnumerable<UniversityResponseModel>> Get(
+        public async Task<IEnumerable<UniversityResponseModel>> GetList(
             [FromQuery] ListUniversitiesRequestModel model,
             CancellationToken cancellationToken
             )
