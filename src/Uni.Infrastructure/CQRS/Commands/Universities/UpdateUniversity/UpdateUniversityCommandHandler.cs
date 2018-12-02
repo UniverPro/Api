@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 using JetBrains.Annotations;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Uni.Core.Exceptions;
 using Uni.DataAccess.Contexts;
-using Uni.Infrastructure.Exceptions;
 using Uni.Infrastructure.Interfaces.CQRS.Commands;
 
 namespace Uni.Infrastructure.CQRS.Commands.Universities.UpdateUniversity

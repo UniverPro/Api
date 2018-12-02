@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using JetBrains.Annotations;
 using LinqBuilder.Core;
 using Microsoft.EntityFrameworkCore;
+using Uni.Core.Exceptions;
 using Uni.DataAccess.Contexts;
 using Uni.DataAccess.Models;
-using Uni.Infrastructure.Exceptions;
 using Uni.Infrastructure.Interfaces.CQRS.Queries;
 
 namespace Uni.Infrastructure.CQRS.Queries.Groups.FindGroups

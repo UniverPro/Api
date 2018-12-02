@@ -6,12 +6,12 @@ using AutoMapper;
 using JetBrains.Annotations;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Uni.Core.Exceptions;
 using Uni.Infrastructure.CQRS.Commands.Subjects.CreateSubject;
 using Uni.Infrastructure.CQRS.Commands.Subjects.RemoveSubject;
 using Uni.Infrastructure.CQRS.Commands.Subjects.UpdateSubject;
 using Uni.Infrastructure.CQRS.Queries.Subjects.FindSubjectById;
 using Uni.Infrastructure.CQRS.Queries.Subjects.FindSubjects;
-using Uni.Infrastructure.Exceptions;
 using Uni.WebApi.Models.Requests;
 using Uni.WebApi.Models.Responses;
 
@@ -90,7 +90,7 @@ namespace Uni.WebApi.Controllers
         /// <returns>Created subject object</returns>
         [HttpPost]
         public async Task<SubjectResponseModel> Post(
-            [FromForm] SubjectRequestModel model,
+            [FromBody] SubjectRequestModel model,
             CancellationToken cancellationToken
             )
         {
@@ -122,7 +122,7 @@ namespace Uni.WebApi.Controllers
         [HttpPut("{subjectId:int:min(1)}")]
         public async Task<SubjectResponseModel> Put(
             int subjectId,
-            [FromForm] SubjectRequestModel model,
+            [FromBody] SubjectRequestModel model,
             CancellationToken cancellationToken
             )
         {

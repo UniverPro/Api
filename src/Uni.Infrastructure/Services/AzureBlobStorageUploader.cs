@@ -1,10 +1,11 @@
 ﻿using System;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
+using Uni.Core.Exceptions;
+using Uni.Core.Extensions;
 using Uni.Infrastructure.Interfaces.Services;
 
 namespace Uni.Infrastructure.Services
@@ -19,31 +20,43 @@ namespace Uni.Infrastructure.Services
             _cloudStorageAccount = CloudStorageAccount.Parse(storageConnectionString);
         }
 
-        public async Task<string> UploadImageToStorageAsync(IFormFile file, CancellationToken cancellationToken = default)
+        public async Task<string> UploadImageToStorageAsync(
+            IFormFile file,
+            CancellationToken cancellationToken = default
+            )
         {
             if (file == null)
             {
                 throw new ArgumentNullException(nameof(file));
             }
 
-            var cloudBlobClient = _cloudStorageAccount.CreateCloudBlobClient();
-            var cloudBlobContainer = cloudBlobClient.GetContainerReference("images");
-
-            await cloudBlobContainer.CreateIfNotExistsAsync(
-                BlobContainerPublicAccessType.Blob,
-                null,
-                null,
-                cancellationToken
-            );
-
-            var extension = Path.GetExtension(file.FileName);
-            var blobName = $"{Guid.NewGuid()}{extension}";
-            var cloudBlockBlob = cloudBlobContainer.GetBlockBlobReference(blobName);
-
-            using (var fileStream = file.OpenReadStream())
+            using (var stream = file.OpenReadStream())
             {
+                string extension;
+                try
+                {
+                    extension = ImageExtensions.AssertFileIsWebFriendlyImageAndGetExtension(stream);
+                }
+                catch (ArgumentException e)
+                {
+                    throw new UnsupportedMediaTypeException("The file has unsupported media type", e);
+                }
+
+                var cloudBlobClient = _cloudStorageAccount.CreateCloudBlobClient();
+                var cloudBlobContainer = cloudBlobClient.GetContainerReference("images");
+
+                await cloudBlobContainer.CreateIfNotExistsAsync(
+                    BlobContainerPublicAccessType.Blob,
+                    null,
+                    null,
+                    cancellationToken
+                );
+
+                var blobName = $"{Guid.NewGuid()}{extension}";
+                var cloudBlockBlob = cloudBlobContainer.GetBlockBlobReference(blobName);
+
                 await cloudBlockBlob.UploadFromStreamAsync(
-                    fileStream,
+                    stream,
                     null,
                     null,
                     null,

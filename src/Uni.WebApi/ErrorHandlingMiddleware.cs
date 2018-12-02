@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
-using Uni.Infrastructure.Exceptions;
+using Uni.Core.Exceptions;
 
 namespace Uni.WebApi
 {

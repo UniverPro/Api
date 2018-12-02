@@ -53,7 +53,7 @@ namespace Uni.Infrastructure.CQRS.Commands.Students.CreateStudent
                             cancellationToken
                         );
 
-                        student.AvatarPath = avatarUri.ToString();
+                        student.AvatarPath = avatarUri;
 
                         await _dbContext.SaveChangesAsync(cancellationToken);
                     }

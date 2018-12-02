@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net;
 
-namespace Uni.Infrastructure.Exceptions
+namespace Uni.Core.Exceptions
 {
     public class HttpStatusCodeException : Exception
     {

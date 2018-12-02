@@ -53,7 +53,7 @@ namespace Uni.Infrastructure.CQRS.Commands.Teachers.CreateTeacher
                             cancellationToken
                         );
 
-                        teacher.AvatarPath = avatarUri.ToString();
+                        teacher.AvatarPath = avatarUri;
 
                         await _dbContext.SaveChangesAsync(cancellationToken);
                     }

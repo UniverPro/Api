@@ -6,12 +6,12 @@ using AutoMapper;
 using JetBrains.Annotations;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Uni.Core.Exceptions;
 using Uni.Infrastructure.CQRS.Commands.Groups.CreateGroup;
 using Uni.Infrastructure.CQRS.Commands.Groups.RemoveGroup;
 using Uni.Infrastructure.CQRS.Commands.Groups.UpdateGroup;
 using Uni.Infrastructure.CQRS.Queries.Groups.FindGroupById;
 using Uni.Infrastructure.CQRS.Queries.Groups.FindGroups;
-using Uni.Infrastructure.Exceptions;
 using Uni.WebApi.Models.Requests;
 using Uni.WebApi.Models.Responses;
 
@@ -97,7 +97,7 @@ namespace Uni.WebApi.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(GroupResponseModel), 200)]
         public async Task<GroupResponseModel> Post(
-            [FromForm] GroupRequestModel model,
+            [FromBody] GroupRequestModel model,
             CancellationToken cancellationToken
             )
         {
@@ -132,7 +132,7 @@ namespace Uni.WebApi.Controllers
         [ProducesResponseType(404)]
         public async Task<GroupResponseModel> Put(
             int groupId,
-            [FromForm] GroupRequestModel model,
+            [FromBody] GroupRequestModel model,
             CancellationToken cancellationToken
             )
         {

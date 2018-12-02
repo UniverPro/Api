@@ -6,12 +6,12 @@ using AutoMapper;
 using JetBrains.Annotations;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Uni.Core.Exceptions;
 using Uni.Infrastructure.CQRS.Commands.Teachers.CreateTeacher;
 using Uni.Infrastructure.CQRS.Commands.Teachers.RemoveTeacher;
 using Uni.Infrastructure.CQRS.Commands.Teachers.UpdateTeacher;
 using Uni.Infrastructure.CQRS.Queries.Teachers.FindTeacherById;
 using Uni.Infrastructure.CQRS.Queries.Teachers.FindTeachers;
-using Uni.Infrastructure.Exceptions;
 using Uni.WebApi.Models.Requests;
 using Uni.WebApi.Models.Responses;
 
@@ -90,7 +90,7 @@ namespace Uni.WebApi.Controllers
         /// <returns>Created teacher object</returns>
         [HttpPost]
         public async Task<TeacherResponseModel> Post(
-            [FromForm] TeacherRequestModel model,
+            [FromBody] TeacherRequestModel model,
             CancellationToken cancellationToken
             )
         {
@@ -125,7 +125,7 @@ namespace Uni.WebApi.Controllers
         [HttpPut("{teacherId:int:min(1)}")]
         public async Task<TeacherResponseModel> Put(
             int teacherId,
-            [FromForm] TeacherRequestModel model,
+            [FromBody] TeacherRequestModel model,
             CancellationToken cancellationToken
             )
         {

@@ -6,12 +6,12 @@ using AutoMapper;
 using JetBrains.Annotations;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Uni.Core.Exceptions;
 using Uni.Infrastructure.CQRS.Commands.Students.CreateStudent;
 using Uni.Infrastructure.CQRS.Commands.Students.RemoveStudent;
 using Uni.Infrastructure.CQRS.Commands.Students.UpdateStudent;
 using Uni.Infrastructure.CQRS.Queries.Students.FindStudentById;
 using Uni.Infrastructure.CQRS.Queries.Students.FindStudents;
-using Uni.Infrastructure.Exceptions;
 using Uni.WebApi.Models.Requests;
 using Uni.WebApi.Models.Responses;
 
@@ -90,7 +90,7 @@ namespace Uni.WebApi.Controllers
         /// <returns>Created student object</returns>
         [HttpPost]
         public async Task<StudentResponseModel> Post(
-            [FromForm] StudentRequestModel model,
+            [FromBody] StudentRequestModel model,
             CancellationToken cancellationToken
             )
         {
@@ -125,7 +125,7 @@ namespace Uni.WebApi.Controllers
         [HttpPut("{studentId:int:min(1)}")]
         public async Task<StudentResponseModel> Put(
             int studentId,
-            [FromForm] StudentRequestModel model,
+            [FromBody] StudentRequestModel model,
             CancellationToken cancellationToken
             )
         {

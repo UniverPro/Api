@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using JetBrains.Annotations;
 
-namespace Uni.Infrastructure.Exceptions
+namespace Uni.Core.Exceptions
 {
     public class NotFoundException : HttpStatusCodeException
     {
