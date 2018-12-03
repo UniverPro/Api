@@ -98,7 +98,7 @@ namespace Uni.WebApi.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(FacultyResponseModel), 200)]
         public async Task<FacultyResponseModel> Post(
-            [FromBody] FacultyRequestModel model,
+            [FromForm] FacultyRequestModel model,
             CancellationToken cancellationToken
             )
         {
@@ -133,7 +133,7 @@ namespace Uni.WebApi.Controllers
         [ProducesResponseType(404)]
         public async Task<FacultyResponseModel> Put(
             int facultyId,
-            [FromBody] FacultyRequestModel model,
+            [FromForm] FacultyRequestModel model,
             CancellationToken cancellationToken
             )
         {

@@ -90,7 +90,7 @@ namespace Uni.WebApi.Controllers
         /// <returns>Created teacher object</returns>
         [HttpPost]
         public async Task<TeacherResponseModel> Post(
-            [FromBody] TeacherRequestModel model,
+            [FromForm] TeacherRequestModel model,
             CancellationToken cancellationToken
             )
         {
@@ -125,7 +125,7 @@ namespace Uni.WebApi.Controllers
         [HttpPut("{teacherId:int:min(1)}")]
         public async Task<TeacherResponseModel> Put(
             int teacherId,
-            [FromBody] TeacherRequestModel model,
+            [FromForm] TeacherRequestModel model,
             CancellationToken cancellationToken
             )
         {

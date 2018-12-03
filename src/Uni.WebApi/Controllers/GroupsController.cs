@@ -97,7 +97,7 @@ namespace Uni.WebApi.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(GroupResponseModel), 200)]
         public async Task<GroupResponseModel> Post(
-            [FromBody] GroupRequestModel model,
+            [FromForm] GroupRequestModel model,
             CancellationToken cancellationToken
             )
         {
@@ -132,7 +132,7 @@ namespace Uni.WebApi.Controllers
         [ProducesResponseType(404)]
         public async Task<GroupResponseModel> Put(
             int groupId,
-            [FromBody] GroupRequestModel model,
+            [FromForm] GroupRequestModel model,
             CancellationToken cancellationToken
             )
         {

@@ -113,7 +113,7 @@ namespace Uni.WebApi.Controllers
         /// <returns>Created schedule object</returns>
         [HttpPost]
         public async Task<ScheduleResponseModel> Post(
-            [FromBody] ScheduleRequestModel model,
+            [FromForm] ScheduleRequestModel model,
             CancellationToken cancellationToken
             )
         {
@@ -149,7 +149,7 @@ namespace Uni.WebApi.Controllers
         [HttpPut("{scheduleId:int:min(1)}")]
         public async Task<ScheduleResponseModel> Put(
             int scheduleId,
-            [FromBody] ScheduleRequestModel model,
+            [FromForm] ScheduleRequestModel model,
             CancellationToken cancellationToken
             )
         {
