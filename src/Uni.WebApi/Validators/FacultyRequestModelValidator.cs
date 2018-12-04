@@ -19,7 +19,7 @@ namespace Uni.WebApi.Validators
 
             RuleFor(x => x.ShortName)
                 .MaximumLength(Consts.MaxShortNameLength)
-                .When(x => !string.IsNullOrWhiteSpace(x.ShortName));
+                .When(x => !string.IsNullOrEmpty(x.ShortName));
         }
     }
 }
