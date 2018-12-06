@@ -41,22 +41,22 @@ namespace Uni.Infrastructure.CQRS.Commands.Students.CreateStudent
                         MiddleName = command.MiddleName,
                         GroupId = command.GroupId
                     };
-
+                    
                     _dbContext.Students.Add(student);
 
                     await _dbContext.SaveChangesAsync(cancellationToken);
 
                     if (command.Avatar != null)
                     {
-                        var avatarUri = await _blobStorageUploader.UploadImageToStorageAsync(
+                        var avatarUri = await _blobStorageUploader.UploadImageAsync(
                             command.Avatar,
                             cancellationToken
                         );
 
                         student.AvatarPath = avatarUri;
-
-                        await _dbContext.SaveChangesAsync(cancellationToken);
                     }
+                    
+                    await _dbContext.SaveChangesAsync(cancellationToken);
 
                     transaction.Commit();
 

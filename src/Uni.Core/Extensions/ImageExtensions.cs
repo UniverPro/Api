@@ -1,7 +1,9 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using JetBrains.Annotations;
 using Uni.Core.Exceptions;
 
 namespace Uni.Core.Extensions
@@ -10,8 +12,14 @@ namespace Uni.Core.Extensions
     {
         private static readonly ImageCodecInfo[] Decoders = ImageCodecInfo.GetImageDecoders();
 
-        public static string AssertFileIsWebFriendlyImageAndGetExtension(Stream stream)
+        [NotNull]
+        public static string AssertFileIsWebFriendlyImageAndGetFormatDescription([NotNull] Stream stream)
         {
+            if (stream == null)
+            {
+                throw new ArgumentNullException(nameof(stream));
+            }
+
             using (var image = Image.FromStream(stream))
             {
                 var validWebImageFormats = new[] {ImageFormat.Jpeg, ImageFormat.Png, ImageFormat.Gif};
@@ -20,7 +28,7 @@ namespace Uni.Core.Extensions
                     throw new UnsupportedMediaTypeException("The file has unsupported media type");
                 }
 
-                return codecInfo.FilenameExtension;
+                return codecInfo.FormatDescription.ToLower();
             }
         }
 

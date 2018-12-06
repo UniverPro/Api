@@ -48,7 +48,7 @@ namespace Uni.Infrastructure.CQRS.Commands.Teachers.CreateTeacher
 
                     if (command.Avatar != null)
                     {
-                        var avatarUri = await _blobStorageUploader.UploadImageToStorageAsync(
+                        var avatarUri = await _blobStorageUploader.UploadImageAsync(
                             command.Avatar,
                             cancellationToken
                         );

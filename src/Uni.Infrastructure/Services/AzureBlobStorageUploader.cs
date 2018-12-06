@@ -1,6 +1,8 @@
 ﻿using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
@@ -12,15 +14,16 @@ namespace Uni.Infrastructure.Services
 {
     public class AzureBlobStorageUploader : IBlobStorageUploader
     {
-        private readonly CloudStorageAccount _cloudStorageAccount;
+        private readonly CloudBlobClient _cloudBlobClient;
 
         public AzureBlobStorageUploader()
         {
             var storageConnectionString = Environment.GetEnvironmentVariable("storageconnectionstring");
-            _cloudStorageAccount = CloudStorageAccount.Parse(storageConnectionString);
+            var cloudStorageAccount = CloudStorageAccount.Parse(storageConnectionString);
+            _cloudBlobClient = cloudStorageAccount.CreateCloudBlobClient();
         }
 
-        public async Task<string> UploadImageToStorageAsync(
+        public async Task<string> UploadImageAsync(
             IFormFile file,
             CancellationToken cancellationToken = default
             )
@@ -29,42 +32,56 @@ namespace Uni.Infrastructure.Services
             {
                 throw new ArgumentNullException(nameof(file));
             }
-
-            using (var stream = file.OpenReadStream())
+            
+            using (var stream = new MemoryStream())
             {
-                string extension;
+                await file.CopyToAsync(stream, cancellationToken);
+
+                string formatDescription;
                 try
                 {
-                    extension = ImageExtensions.AssertFileIsWebFriendlyImageAndGetExtension(stream);
+                    formatDescription = ImageExtensions.AssertFileIsWebFriendlyImageAndGetFormatDescription(stream);
                 }
                 catch (ArgumentException e)
                 {
                     throw new UnsupportedMediaTypeException("The file has unsupported media type", e);
                 }
 
-                var cloudBlobClient = _cloudStorageAccount.CreateCloudBlobClient();
-                var cloudBlobContainer = cloudBlobClient.GetContainerReference("images");
+                stream.Seek(0, SeekOrigin.Begin);
+                
+                var blobName = $"{Guid.NewGuid()}.{formatDescription}";
 
-                await cloudBlobContainer.CreateIfNotExistsAsync(
-                    BlobContainerPublicAccessType.Blob,
-                    null,
-                    null,
-                    cancellationToken
-                );
-
-                var blobName = $"{Guid.NewGuid()}{extension}";
-                var cloudBlockBlob = cloudBlobContainer.GetBlockBlobReference(blobName);
-
-                await cloudBlockBlob.UploadFromStreamAsync(
-                    stream,
-                    null,
-                    null,
-                    null,
-                    cancellationToken
-                );
-
-                return blobName;
+                return await UploadToStorageInternal(stream, blobName, cancellationToken);
             }
+        }
+
+        private async Task<string> UploadToStorageInternal(Stream stream, [NotNull] string blobName, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(blobName))
+            {
+                throw new ArgumentException("Value cannot be null or whitespace.", nameof(blobName));
+            }
+
+            var cloudBlobContainer = _cloudBlobClient.GetContainerReference("images");
+
+            await cloudBlobContainer.CreateIfNotExistsAsync(
+                BlobContainerPublicAccessType.Blob,
+                null,
+                null,
+                cancellationToken
+            );
+
+            var cloudBlockBlob = cloudBlobContainer.GetBlockBlobReference(blobName);
+
+            await cloudBlockBlob.UploadFromStreamAsync(
+                stream,
+                null,
+                null,
+                null,
+                cancellationToken
+            );
+
+            return blobName;
         }
     }
 }
