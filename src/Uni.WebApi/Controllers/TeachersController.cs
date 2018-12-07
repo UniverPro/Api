@@ -41,7 +41,7 @@ namespace Uni.WebApi.Controllers
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>List of teacher objects.</returns>
         [HttpGet]
-        public async Task<IEnumerable<TeacherResponseModel>> GetList(
+        public async Task<IEnumerable<TeacherResponseModel>> GetTeachers(
             [FromQuery] ListTeachersRequestModel model,
             CancellationToken cancellationToken
             )
@@ -64,7 +64,7 @@ namespace Uni.WebApi.Controllers
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Teacher object</returns>
         [HttpGet("{teacherId:int:min(1)}")]
-        public async Task<TeacherResponseModel> Get(int teacherId, CancellationToken cancellationToken)
+        public async Task<TeacherResponseModel> GetTeacher(int teacherId, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -89,7 +89,7 @@ namespace Uni.WebApi.Controllers
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Created teacher object</returns>
         [HttpPost]
-        public async Task<TeacherResponseModel> Post(
+        public async Task<TeacherResponseModel> PostTeacher(
             [FromForm] TeacherRequestModel model,
             CancellationToken cancellationToken
             )
@@ -123,7 +123,7 @@ namespace Uni.WebApi.Controllers
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Updated teacher object</returns>
         [HttpPut("{teacherId:int:min(1)}")]
-        public async Task<TeacherResponseModel> Put(
+        public async Task<TeacherResponseModel> PutTeacher(
             int teacherId,
             [FromForm] TeacherRequestModel model,
             CancellationToken cancellationToken
@@ -157,7 +157,7 @@ namespace Uni.WebApi.Controllers
         /// <param name="cancellationToken">Cancellation token</param>
         /// <param name="teacherId">Teacher unique identifier</param>
         [HttpDelete("{teacherId:int:min(1)}")]
-        public async Task Delete(int teacherId, CancellationToken cancellationToken)
+        public async Task DeleteTeacher(int teacherId, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 

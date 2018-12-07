@@ -41,7 +41,7 @@ namespace Uni.WebApi.Controllers
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>List of schedule objects.</returns>
         [HttpGet]
-        public async Task<IEnumerable<ScheduleResponseModel>> GetList(
+        public async Task<IEnumerable<ScheduleResponseModel>> GetSchedules(
             [FromQuery] ListSchedulesRequestModel model,
             CancellationToken cancellationToken
             )
@@ -64,7 +64,7 @@ namespace Uni.WebApi.Controllers
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>List of schedule objects with details.</returns>
         [HttpGet("details")]
-        public async Task<IEnumerable<ScheduleDetailsResponseModel>> GetDetails(
+        public async Task<IEnumerable<ScheduleDetailsResponseModel>> GetSchedulesDetails(
             [FromQuery] ListSchedulesRequestModel model,
             CancellationToken cancellationToken
             )
@@ -87,7 +87,7 @@ namespace Uni.WebApi.Controllers
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Schedule object</returns>
         [HttpGet("{scheduleId:int:min(1)}")]
-        public async Task<ScheduleResponseModel> Get(int scheduleId, CancellationToken cancellationToken)
+        public async Task<ScheduleResponseModel> GetSchedule(int scheduleId, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -112,7 +112,7 @@ namespace Uni.WebApi.Controllers
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Created schedule object</returns>
         [HttpPost]
-        public async Task<ScheduleResponseModel> Post(
+        public async Task<ScheduleResponseModel> PostSchedule(
             [FromForm] ScheduleRequestModel model,
             CancellationToken cancellationToken
             )
@@ -147,7 +147,7 @@ namespace Uni.WebApi.Controllers
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Updated schedule object</returns>
         [HttpPut("{scheduleId:int:min(1)}")]
-        public async Task<ScheduleResponseModel> Put(
+        public async Task<ScheduleResponseModel> PutSchedule(
             int scheduleId,
             [FromForm] ScheduleRequestModel model,
             CancellationToken cancellationToken
@@ -182,7 +182,7 @@ namespace Uni.WebApi.Controllers
         /// <param name="cancellationToken">Cancellation token</param>
         /// <param name="scheduleId">Schedule unique identifier</param>
         [HttpDelete("{scheduleId:int:min(1)}")]
-        public async Task Delete(int scheduleId, CancellationToken cancellationToken)
+        public async Task DeleteSchedule(int scheduleId, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 

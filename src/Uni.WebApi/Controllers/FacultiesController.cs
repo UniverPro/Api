@@ -43,7 +43,7 @@ namespace Uni.WebApi.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<FacultyResponseModel>), 200)]
         [ProducesResponseType(404)]
-        public async Task<IEnumerable<FacultyResponseModel>> GetList(
+        public async Task<IEnumerable<FacultyResponseModel>> GetFaculties(
             [FromQuery] ListFacultiesRequestModel model,
             CancellationToken cancellationToken
             )
@@ -68,7 +68,7 @@ namespace Uni.WebApi.Controllers
         [HttpGet("{facultyId:int:min(1)}")]
         [ProducesResponseType(typeof(FacultyResponseModel), 200)]
         [ProducesResponseType(404)]
-        public async Task<FacultyResponseModel> Get(
+        public async Task<FacultyResponseModel> GetFaculty(
             int facultyId,
             CancellationToken cancellationToken
             )
@@ -97,7 +97,7 @@ namespace Uni.WebApi.Controllers
         /// <returns>Created faculty object</returns>
         [HttpPost]
         [ProducesResponseType(typeof(FacultyResponseModel), 200)]
-        public async Task<FacultyResponseModel> Post(
+        public async Task<FacultyResponseModel> PostFaculty(
             [FromForm] FacultyRequestModel model,
             CancellationToken cancellationToken
             )
@@ -131,7 +131,7 @@ namespace Uni.WebApi.Controllers
         [HttpPut("{facultyId:int:min(1)}")]
         [ProducesResponseType(typeof(FacultyResponseModel), 200)]
         [ProducesResponseType(404)]
-        public async Task<FacultyResponseModel> Put(
+        public async Task<FacultyResponseModel> PutFaculty(
             int facultyId,
             [FromForm] FacultyRequestModel model,
             CancellationToken cancellationToken
@@ -166,7 +166,7 @@ namespace Uni.WebApi.Controllers
         [HttpDelete("{facultyId:int:min(1)}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
-        public async Task Delete(
+        public async Task DeleteFaculty(
             int facultyId,
             CancellationToken cancellationToken
             )

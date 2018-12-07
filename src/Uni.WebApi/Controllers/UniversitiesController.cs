@@ -42,7 +42,7 @@ namespace Uni.WebApi.Controllers
         /// <returns>List of university objects.</returns>
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<UniversityResponseModel>), 200)]
-        public async Task<IEnumerable<UniversityResponseModel>> GetList(
+        public async Task<IEnumerable<UniversityResponseModel>> GetUniversities(
             [FromQuery] ListUniversitiesRequestModel model,
             CancellationToken cancellationToken
             )
@@ -67,7 +67,7 @@ namespace Uni.WebApi.Controllers
         [HttpGet("{universityId:int:min(1)}")]
         [ProducesResponseType(typeof(UniversityResponseModel), 200)]
         [ProducesResponseType(404)]
-        public async Task<UniversityResponseModel> Get(
+        public async Task<UniversityResponseModel> GetUniversity(
             int universityId,
             CancellationToken cancellationToken
             )
@@ -96,7 +96,7 @@ namespace Uni.WebApi.Controllers
         /// <returns>Created university object</returns>
         [HttpPost]
         [ProducesResponseType(typeof(UniversityResponseModel), 200)]
-        public async Task<UniversityResponseModel> Post(
+        public async Task<UniversityResponseModel> PostUniversity(
             [FromForm] UniversityRequestModel model,
             CancellationToken cancellationToken
             )
@@ -126,7 +126,7 @@ namespace Uni.WebApi.Controllers
         [HttpPut("{universityId:int:min(1)}")]
         [ProducesResponseType(typeof(UniversityResponseModel), 200)]
         [ProducesResponseType(404)]
-        public async Task<UniversityResponseModel> Put(
+        public async Task<UniversityResponseModel> PutUniversity(
             int universityId,
             [FromForm] UniversityRequestModel model,
             CancellationToken cancellationToken
@@ -160,7 +160,7 @@ namespace Uni.WebApi.Controllers
         [HttpDelete("{universityId:int:min(1)}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
-        public async Task Delete(
+        public async Task DeleteUniversity(
             int universityId,
             CancellationToken cancellationToken
             )

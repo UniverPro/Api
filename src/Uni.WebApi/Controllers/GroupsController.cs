@@ -42,7 +42,7 @@ namespace Uni.WebApi.Controllers
         /// <returns>List of group objects.</returns>
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<GroupResponseModel>), 200)]
-        public async Task<IEnumerable<GroupResponseModel>> GetList(
+        public async Task<IEnumerable<GroupResponseModel>> GetGroups(
             [FromQuery] ListGroupsRequestModel model,
             CancellationToken cancellationToken
             )
@@ -67,7 +67,7 @@ namespace Uni.WebApi.Controllers
         [HttpGet("{groupId:int:min(1)}")]
         [ProducesResponseType(typeof(GroupResponseModel), 200)]
         [ProducesResponseType(404)]
-        public async Task<GroupResponseModel> Get(
+        public async Task<GroupResponseModel> GetGroup(
             int groupId,
             CancellationToken cancellationToken
             )
@@ -96,7 +96,7 @@ namespace Uni.WebApi.Controllers
         /// <returns>Created group object</returns>
         [HttpPost]
         [ProducesResponseType(typeof(GroupResponseModel), 200)]
-        public async Task<GroupResponseModel> Post(
+        public async Task<GroupResponseModel> PostGroup(
             [FromForm] GroupRequestModel model,
             CancellationToken cancellationToken
             )
@@ -130,7 +130,7 @@ namespace Uni.WebApi.Controllers
         [HttpPut("{groupId:int:min(1)}")]
         [ProducesResponseType(typeof(GroupResponseModel), 200)]
         [ProducesResponseType(404)]
-        public async Task<GroupResponseModel> Put(
+        public async Task<GroupResponseModel> PutGroup(
             int groupId,
             [FromForm] GroupRequestModel model,
             CancellationToken cancellationToken
@@ -164,7 +164,7 @@ namespace Uni.WebApi.Controllers
         [HttpDelete("{groupId:int:min(1)}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
-        public async Task Delete(
+        public async Task DeleteGroup(
             int groupId,
             CancellationToken cancellationToken
             )
