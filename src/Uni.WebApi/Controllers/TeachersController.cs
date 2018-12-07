@@ -6,6 +6,7 @@ using AutoMapper;
 using JetBrains.Annotations;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 using Uni.Core.Exceptions;
 using Uni.Infrastructure.CQRS.Commands.Teachers.CreateTeacher;
 using Uni.Infrastructure.CQRS.Commands.Teachers.RemoveTeacher;
@@ -41,6 +42,8 @@ namespace Uni.WebApi.Controllers
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>List of teacher objects.</returns>
         [HttpGet]
+        [SwaggerResponse(200, "Success", typeof(IEnumerable<TeacherResponseModel>))]
+        [SwaggerResponse(404, "Not Found")]
         public async Task<IEnumerable<TeacherResponseModel>> GetTeachers(
             [FromQuery] ListTeachersRequestModel model,
             CancellationToken cancellationToken
@@ -64,6 +67,8 @@ namespace Uni.WebApi.Controllers
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Teacher object</returns>
         [HttpGet("{teacherId:int:min(1)}")]
+        [SwaggerResponse(200, "Success", typeof(TeacherResponseModel))]
+        [SwaggerResponse(404, "Not Found")]
         public async Task<TeacherResponseModel> GetTeacher(int teacherId, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -89,6 +94,8 @@ namespace Uni.WebApi.Controllers
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Created teacher object</returns>
         [HttpPost]
+        [SwaggerResponse(200, "Success", typeof(TeacherResponseModel))]
+        [SwaggerResponse(404, "Not Found")]
         public async Task<TeacherResponseModel> PostTeacher(
             [FromForm] TeacherRequestModel model,
             CancellationToken cancellationToken
@@ -123,6 +130,8 @@ namespace Uni.WebApi.Controllers
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Updated teacher object</returns>
         [HttpPut("{teacherId:int:min(1)}")]
+        [SwaggerResponse(200, "Success", typeof(TeacherResponseModel))]
+        [SwaggerResponse(404, "Not Found")]
         public async Task<TeacherResponseModel> PutTeacher(
             int teacherId,
             [FromForm] TeacherRequestModel model,
@@ -157,6 +166,8 @@ namespace Uni.WebApi.Controllers
         /// <param name="cancellationToken">Cancellation token</param>
         /// <param name="teacherId">Teacher unique identifier</param>
         [HttpDelete("{teacherId:int:min(1)}")]
+        [SwaggerResponse(200, "Success")]
+        [SwaggerResponse(404, "Not Found")]
         public async Task DeleteTeacher(int teacherId, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();

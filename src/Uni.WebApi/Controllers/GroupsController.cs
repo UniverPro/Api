@@ -6,6 +6,7 @@ using AutoMapper;
 using JetBrains.Annotations;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 using Uni.Core.Exceptions;
 using Uni.Infrastructure.CQRS.Commands.Groups.CreateGroup;
 using Uni.Infrastructure.CQRS.Commands.Groups.RemoveGroup;
@@ -41,7 +42,8 @@ namespace Uni.WebApi.Controllers
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>List of group objects.</returns>
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<GroupResponseModel>), 200)]
+        [SwaggerResponse(200, "Success", typeof(IEnumerable<GroupResponseModel>))]
+        [SwaggerResponse(404, "Not Found")]
         public async Task<IEnumerable<GroupResponseModel>> GetGroups(
             [FromQuery] ListGroupsRequestModel model,
             CancellationToken cancellationToken
@@ -65,8 +67,8 @@ namespace Uni.WebApi.Controllers
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Group object</returns>
         [HttpGet("{groupId:int:min(1)}")]
-        [ProducesResponseType(typeof(GroupResponseModel), 200)]
-        [ProducesResponseType(404)]
+        [SwaggerResponse(200, "Success", typeof(GroupResponseModel))]
+        [SwaggerResponse(404, "Not Found")]
         public async Task<GroupResponseModel> GetGroup(
             int groupId,
             CancellationToken cancellationToken
@@ -95,7 +97,8 @@ namespace Uni.WebApi.Controllers
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Created group object</returns>
         [HttpPost]
-        [ProducesResponseType(typeof(GroupResponseModel), 200)]
+        [SwaggerResponse(200, "Success", typeof(GroupResponseModel))]
+        [SwaggerResponse(404, "Not Found")]
         public async Task<GroupResponseModel> PostGroup(
             [FromForm] GroupRequestModel model,
             CancellationToken cancellationToken
@@ -128,8 +131,8 @@ namespace Uni.WebApi.Controllers
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Updated group object</returns>
         [HttpPut("{groupId:int:min(1)}")]
-        [ProducesResponseType(typeof(GroupResponseModel), 200)]
-        [ProducesResponseType(404)]
+        [SwaggerResponse(200, "Success", typeof(GroupResponseModel))]
+        [SwaggerResponse(404, "Not Found")]
         public async Task<GroupResponseModel> PutGroup(
             int groupId,
             [FromForm] GroupRequestModel model,
@@ -162,8 +165,8 @@ namespace Uni.WebApi.Controllers
         /// <param name="groupId">Group unique identifier</param>
         /// <param name="cancellationToken">Cancellation token</param>
         [HttpDelete("{groupId:int:min(1)}")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(404)]
+        [SwaggerResponse(200, "Success")]
+        [SwaggerResponse(404, "Not Found")]
         public async Task DeleteGroup(
             int groupId,
             CancellationToken cancellationToken

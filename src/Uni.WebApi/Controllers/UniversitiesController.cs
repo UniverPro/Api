@@ -6,6 +6,7 @@ using AutoMapper;
 using JetBrains.Annotations;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 using Uni.Core.Exceptions;
 using Uni.Infrastructure.CQRS.Commands.Universities.CreateUniversity;
 using Uni.Infrastructure.CQRS.Commands.Universities.RemoveUniversity;
@@ -41,7 +42,8 @@ namespace Uni.WebApi.Controllers
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>List of university objects.</returns>
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<UniversityResponseModel>), 200)]
+        [SwaggerResponse(200, "Success", typeof(IEnumerable<UniversityResponseModel>))]
+        [SwaggerResponse(404, "Not Found")]
         public async Task<IEnumerable<UniversityResponseModel>> GetUniversities(
             [FromQuery] ListUniversitiesRequestModel model,
             CancellationToken cancellationToken
@@ -65,8 +67,8 @@ namespace Uni.WebApi.Controllers
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>University object</returns>
         [HttpGet("{universityId:int:min(1)}")]
-        [ProducesResponseType(typeof(UniversityResponseModel), 200)]
-        [ProducesResponseType(404)]
+        [SwaggerResponse(200, "Success", typeof(UniversityResponseModel))]
+        [SwaggerResponse(404, "Not Found")]
         public async Task<UniversityResponseModel> GetUniversity(
             int universityId,
             CancellationToken cancellationToken
@@ -95,7 +97,8 @@ namespace Uni.WebApi.Controllers
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Created university object</returns>
         [HttpPost]
-        [ProducesResponseType(typeof(UniversityResponseModel), 200)]
+        [SwaggerResponse(200, "Success", typeof(UniversityResponseModel))]
+        [SwaggerResponse(404, "Not Found")]
         public async Task<UniversityResponseModel> PostUniversity(
             [FromForm] UniversityRequestModel model,
             CancellationToken cancellationToken
@@ -124,8 +127,8 @@ namespace Uni.WebApi.Controllers
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Updated university object</returns>
         [HttpPut("{universityId:int:min(1)}")]
-        [ProducesResponseType(typeof(UniversityResponseModel), 200)]
-        [ProducesResponseType(404)]
+        [SwaggerResponse(200, "Success", typeof(UniversityResponseModel))]
+        [SwaggerResponse(404, "Not Found")]
         public async Task<UniversityResponseModel> PutUniversity(
             int universityId,
             [FromForm] UniversityRequestModel model,
@@ -158,8 +161,8 @@ namespace Uni.WebApi.Controllers
         /// <param name="universityId">University unique identifier</param>
         /// <param name="cancellationToken">Cancellation token</param>
         [HttpDelete("{universityId:int:min(1)}")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(404)]
+        [SwaggerResponse(200, "Success")]
+        [SwaggerResponse(404, "Not Found")]
         public async Task DeleteUniversity(
             int universityId,
             CancellationToken cancellationToken

@@ -6,6 +6,7 @@ using AutoMapper;
 using JetBrains.Annotations;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 using Uni.Core.Exceptions;
 using Uni.Infrastructure.CQRS.Commands.Subjects.CreateSubject;
 using Uni.Infrastructure.CQRS.Commands.Subjects.RemoveSubject;
@@ -41,6 +42,8 @@ namespace Uni.WebApi.Controllers
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>List of subject objects.</returns>
         [HttpGet]
+        [SwaggerResponse(200, "Success", typeof(IEnumerable<SubjectResponseModel>))]
+        [SwaggerResponse(404, "Not Found")]
         public async Task<IEnumerable<SubjectResponseModel>> GetSubjects(
             [FromQuery] ListSubjectsRequestModel model,
             CancellationToken cancellationToken
@@ -64,6 +67,8 @@ namespace Uni.WebApi.Controllers
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Subject object</returns>
         [HttpGet("{subjectId:int:min(1)}")]
+        [SwaggerResponse(200, "Success", typeof(SubjectResponseModel))]
+        [SwaggerResponse(404, "Not Found")]
         public async Task<SubjectResponseModel> GetSubject(int subjectId, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -89,6 +94,8 @@ namespace Uni.WebApi.Controllers
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Created subject object</returns>
         [HttpPost]
+        [SwaggerResponse(200, "Success", typeof(SubjectResponseModel))]
+        [SwaggerResponse(404, "Not Found")]
         public async Task<SubjectResponseModel> PostSubject(
             [FromForm] SubjectRequestModel model,
             CancellationToken cancellationToken
@@ -120,6 +127,8 @@ namespace Uni.WebApi.Controllers
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Updated subject object</returns>
         [HttpPut("{subjectId:int:min(1)}")]
+        [SwaggerResponse(200, "Success", typeof(SubjectResponseModel))]
+        [SwaggerResponse(404, "Not Found")]
         public async Task<SubjectResponseModel> PutSubject(
             int subjectId,
             [FromForm] SubjectRequestModel model,
@@ -151,6 +160,8 @@ namespace Uni.WebApi.Controllers
         /// <param name="cancellationToken">Cancellation token</param>
         /// <param name="subjectId">Subject unique identifier</param>
         [HttpDelete("{subjectId:int:min(1)}")]
+        [SwaggerResponse(200, "Success")]
+        [SwaggerResponse(404, "Not Found")]
         public async Task DeleteSubject(int subjectId, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();

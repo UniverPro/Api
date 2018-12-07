@@ -6,6 +6,7 @@ using AutoMapper;
 using JetBrains.Annotations;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 using Uni.Core.Exceptions;
 using Uni.Infrastructure.CQRS.Commands.Faculties.CreateFaculty;
 using Uni.Infrastructure.CQRS.Commands.Faculties.RemoveFaculty;
@@ -41,8 +42,8 @@ namespace Uni.WebApi.Controllers
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>List of faculty objects.</returns>
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<FacultyResponseModel>), 200)]
-        [ProducesResponseType(404)]
+        [SwaggerResponse(200, "Success", typeof(IEnumerable<FacultyResponseModel>))]
+        [SwaggerResponse(404, "Not Found")]
         public async Task<IEnumerable<FacultyResponseModel>> GetFaculties(
             [FromQuery] ListFacultiesRequestModel model,
             CancellationToken cancellationToken
@@ -66,8 +67,8 @@ namespace Uni.WebApi.Controllers
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Faculty object</returns>
         [HttpGet("{facultyId:int:min(1)}")]
-        [ProducesResponseType(typeof(FacultyResponseModel), 200)]
-        [ProducesResponseType(404)]
+        [SwaggerResponse(200, "Success", typeof(FacultyResponseModel))]
+        [SwaggerResponse(404, "Not Found")]
         public async Task<FacultyResponseModel> GetFaculty(
             int facultyId,
             CancellationToken cancellationToken
@@ -96,7 +97,8 @@ namespace Uni.WebApi.Controllers
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Created faculty object</returns>
         [HttpPost]
-        [ProducesResponseType(typeof(FacultyResponseModel), 200)]
+        [SwaggerResponse(200, "Success", typeof(FacultyResponseModel))]
+        [SwaggerResponse(404, "Not Found")]
         public async Task<FacultyResponseModel> PostFaculty(
             [FromForm] FacultyRequestModel model,
             CancellationToken cancellationToken
@@ -129,8 +131,8 @@ namespace Uni.WebApi.Controllers
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Updated faculty object</returns>
         [HttpPut("{facultyId:int:min(1)}")]
-        [ProducesResponseType(typeof(FacultyResponseModel), 200)]
-        [ProducesResponseType(404)]
+        [SwaggerResponse(200, "Success", typeof(FacultyResponseModel))]
+        [SwaggerResponse(404, "Not Found")]
         public async Task<FacultyResponseModel> PutFaculty(
             int facultyId,
             [FromForm] FacultyRequestModel model,
@@ -164,8 +166,8 @@ namespace Uni.WebApi.Controllers
         /// <param name="facultyId">Faculty unique identifier</param>
         /// <param name="cancellationToken">Cancellation token</param>
         [HttpDelete("{facultyId:int:min(1)}")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(404)]
+        [SwaggerResponse(200, "Success")]
+        [SwaggerResponse(404, "Not Found")]
         public async Task DeleteFaculty(
             int facultyId,
             CancellationToken cancellationToken
