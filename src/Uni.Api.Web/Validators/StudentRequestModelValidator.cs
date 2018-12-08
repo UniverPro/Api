@@ -1,7 +1,7 @@
 ﻿using System;
 using FluentValidation;
 using JetBrains.Annotations;
-using Uni.Api.Web.Models.Requests;
+using Uni.Api.Shared.Requests;
 
 namespace Uni.Api.Web.Validators
 {

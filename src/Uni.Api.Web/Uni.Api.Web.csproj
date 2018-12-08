@@ -34,6 +34,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Uni.Api.Shared\Uni.Api.Shared.csproj" />
     <ProjectReference Include="..\Uni.DataAccess\Uni.DataAccess.csproj" />
     <ProjectReference Include="..\Uni.Infrastructure\Uni.Infrastructure.csproj" />
   </ItemGroup>
