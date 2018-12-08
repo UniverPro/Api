@@ -4,13 +4,13 @@ VisualStudioVersion = 15.0.28307.102
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{ECD4772D-2D4B-47B2-BCC8-C118F11110AD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uni.WebApi", "src\Uni.WebApi\Uni.WebApi.csproj", "{2A357BF3-4384-44CF-BDC9-F99D7CF16BA8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uni.Api.Web", "src\Uni.Api.Web\Uni.Api.Web.csproj", "{2A357BF3-4384-44CF-BDC9-F99D7CF16BA8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uni.DataAccess", "src\Uni.DataAccess\Uni.DataAccess.csproj", "{C440D1B4-70A3-4F46-970B-76EEFE3C1C07}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uni.Infrastructure", "src\Uni.Infrastructure\Uni.Infrastructure.csproj", "{2F06A395-3A69-4559-BD52-A7D711CB31C9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uni.Core", "src\Uni.Core\Uni.Core.csproj", "{91958F35-DBE4-4D03-8679-738280F1C7CE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uni.Core", "src\Uni.Core\Uni.Core.csproj", "{91958F35-DBE4-4D03-8679-738280F1C7CE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
