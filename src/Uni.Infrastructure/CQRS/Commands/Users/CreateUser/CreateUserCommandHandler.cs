@@ -5,6 +5,7 @@ using JetBrains.Annotations;
 using Uni.DataAccess.Contexts;
 using Uni.DataAccess.Models;
 using Uni.Infrastructure.Interfaces.CQRS.Commands;
+using Uni.Infrastructure.Interfaces.Services;
 
 namespace Uni.Infrastructure.CQRS.Commands.Users.CreateUser
 {
@@ -12,10 +13,12 @@ namespace Uni.Infrastructure.CQRS.Commands.Users.CreateUser
     public class CreateUserCommandHandler : ICommandHandler<CreateUserCommand, int>
     {
         private readonly UniDbContext _dbContext;
+        private readonly IPasswordHasher _passwordHasher;
 
-        public CreateUserCommandHandler([NotNull] UniDbContext dbContext)
+        public CreateUserCommandHandler([NotNull] UniDbContext dbContext, [NotNull] IPasswordHasher passwordHasher)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+            _passwordHasher = passwordHasher ?? throw new ArgumentNullException(nameof(passwordHasher));
         }
 
         public async Task<int> Handle(
@@ -32,7 +35,7 @@ namespace Uni.Infrastructure.CQRS.Commands.Users.CreateUser
                     var user = new User
                     {
                         Login = command.Login,
-                        Password = command.Password,
+                        Password = _passwordHasher.HashPassword(command.Password),
                         PersonId = command.PersonId
                     };
 

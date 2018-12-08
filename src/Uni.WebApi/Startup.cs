@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Uni.DataAccess.Contexts;
@@ -27,13 +28,13 @@ namespace Uni.WebApi
 {
     public class Startup
     {
+        private readonly IConfiguration _configuration;
+
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            _configuration = configuration;
         }
-
-        public IConfiguration Configuration { get; }
-
+        
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc(
@@ -56,16 +57,24 @@ namespace Uni.WebApi
                 typeof(QueriesMarker),
                 typeof(CommandsMarker)
             );
-
-            services.AddTransient<ErrorHandlingMiddleware>();
+            
             services.AddTransient<IBlobStorageUploader, AzureBlobStorageUploader>();
+            services.AddTransient<ErrorHandlingMiddleware>();
+            services.AddScoped<IPasswordHasher, PasswordHasher>();
+            services.AddScoped<IPasswordValidator, PasswordHasher>();
+            services.Configure<PasswordHasherOptions>(_configuration.GetSection("PasswordHasherOptions"));
+            services.AddScoped(resolver =>
+            {
+                var snapshot = resolver.GetRequiredService<IOptionsSnapshot<PasswordHasherOptions>>();
+                return snapshot.Value;
+            });
 
             services.AddEntityFrameworkSqlServer();
             services.AddDbContext<UniDbContext>(
                 x =>
                 {
                     x.UseSqlServer(
-                        Configuration.GetConnectionString("UniDbConnection"),
+                        _configuration.GetConnectionString("UniDbConnection"),
                         sql => sql.MigrationsAssembly(typeof(UniDbContext).Assembly.FullName)
                     );
                 }
