@@ -8,23 +8,24 @@ using IdentityServer4.Extensions;
 using IdentityServer4.Models;
 using IdentityServer4.Services;
 using JetBrains.Annotations;
-using Uni.DataAccess.Models;
+using Uni.Api.Client;
+using Uni.Api.Shared.Responses;
 
 namespace Uni.Identity.Web.Services.IdentityServer
 {
     public class ProfileService : IProfileService
     {
-        private readonly IUserService _userService;
+        private readonly IUniApiClient _uniApiClient;
 
-        public ProfileService([NotNull] IUserService userService)
+        public ProfileService([NotNull] IUniApiClient uniApiClient)
         {
-            _userService = userService ?? throw new ArgumentNullException(nameof(userService));
+            _uniApiClient = uniApiClient ?? throw new ArgumentNullException(nameof(uniApiClient));
         }
 
         public async Task GetProfileDataAsync(ProfileDataRequestContext context)
         {
             var userId = SubjectIdToInt(context.Subject.GetSubjectId());
-            var user = await _userService.FindUserByIdAsync(userId);
+            var user = await _uniApiClient.FindUserByIdAsync(userId);
             var claims = user.ToClaims();
             context.AddRequestedClaims(claims);
         }
@@ -32,8 +33,8 @@ namespace Uni.Identity.Web.Services.IdentityServer
         public async Task IsActiveAsync(IsActiveContext context)
         {
             var userId = SubjectIdToInt(context.Subject.GetSubjectId());
-            var user = await _userService.FindUserByIdAsync(userId);
-            context.IsActive = user != null /* && user.IsActive*/;
+            var dummy = await _uniApiClient.FindUserByIdAsync(userId);
+            context.IsActive = true /* && user.IsActive*/;
         }
 
         /// <summary>
@@ -60,23 +61,22 @@ namespace Uni.Identity.Web.Services.IdentityServer
 
     public static class PersonExtensions
     {
-        public static IEnumerable<Claim> ToClaims([NotNull] this Person person)
+        public static IEnumerable<Claim> ToClaims([NotNull] this UserResponseModel user)
         {
-            if (person == null)
+            if (user == null)
             {
-                throw new ArgumentNullException(nameof(person));
+                throw new ArgumentNullException(nameof(user));
             }
 
             var claims = new List<Claim>
             {
-                new Claim(JwtClaimTypes.GivenName, person.FirstName),
-                new Claim(JwtClaimTypes.FamilyName, person.LastName)
+                new Claim(JwtClaimTypes.PreferredUserName, user.Login)
             };
 
-            if (!string.IsNullOrWhiteSpace(person.AvatarPath))
-            {
-                claims.Add(new Claim(JwtClaimTypes.Picture, person.AvatarPath));
-            }
+            //if (!string.IsNullOrWhiteSpace(user.AvatarPath))
+            //{
+            //    claims.Add(new Claim(JwtClaimTypes.Picture, user.AvatarPath));
+            //}
 
             return claims;
         }

@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Uni.DataAccess.Models;
+using Uni.Api.Shared.Responses;
 using Uni.Identity.Web.ViewModels.Account.LoggedOut;
 using Uni.Identity.Web.ViewModels.Account.Login;
 using Uni.Identity.Web.ViewModels.Account.Logout;
@@ -26,13 +26,13 @@ namespace Uni.Identity.Web.Services.Account
         Task<LoginViewModel> BuildLoginViewModelAsync(LoginViewModel loginViewModel);
 
         /// <summary>
-        ///     Ищет пользователя по логину и паролю. Если пользователь найден - вернёт экземпляр <see cref="Person" />, если нет -
+        ///     Ищет пользователя по логину и паролю. Если пользователь найден - вернёт экземпляр <see cref="UserResponseModel" />, если нет -
         ///     <see langword="null" />.
         /// </summary>
         /// <param name="login">Логин пользователя.</param>
         /// <param name="password">Пароль пользователя.</param>
         /// <returns></returns>
-        Task<Person> FindUserAsync(string login, string password);
+        Task<UserResponseModel> FindUserAsync(string login, string password);
 
         /// <summary>
         ///     Создаёт модель данных для экрана выхода пользователя.

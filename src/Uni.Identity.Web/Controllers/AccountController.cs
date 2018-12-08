@@ -106,12 +106,14 @@ namespace Uni.Identity.Web.Controllers
                     .FindUserAsync(model.Username, model.Password);
                 if (user != null)
                 {
-                    var userName = user.FirstName;
+                    var userName = user.Login;
                     var subjectId = user.Id.ToString(CultureInfo.InvariantCulture);
                     await _events.RaiseAsync(new UserLoginSuccessEvent(
                         userName,
                         subjectId,
-                        userName));
+                        userName)
+                    );
+
                     // Явно устанавливаем окончание жизни кук, только если пользователь выбрал "Запомнить"
                     // в противном случае, срок жизни кук будет зависеть от настроек middleware, отвечающей за куки.
                     AuthenticationProperties props = null;

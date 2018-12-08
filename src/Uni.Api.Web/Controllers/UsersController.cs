@@ -51,9 +51,14 @@ namespace Uni.Api.Web.Controllers
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var query = _mapper.Map<FindUserByLoginAndPasswordQuery>(model);
+            var query = new FindUserByLoginAndPasswordQuery(model.Login, model.Password);
 
             var user = await _mediator.Send(query, cancellationToken);
+            
+            if (user == null)
+            {
+                throw new NotFoundException(nameof(user));
+            }
 
             var response = _mapper.Map<UserResponseModel>(user);
 

@@ -3,11 +3,11 @@ using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
-using LinqBuilder.EFCore;
 using Microsoft.EntityFrameworkCore;
 using Uni.DataAccess.Contexts;
 using Uni.DataAccess.Models;
 using Uni.Infrastructure.Interfaces.CQRS.Queries;
+using Uni.Infrastructure.Interfaces.Services;
 
 namespace Uni.Infrastructure.CQRS.Queries.Users.FindUserByLoginAndPassword
 {
@@ -15,10 +15,15 @@ namespace Uni.Infrastructure.CQRS.Queries.Users.FindUserByLoginAndPassword
     public class FindUserByLoginAndPasswordQueryHandler : IQueryHandler<FindUserByLoginAndPasswordQuery, User>
     {
         private readonly UniDbContext _dbContext;
+        private readonly IPasswordValidator _passwordValidator;
 
-        public FindUserByLoginAndPasswordQueryHandler([NotNull] UniDbContext dbContext)
+        public FindUserByLoginAndPasswordQueryHandler(
+            [NotNull] UniDbContext dbContext,
+            [NotNull] IPasswordValidator passwordValidator
+            )
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+            _passwordValidator = passwordValidator ?? throw new ArgumentNullException(nameof(passwordValidator));
         }
 
         public async Task<User> Handle(
@@ -28,8 +33,6 @@ namespace Uni.Infrastructure.CQRS.Queries.Users.FindUserByLoginAndPassword
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var specification = query.ToSpecification();
-
             using (var transaction =
                 await _dbContext.Database.BeginTransactionAsync(IsolationLevel.RepeatableRead, cancellationToken))
             {
@@ -38,7 +41,11 @@ namespace Uni.Infrastructure.CQRS.Queries.Users.FindUserByLoginAndPassword
                     var user = await _dbContext
                         .Users
                         .AsNoTracking()
-                        .SingleAsync(specification);
+                        .SingleOrDefaultAsync(
+                            x => EF.Functions.Like(x.Login, query.Login) &&
+                                 _passwordValidator.Verify(x.Password, query.Password),
+                            cancellationToken
+                        );
 
                     transaction.Commit();
                     return user;

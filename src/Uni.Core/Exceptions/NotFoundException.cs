@@ -5,14 +5,14 @@ namespace Uni.Core.Exceptions
 {
     public class NotFoundException : HttpStatusCodeException
     {
-        public NotFoundException([NotNull] string objectName, int id) : base(
+        public NotFoundException([NotNull] string objectName, int? id = null) : base(
             HttpStatusCode.NotFound,
-            $"The {objectName} with id={id} wasn't found"
+            $"The {objectName} {(id.HasValue ? $"with id={id}":"")} wasn't found"
         )
         {
             Id = id;
         }
 
-        public int Id { get; }
+        public int? Id { get; }
     }
 }

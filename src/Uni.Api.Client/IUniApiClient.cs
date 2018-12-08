@@ -38,8 +38,8 @@ namespace Uni.Api.Client
         [ItemNotNull]
         [Get("/users")]
         Task<UserResponseModel> FindUserByLoginAndPasswordAsync(
-            [NotNull] [Body(BodySerializationMethod.UrlEncoded)]
-            FindUserByLoginAndPasswordRequestModel request,
+            [NotNull] [AliasAs("login")] string login,
+            [NotNull] [AliasAs("password")] string password,
             CancellationToken token = default
             );
     }

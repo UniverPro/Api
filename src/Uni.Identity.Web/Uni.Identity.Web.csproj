@@ -32,7 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Uni.DataAccess\Uni.DataAccess.csproj" />
+    <ProjectReference Include="..\Uni.Api.Client\Uni.Api.Client.csproj" />
   </ItemGroup>
 
 </Project>

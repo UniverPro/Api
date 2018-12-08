@@ -1,5 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Uni.Identity.Web.Services;
+﻿using System;
+using Microsoft.Extensions.DependencyInjection;
+using Uni.Api.Client;
 using Uni.Identity.Web.Services.Account;
 using Uni.Identity.Web.Services.Consent;
 
@@ -19,7 +20,12 @@ namespace Uni.Identity.Web.Extensions.Installers
         {
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IConsentService, ConsentService>();
-            services.AddScoped<IUserService, UserService>();
+            services.AddUniApiClient()
+                .ConfigureHttpClient(x=>
+                    {
+                        x.BaseAddress = new Uri("http://localhost:5001/api/v1");
+                    }
+                );
             return services;
         }
     }

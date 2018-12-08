@@ -24,7 +24,6 @@ namespace Uni.Identity.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services
-                .InstallDbContext(_configuration.GetConnectionString("MainDatabase"))
                 .InstallDataProtection(
                     "backoffice_identity",
                     _configuration.GetValue<string>("DataProtectionDirectory"))

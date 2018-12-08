@@ -7,7 +7,9 @@ using IdentityServer4.Services;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
-using Uni.DataAccess.Models;
+using Uni.Api.Client;
+using Uni.Api.Shared.Requests.Filters;
+using Uni.Api.Shared.Responses;
 using Uni.Identity.Web.Configuration.Options;
 using Uni.Identity.Web.Configuration.Options.IdentityServer;
 using Uni.Identity.Web.ViewModels.Account.LoggedOut;
@@ -24,18 +26,18 @@ namespace Uni.Identity.Web.Services.Account
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IdentityServerCommonOptions _identityServerCommonOptions;
         private readonly IIdentityServerInteractionService _interaction;
-        private readonly IUserService _userService;
+        private readonly IUniApiClient _uniApiClient;
 
         public AccountService(
             IOptionsSnapshot<IdentityServerConfiguration> identityServerCommonOptions,
             [NotNull] IHttpContextAccessor contextAccessor,
-            [NotNull] IUserService userService,
+            [NotNull] IUniApiClient uniApiClient,
             [NotNull] IIdentityServerInteractionService interaction)
         {
             _identityServerCommonOptions = identityServerCommonOptions?.Value?.Common ??
                                            throw new ArgumentNullException(nameof(identityServerCommonOptions));
             _contextAccessor = contextAccessor ?? throw new ArgumentNullException(nameof(contextAccessor));
-            _userService = userService ?? throw new ArgumentNullException(nameof(userService));
+            _uniApiClient = uniApiClient ?? throw new ArgumentNullException(nameof(uniApiClient));
             _interaction = interaction ?? throw new ArgumentNullException(nameof(interaction));
         }
 
@@ -65,14 +67,14 @@ namespace Uni.Identity.Web.Services.Account
             return newViewModel;
         }
 
-        public async Task<Person> FindUserAsync(string login, string password)
+        public async Task<UserResponseModel> FindUserAsync(string login, string password)
         {
             if (string.IsNullOrEmpty(login))
             {
                 return null;
             }
 
-            return await _userService.FindAsync(login, password);
+            return await _uniApiClient.FindUserByLoginAndPasswordAsync(login, password);
         }
 
         public async Task<LogoutViewModel> BuildLogoutViewModelAsync(string logoutId)
