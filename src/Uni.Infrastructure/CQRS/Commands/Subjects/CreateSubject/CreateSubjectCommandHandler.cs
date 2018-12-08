@@ -28,6 +28,7 @@ namespace Uni.Infrastructure.CQRS.Commands.Subjects.CreateSubject
             {
                 try
                 {
+                    // TODO: Check if GroupId exists
                     var subject = new Subject
                     {
                         Name = command.Name,

@@ -14,6 +14,7 @@ using Uni.Infrastructure.CQRS.Commands.Subjects.UpdateSubject;
 using Uni.Infrastructure.CQRS.Queries.Subjects.FindSubjectById;
 using Uni.Infrastructure.CQRS.Queries.Subjects.FindSubjects;
 using Uni.WebApi.Models.Requests;
+using Uni.WebApi.Models.Requests.Filters;
 using Uni.WebApi.Models.Responses;
 
 namespace Uni.WebApi.Controllers

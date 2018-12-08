@@ -1,7 +1,9 @@
 ﻿using System;
+using JetBrains.Annotations;
 
-namespace Uni.WebApi.Models.Requests
+namespace Uni.WebApi.Models.Requests.Filters
 {
+    [PublicAPI]
     public class ListSchedulesRequestModel
     {
         /// <summary>

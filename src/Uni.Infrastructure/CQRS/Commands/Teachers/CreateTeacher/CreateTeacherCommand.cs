@@ -9,6 +9,7 @@ namespace Uni.Infrastructure.CQRS.Commands.Teachers.CreateTeacher
             string firstName,
             string lastName,
             string middleName,
+            string email,
             IFormFile avatar,
             int facultyId
             )
@@ -16,6 +17,7 @@ namespace Uni.Infrastructure.CQRS.Commands.Teachers.CreateTeacher
             FirstName = firstName;
             LastName = lastName;
             MiddleName = middleName;
+            Email = email;
             Avatar = avatar;
             FacultyId = facultyId;
         }
@@ -25,6 +27,8 @@ namespace Uni.Infrastructure.CQRS.Commands.Teachers.CreateTeacher
         public string LastName { get; }
 
         public string MiddleName { get; }
+
+        public string Email { get; }
 
         public IFormFile Avatar { get; }
 

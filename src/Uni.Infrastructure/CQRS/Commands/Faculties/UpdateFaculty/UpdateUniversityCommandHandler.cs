@@ -39,7 +39,8 @@ namespace Uni.Infrastructure.CQRS.Commands.Faculties.UpdateFaculty
                     {
                         throw new NotFoundException(nameof(faculty), command.Id);
                     }
-
+                    
+                    // TODO: check UniversityId exists
                     faculty.UniversityId = command.UniversityId;
                     faculty.Description = command.Description;
                     faculty.ShortName = command.ShortName;

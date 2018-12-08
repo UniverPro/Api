@@ -1,7 +1,15 @@
-﻿namespace Uni.WebApi.Models.Requests
+﻿using JetBrains.Annotations;
+
+namespace Uni.WebApi.Models.Requests.Filters
 {
-    public class ListUniversitiesRequestModel
+    [PublicAPI]
+    public class ListFacultiesRequestModel
     {
+        /// <summary>
+        ///     Filters results by university if value set
+        /// </summary>
+        public int? UniversityId { get; set; }
+
         /// <summary>
         ///     Filters results by name if value set
         /// </summary>

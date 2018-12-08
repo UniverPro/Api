@@ -10,14 +10,8 @@ namespace Uni.DataAccess.Configurations
     {
         public void Configure(EntityTypeBuilder<Schedule> builder)
         {
-            builder.ToTable("Schedule");
-
-            builder.Property(e => e.Id)
-                .ValueGeneratedOnAdd();
-
-            builder.Property(e => e.StartTime)
-                .HasColumnType("datetime");
-
+            builder.ToTable(nameof(Schedule));
+            
             builder.HasOne(d => d.Subject)
                 .WithMany(p => p.Schedules)
                 .HasForeignKey(d => d.SubjectId)

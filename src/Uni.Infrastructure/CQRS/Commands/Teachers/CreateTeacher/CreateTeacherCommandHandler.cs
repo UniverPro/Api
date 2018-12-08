@@ -34,11 +34,13 @@ namespace Uni.Infrastructure.CQRS.Commands.Teachers.CreateTeacher
             {
                 try
                 {
+                    // TODO: Check if FacultyId exists
                     var teacher = new Teacher
                     {
                         FirstName = command.FirstName,
                         LastName = command.LastName,
                         MiddleName = command.MiddleName,
+                        Email = command.Email,
                         FacultyId = command.FacultyId
                     };
 

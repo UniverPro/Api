@@ -10,6 +10,7 @@ namespace Uni.Infrastructure.CQRS.Commands.Students.UpdateStudent
             string firstName,
             string lastName,
             string middleName,
+            string email,
             IFormFile avatar,
             int groupId
             )
@@ -18,6 +19,7 @@ namespace Uni.Infrastructure.CQRS.Commands.Students.UpdateStudent
             FirstName = firstName;
             LastName = lastName;
             MiddleName = middleName;
+            Email = email;
             Avatar = avatar;
             GroupId = groupId;
         }
@@ -29,6 +31,8 @@ namespace Uni.Infrastructure.CQRS.Commands.Students.UpdateStudent
         public string LastName { get; }
 
         public string MiddleName { get; }
+
+        public string Email { get; }
 
         public IFormFile Avatar { get; }
 

@@ -28,6 +28,7 @@ namespace Uni.Infrastructure.CQRS.Commands.Schedules.CreateSchedule
             {
                 try
                 {
+                    // TODO: check SubjectId & TeacherId exists
                     var schedule = new Schedule
                     {
                         SubjectId = command.SubjectId,

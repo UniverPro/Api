@@ -14,6 +14,7 @@ using Uni.Infrastructure.CQRS.Commands.Groups.UpdateGroup;
 using Uni.Infrastructure.CQRS.Queries.Groups.FindGroupById;
 using Uni.Infrastructure.CQRS.Queries.Groups.FindGroups;
 using Uni.WebApi.Models.Requests;
+using Uni.WebApi.Models.Requests.Filters;
 using Uni.WebApi.Models.Responses;
 
 namespace Uni.WebApi.Controllers

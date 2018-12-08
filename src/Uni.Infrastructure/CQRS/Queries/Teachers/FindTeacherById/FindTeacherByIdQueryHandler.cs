@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
+using Uni.DataAccess;
 using Uni.DataAccess.Contexts;
 using Uni.DataAccess.Models;
 using Uni.Infrastructure.Interfaces.CQRS.Queries;
@@ -33,6 +34,7 @@ namespace Uni.Infrastructure.CQRS.Queries.Teachers.FindTeacherById
                 {
                     var teacher = await _dbContext
                         .Teachers
+                        .IncludeDefault()
                         .AsNoTracking()
                         .SingleOrDefaultAsync(x => x.Id == query.TeacherId, cancellationToken);
 

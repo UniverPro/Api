@@ -11,7 +11,7 @@ namespace Uni.DataAccess.Configurations
     {
         public void Configure(EntityTypeBuilder<Faculty> builder)
         {
-            builder.ToTable("Faculty");
+            builder.ToTable(nameof(Faculty));
 
             builder.HasIndex(e => e.Name);
 
@@ -19,7 +19,8 @@ namespace Uni.DataAccess.Configurations
                 .IsRequired()
                 .HasMaxLength(Consts.MaxNameLength);
 
-            builder.Property(e => e.ShortName).HasMaxLength(50);
+            builder.Property(e => e.ShortName)
+                .HasMaxLength(Consts.MaxShortNameLength);
 
             builder.HasOne(d => d.University)
                 .WithMany(p => p.Faculties)

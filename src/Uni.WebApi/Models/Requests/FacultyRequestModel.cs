@@ -1,8 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using JetBrains.Annotations;
 
 namespace Uni.WebApi.Models.Requests
 {
-    [JsonObject]
+    [PublicAPI]
     public class FacultyRequestModel
     {
         public int UniversityId { get; set; }

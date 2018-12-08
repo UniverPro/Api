@@ -45,10 +45,12 @@ namespace Uni.Infrastructure.CQRS.Commands.Teachers.UpdateTeacher
                     {
                         throw new NotFoundException(nameof(teacher), command.Id);
                     }
-
+                    
+                    // TODO: Check if FacultyId exists
                     teacher.FirstName = command.FirstName;
                     teacher.LastName = command.LastName;
                     teacher.MiddleName = command.MiddleName;
+                    teacher.Email = command.Email;
                     teacher.FacultyId = command.FacultyId;
 
                     await _dbContext.SaveChangesAsync(cancellationToken);

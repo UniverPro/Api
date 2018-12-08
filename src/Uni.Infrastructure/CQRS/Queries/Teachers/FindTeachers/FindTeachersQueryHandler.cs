@@ -7,6 +7,7 @@ using JetBrains.Annotations;
 using LinqBuilder.Core;
 using Microsoft.EntityFrameworkCore;
 using Uni.Core.Exceptions;
+using Uni.DataAccess;
 using Uni.DataAccess.Contexts;
 using Uni.DataAccess.Models;
 using Uni.Infrastructure.Interfaces.CQRS.Queries;
@@ -54,6 +55,7 @@ namespace Uni.Infrastructure.CQRS.Queries.Teachers.FindTeachers
 
                     var teachers = await _dbContext
                         .Teachers
+                        .IncludeDefault()
                         .AsNoTracking()
                         .ExeSpec(specification)
                         .ToListAsync(cancellationToken);

@@ -79,6 +79,9 @@ namespace Uni.DataAccess.Migrations.UniDb
                     b.Property<string>("Discriminator")
                         .IsRequired();
 
+                    b.Property<string>("Email")
+                        .HasMaxLength(254);
+
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(255);
@@ -91,6 +94,10 @@ namespace Uni.DataAccess.Migrations.UniDb
                         .HasMaxLength(255);
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique()
+                        .HasFilter("[Email] IS NOT NULL");
 
                     b.ToTable("Person");
 
@@ -109,8 +116,7 @@ namespace Uni.DataAccess.Migrations.UniDb
 
                     b.Property<string>("LessonType");
 
-                    b.Property<DateTime>("StartTime")
-                        .HasColumnType("datetime");
+                    b.Property<DateTime>("StartTime");
 
                     b.Property<int>("SubjectId");
 
@@ -167,6 +173,32 @@ namespace Uni.DataAccess.Migrations.UniDb
                         .IsUnique();
 
                     b.ToTable("University");
+                });
+
+            modelBuilder.Entity("Uni.DataAccess.Models.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Login")
+                        .IsRequired()
+                        .HasMaxLength(254);
+
+                    b.Property<string>("Password")
+                        .IsRequired();
+
+                    b.Property<int>("PersonId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Login")
+                        .IsUnique();
+
+                    b.HasIndex("PersonId")
+                        .IsUnique();
+
+                    b.ToTable("User");
                 });
 
             modelBuilder.Entity("Uni.DataAccess.Models.Student", b =>
@@ -231,6 +263,14 @@ namespace Uni.DataAccess.Migrations.UniDb
                         .WithMany("Subjects")
                         .HasForeignKey("GroupId")
                         .HasConstraintName("FK_Subject_Group");
+                });
+
+            modelBuilder.Entity("Uni.DataAccess.Models.User", b =>
+                {
+                    b.HasOne("Uni.DataAccess.Models.Person", "Person")
+                        .WithOne("User")
+                        .HasForeignKey("Uni.DataAccess.Models.User", "PersonId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Uni.DataAccess.Models.Student", b =>

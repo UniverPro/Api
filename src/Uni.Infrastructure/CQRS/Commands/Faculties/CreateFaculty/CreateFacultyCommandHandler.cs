@@ -28,6 +28,7 @@ namespace Uni.Infrastructure.CQRS.Commands.Faculties.CreateFaculty
             {
                 try
                 {
+                    // TODO: check UniversityId exists
                     var faculty = new Faculty
                     {
                         UniversityId = command.UniversityId,

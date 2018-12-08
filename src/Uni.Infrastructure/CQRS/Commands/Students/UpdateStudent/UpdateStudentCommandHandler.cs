@@ -42,10 +42,12 @@ namespace Uni.Infrastructure.CQRS.Commands.Students.UpdateStudent
                     {
                         throw new NotFoundException(nameof(student), command.Id);
                     }
-
+                    
+                    // TODO: Check if GroupId exists
                     student.FirstName = command.FirstName;
                     student.LastName = command.LastName;
                     student.MiddleName = command.MiddleName;
+                    student.Email = command.Email;
                     student.GroupId = command.GroupId;
 
                     await _dbContext.SaveChangesAsync(cancellationToken);

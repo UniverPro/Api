@@ -11,7 +11,7 @@ namespace Uni.DataAccess.Configurations
     {
         public void Configure(EntityTypeBuilder<University> builder)
         {
-            builder.ToTable("University");
+            builder.ToTable(nameof(University));
 
             builder.HasIndex(e => e.Name)
                 .IsUnique();
@@ -21,7 +21,7 @@ namespace Uni.DataAccess.Configurations
                 .HasMaxLength(Consts.MaxNameLength);
 
             builder.Property(e => e.ShortName)
-                .HasMaxLength(50);
+                .HasMaxLength(Consts.MaxShortNameLength);
         }
     }
 }

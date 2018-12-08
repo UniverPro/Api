@@ -14,6 +14,7 @@ using Uni.Infrastructure.CQRS.Commands.Faculties.UpdateFaculty;
 using Uni.Infrastructure.CQRS.Queries.Faculties.FindFaculties;
 using Uni.Infrastructure.CQRS.Queries.Faculties.FindFacultyById;
 using Uni.WebApi.Models.Requests;
+using Uni.WebApi.Models.Requests.Filters;
 using Uni.WebApi.Models.Responses;
 
 namespace Uni.WebApi.Controllers

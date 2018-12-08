@@ -14,6 +14,7 @@ using Uni.Infrastructure.CQRS.Commands.Schedules.UpdateSchedule;
 using Uni.Infrastructure.CQRS.Queries.Schedules.FindScheduleById;
 using Uni.Infrastructure.CQRS.Queries.Schedules.FindSchedules;
 using Uni.WebApi.Models.Requests;
+using Uni.WebApi.Models.Requests.Filters;
 using Uni.WebApi.Models.Responses;
 
 namespace Uni.WebApi.Controllers

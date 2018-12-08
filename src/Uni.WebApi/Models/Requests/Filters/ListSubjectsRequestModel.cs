@@ -1,5 +1,8 @@
-﻿namespace Uni.WebApi.Models.Requests
+﻿using JetBrains.Annotations;
+
+namespace Uni.WebApi.Models.Requests.Filters
 {
+    [PublicAPI]
     public class ListSubjectsRequestModel
     {
         /// <summary>

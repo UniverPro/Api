@@ -11,7 +11,7 @@ namespace Uni.DataAccess.Configurations
     {
         public void Configure(EntityTypeBuilder<Group> builder)
         {
-            builder.ToTable("Group");
+            builder.ToTable(nameof(Group));
 
             builder.HasIndex(e => e.Name);
 

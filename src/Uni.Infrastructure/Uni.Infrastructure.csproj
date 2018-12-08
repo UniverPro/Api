@@ -12,6 +12,7 @@
     <PackageReference Include="LinqBuilder.EFCore" Version="0.13.0" />
     <PackageReference Include="LinqBuilder.OrderBy" Version="0.13.0" />
     <PackageReference Include="MediatR" Version="5.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Cryptography.KeyDerivation" Version="2.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="2.1.1" />
     <PackageReference Include="WindowsAzure.Storage" Version="9.3.3" />
   </ItemGroup>

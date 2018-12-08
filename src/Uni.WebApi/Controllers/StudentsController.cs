@@ -14,6 +14,7 @@ using Uni.Infrastructure.CQRS.Commands.Students.UpdateStudent;
 using Uni.Infrastructure.CQRS.Queries.Students.FindStudentById;
 using Uni.Infrastructure.CQRS.Queries.Students.FindStudents;
 using Uni.WebApi.Models.Requests;
+using Uni.WebApi.Models.Requests.Filters;
 using Uni.WebApi.Models.Responses;
 
 namespace Uni.WebApi.Controllers
@@ -107,6 +108,7 @@ namespace Uni.WebApi.Controllers
                 model.FirstName,
                 model.LastName,
                 model.MiddleName,
+                model.Email,
                 model.Avatar,
                 model.GroupId
             );
@@ -145,6 +147,7 @@ namespace Uni.WebApi.Controllers
                 model.FirstName,
                 model.LastName,
                 model.MiddleName,
+                model.Email,
                 model.Avatar,
                 model.GroupId
             );

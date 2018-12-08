@@ -39,7 +39,8 @@ namespace Uni.Infrastructure.CQRS.Commands.Subjects.UpdateSubject
                     {
                         throw new NotFoundException(nameof(subject), command.Id);
                     }
-
+                    
+                    // TODO: Check if GroupId exists
                     subject.Name = command.Name;
                     subject.GroupId = command.GroupId;
 

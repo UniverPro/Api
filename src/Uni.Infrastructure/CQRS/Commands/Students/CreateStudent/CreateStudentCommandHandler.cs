@@ -34,11 +34,13 @@ namespace Uni.Infrastructure.CQRS.Commands.Students.CreateStudent
             {
                 try
                 {
+                    // TODO: Check if GroupId exists
                     var student = new Student
                     {
                         FirstName = command.FirstName,
                         LastName = command.LastName,
                         MiddleName = command.MiddleName,
+                        Email = command.Email,
                         GroupId = command.GroupId
                     };
                     

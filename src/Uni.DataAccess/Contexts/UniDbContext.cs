@@ -15,6 +15,8 @@ namespace Uni.DataAccess.Contexts
             : base(options)
         {
         }
+        
+        public virtual DbSet<User> Users { get; set; }
 
         public virtual DbSet<Faculty> Faculties { get; set; }
 

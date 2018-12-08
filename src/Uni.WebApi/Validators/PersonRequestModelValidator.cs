@@ -25,6 +25,15 @@ namespace Uni.WebApi.Validators
                         .NotEmpty()
                         .MaximumLength(Consts.MaxNameLength)
             );
+
+            When(
+                x => !string.IsNullOrEmpty(x.Email),
+                () =>
+                    RuleFor(x => x.Email)
+                        .NotEmpty()
+                        .MaximumLength(Consts.MaxEmailLength)
+                        .EmailAddress()
+            );
         }
     }
 }

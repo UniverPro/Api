@@ -1,8 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using JetBrains.Annotations;
 
 namespace Uni.WebApi.Models.Requests
 {
-    [JsonObject]
+    [PublicAPI]
     public class SubjectRequestModel
     {
         public int GroupId { get; set; }

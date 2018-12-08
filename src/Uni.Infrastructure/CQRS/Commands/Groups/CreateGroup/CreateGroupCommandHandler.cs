@@ -28,6 +28,7 @@ namespace Uni.Infrastructure.CQRS.Commands.Groups.CreateGroup
             {
                 try
                 {
+                    // TODO: check FacultyId exists
                     var group = new Group
                     {
                         Name = command.Name,

@@ -16,6 +16,7 @@ namespace Uni.Infrastructure.CQRS.Queries.Students.FindStudents
             [CanBeNull] string firstName,
             [CanBeNull] string lastName,
             [CanBeNull] string middleName,
+            [CanBeNull] string email,
             [CanBeNull] string avatarPath
             )
         {
@@ -23,6 +24,7 @@ namespace Uni.Infrastructure.CQRS.Queries.Students.FindStudents
             FirstName = firstName;
             LastName = lastName;
             MiddleName = middleName;
+            Email = email;
             AvatarPath = avatarPath;
         }
 
@@ -33,6 +35,8 @@ namespace Uni.Infrastructure.CQRS.Queries.Students.FindStudents
         public string LastName { get; }
 
         public string MiddleName { get; }
+
+        public string Email { get; }
 
         public string AvatarPath { get; }
 
@@ -64,6 +68,13 @@ namespace Uni.Infrastructure.CQRS.Queries.Students.FindStudents
             {
                 specification = specification.And(
                     Spec<Student>.New(x => EF.Functions.Like(x.MiddleName, $"%{MiddleName}%"))
+                );
+            }
+            
+            if (!string.IsNullOrEmpty(Email))
+            {
+                specification = specification.And(
+                    Spec<Student>.New(x => EF.Functions.Like(x.Email, $"%{Email}%"))
                 );
             }
 
