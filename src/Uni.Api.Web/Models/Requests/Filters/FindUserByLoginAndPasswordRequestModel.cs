@@ -2,12 +2,12 @@
 
 namespace Uni.Api.Web.Models.Requests.Filters
 {
+    // TODO: add validator
     [PublicAPI]
-    public class ListUsersRequestModel
+    public class FindUserByLoginAndPasswordRequestModel
     {
-        /// <summary>
-        ///     Filters results by logins if value set
-        /// </summary>
         public string Login { get; set; }
+        
+        public string Password { get; set; }
     }
 }

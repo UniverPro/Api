@@ -12,10 +12,10 @@ using Uni.Infrastructure.CQRS.Commands.Users.CreateUser;
 using Uni.Infrastructure.CQRS.Commands.Users.RemoveUser;
 using Uni.Infrastructure.CQRS.Commands.Users.UpdateUser;
 using Uni.Infrastructure.CQRS.Queries.Users.FindUserById;
-using Uni.Infrastructure.CQRS.Queries.Users.FindUsers;
 using Uni.Api.Web.Models.Requests;
 using Uni.Api.Web.Models.Requests.Filters;
 using Uni.Api.Web.Models.Responses;
+using Uni.Infrastructure.CQRS.Queries.Users.FindUserByLoginAndPassword;
 
 namespace Uni.Api.Web.Controllers
 {
@@ -37,25 +37,25 @@ namespace Uni.Api.Web.Controllers
         }
 
         /// <summary>
-        ///     Get all users
+        ///     Searches the user by login and password
         /// </summary>
         /// <param name="model">Query specific filters</param>
         /// <param name="cancellationToken">Cancellation token</param>
-        /// <returns>List of user objects.</returns>
+        /// <returns>User object</returns>
         [HttpGet]
         [SwaggerResponse(200, "Success", typeof(IEnumerable<UserResponseModel>))]
-        public async Task<IEnumerable<UserResponseModel>> GetUsers(
-            [FromQuery] ListUsersRequestModel model,
+        public async Task<UserResponseModel> GetUserByLoginAndPassword(
+            [FromQuery] FindUserByLoginAndPasswordRequestModel model,
             CancellationToken cancellationToken
             )
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var query = _mapper.Map<FindUsersQuery>(model);
+            var query = _mapper.Map<FindUserByLoginAndPasswordQuery>(model);
 
-            var users = await _mediator.Send(query, cancellationToken);
+            var user = await _mediator.Send(query, cancellationToken);
 
-            var response = _mapper.Map<IEnumerable<UserResponseModel>>(users);
+            var response = _mapper.Map<UserResponseModel>(user);
 
             return response;
         }

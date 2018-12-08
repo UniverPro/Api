@@ -1,29 +1,28 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
-using LinqBuilder.Core;
+using LinqBuilder.EFCore;
 using Microsoft.EntityFrameworkCore;
 using Uni.DataAccess.Contexts;
 using Uni.DataAccess.Models;
 using Uni.Infrastructure.Interfaces.CQRS.Queries;
 
-namespace Uni.Infrastructure.CQRS.Queries.Users.FindUsers
+namespace Uni.Infrastructure.CQRS.Queries.Users.FindUserByLoginAndPassword
 {
     [UsedImplicitly]
-    public class FindUsersQueryHandler : IQueryHandler<FindUsersQuery, IEnumerable<User>>
+    public class FindUserByLoginAndPasswordQueryHandler : IQueryHandler<FindUserByLoginAndPasswordQuery, User>
     {
         private readonly UniDbContext _dbContext;
 
-        public FindUsersQueryHandler([NotNull] UniDbContext dbContext)
+        public FindUserByLoginAndPasswordQueryHandler([NotNull] UniDbContext dbContext)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         }
 
-        public async Task<IEnumerable<User>> Handle(
-            FindUsersQuery query,
+        public async Task<User> Handle(
+            FindUserByLoginAndPasswordQuery query,
             CancellationToken cancellationToken
             )
         {
@@ -36,14 +35,13 @@ namespace Uni.Infrastructure.CQRS.Queries.Users.FindUsers
             {
                 try
                 {
-                    var faculties = await _dbContext
+                    var user = await _dbContext
                         .Users
                         .AsNoTracking()
-                        .ExeSpec(specification)
-                        .ToListAsync(cancellationToken);
+                        .SingleAsync(specification);
 
                     transaction.Commit();
-                    return faculties;
+                    return user;
                 }
                 catch
                 {
