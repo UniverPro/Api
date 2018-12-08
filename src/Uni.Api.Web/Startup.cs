@@ -5,11 +5,14 @@ using System.Reflection;
 using AutoMapper;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using IdentityServer4.AccessTokenValidation;
 using MediatR;
 using MicroElements.Swashbuckle.FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -50,6 +53,12 @@ namespace Uni.Api.Web
                     )
                 )
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            
+            services.Configure<RouteOptions>(options =>
+            {
+                options.LowercaseUrls = true;
+                options.AppendTrailingSlash = false;
+            });
 
             services.AddAutoMapper();
 
@@ -80,8 +89,32 @@ namespace Uni.Api.Web
                 }
             );
 
-            // Automatically perform database migration
-            services.BuildServiceProvider().GetService<UniDbContext>().Database.Migrate();
+            services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
+                .AddIdentityServerAuthentication(
+                    options =>
+                    {
+                        options.Authority = "http://localhost:5000";
+                        options.RequireHttpsMetadata = false;
+                        options.SupportedTokens = SupportedTokens.Reference;
+                        options.ApiName = "api_main";
+                        options.ApiSecret = "api_main_secret";
+                    }
+                );
+
+            services.AddAuthorization(
+                options =>
+                {
+                    var builder =
+                        new AuthorizationPolicyBuilder(IdentityServerAuthenticationDefaults.AuthenticationScheme);
+                    var policy = builder
+                        .RequireAuthenticatedUser()
+                        .RequireScope("api_main_scope")
+                        .Build();
+
+                    options.AddPolicy("Application", policy);
+                    options.DefaultPolicy = policy;
+                }
+            );
 
             // Configure versions 
             services.AddApiVersioning(
@@ -112,11 +145,7 @@ namespace Uni.Api.Web
 
                     var xmlPath = Path.Combine(AppContext.BaseDirectory, "Uni.Api.Web.xml");
                     options.IncludeXmlComments(xmlPath);
-
-                    options.DescribeAllEnumsAsStrings();
-
                     options.OperationFilter<RemoveVersionFromParameter>();
-
                     options.DocumentFilter<ReplaceVersionWithExactValueInPath>();
 
                     options.DocInclusionPredicate(
@@ -138,20 +167,27 @@ namespace Uni.Api.Web
             );
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(
+            IApplicationBuilder app,
+            IHostingEnvironment env
+            )
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseMiddleware<ErrorHandlingMiddleware>();
+            using (var scope = app.ApplicationServices.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<UniDbContext>();
+                dbContext.Database.Migrate();
+            }
 
+            app.UseMiddleware<ErrorHandlingMiddleware>();
             app.UseScopedSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Uni API v1"));
-
             app.UseHttpsRedirection();
+            app.UseAuthentication();
             app.UseMvc();
         }
     }

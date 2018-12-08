@@ -1,0 +1,43 @@
+﻿@model Uni.Identity.Web.ViewModels.Account.LoggedOut.LoggedOutViewModel
+@{
+    ViewData["signed-out"] = true; // нужно для того, чтобы _Layout страница поняла, что работает с анонимным пользователем
+    ViewData["Title"] = "Выход из системы";
+}
+
+<div class="row">
+    <div class="col">
+        <h2 class="font-weight-light">Вы успешно вышли из системы</h2>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <div class="card">
+            <div class="card-header">
+                Вы успешно вышли из системы
+            </div>
+            <div class="card-body">
+                <div class="card-text logged-out">
+                    <div>Для повторной аутентификации вернитесь на страницу с приложением</div>
+                    @if (Model.PostLogoutRedirectUri != null)
+                    {
+                        <div>
+                            Нажмите <a id="post-logout-redirect-uri" href="@Model.PostLogoutRedirectUri">тут</a> чтобы вернуться на страницу с приложением
+                        </div>
+                    }
+                    @if (Model.SignOutIframeUrl != null)
+                    {
+                        <iframe width="0" height="0" src="@Model.SignOutIframeUrl"></iframe>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    @if (Model.AutomaticRedirectAfterSignOut)
+    {
+        <script src="~/static/signout-redirect.js"></script>
+    }
+}

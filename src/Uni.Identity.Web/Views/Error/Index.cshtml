@@ -1,0 +1,33 @@
+﻿@model Uni.Identity.Web.ViewModels.Error.ErrorViewModel
+@{
+    ViewData["Title"] = "Ошибка";
+}
+<div class="row">
+    <div class="col">
+        <h2 class="font-weight-light">@ViewData["Title"]</h2>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <div class="alert alert-danger">
+            <div>Извините, произошла ошибка.</div>
+            @if (!string.IsNullOrEmpty(Model?.Message))
+            {
+                <div>
+                    <strong>@Model.Message</strong>
+                </div>
+            }
+            @if (!string.IsNullOrEmpty(Model?.Description))
+            {
+                <div>
+                    @Model.Description
+                </div>
+            }
+        </div>
+
+        @if (!string.IsNullOrEmpty(Model?.RequestId))
+        {
+            <div>Id запроса: @Model.RequestId</div>
+        }
+    </div>
+</div>

@@ -1,0 +1,63 @@
+﻿@model Uni.Identity.Web.ViewModels.Consent.ConsentViewModel
+@{
+    ViewData["Title"] = "Предоставление разрешений";
+}
+<div class="row">
+    <div class="col">
+        <h2 class="font-weight-light">@ViewData["Title"]</h2>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <h5 class="pt-3">@Model.ClientName</h5>
+        <h6 class="text-muted">Запрашивает разрешение на получение следующих сведений</h6>
+        <hr/>
+        <form asp-action="Index" method="post">
+            <div class="form-group">
+                <input type="hidden" asp-for="ReturnUrl"/>
+                Отметьте галочкой сведения, к которым вы хотите предоставить доступ
+            </div>
+            @if (Model.IdentityScopes.Any())
+            {
+                <div class="form-group">
+                    <div class="card">
+                        <div class="card-header">Персональная информация</div>
+                        <ul class="list-group list-group-flush">
+                            @foreach (var scope in Model.IdentityScopes)
+                            {
+                                <partial model="scope" name="_ScopeListItem" view-data="@ViewData"/>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            }
+            @if (Model.ResourceScopes.Any())
+            {
+                <div class="form-group">
+                    <div class="card">
+                        <div class="card-header">Доступ к ресурсам</div>
+                        <ul class="list-group list-group-flush">
+                            @foreach (var scope in Model.ResourceScopes)
+                            {
+                                <partial model="scope" name="_ScopeListItem" view-data="@ViewData"/>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            }
+            @if (Model.AllowRememberConsent)
+            {
+                <div class="form-group">
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" asp-for="RememberConsent">
+                        <label class="form-check-label" asp-for="RememberConsent">Запомнить разрешения</label>
+                    </div>
+                </div>
+            }
+            <div class="form-group">
+                <button name="button" value="yes" class="btn btn-primary" autofocus>Да, разрешить</button>
+                <button name="button" value="no" class="btn">Нет, отклонить</button>
+            </div>
+        </form>
+    </div>
+</div>

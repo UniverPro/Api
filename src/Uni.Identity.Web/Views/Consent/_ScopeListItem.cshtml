@@ -1,0 +1,36 @@
+﻿@model Uni.Identity.Web.ViewModels.Consent.ScopeViewModel
+@{
+    Layout = null;
+}
+<li class="list-group-item">
+    <label>
+        <input type="checkbox"
+               name="ScopesConsented"
+               id="scopes_@Model.Name"
+               value="@Model.Name"
+               @(Model.Checked ? "checked" : null)
+               @(Model.Required ? "disabled" : null)/>
+        @if (Model.Required)
+        {
+            <input type="hidden" name="ScopesConsented" value="@Model.Name"/>
+        }
+        <strong>@Model.DisplayName</strong>
+        @if (Model.Emphasize)
+        {
+            <i class="fas fa-exclamation-circle"></i>
+        }
+    </label>
+    @if (Model.Required)
+    {
+        <span>
+            <em>(обязательный)</em>
+        </span>
+    }
+    @if (!string.IsNullOrEmpty(Model.Description))
+    {
+        <div>
+            @* ReSharper disable once Html.IdNotResolved *@
+            <label for="scopes_@Model.Name">@Model.Description</label>
+        </div>
+    }
+</li>
