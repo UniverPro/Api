@@ -1,8 +1,8 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
 using Uni.Api.Client;
-using Uni.Identity.Web.Services.Account;
-using Uni.Identity.Web.Services.Consent;
+using Uni.Identity.Web.Interfaces;
+using Uni.Identity.Web.Services;
 
 namespace Uni.Identity.Web.Extensions.Installers
 {

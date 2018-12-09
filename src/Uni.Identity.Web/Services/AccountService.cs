@@ -8,15 +8,15 @@ using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Uni.Api.Client;
-using Uni.Api.Shared.Requests.Filters;
 using Uni.Api.Shared.Responses;
 using Uni.Identity.Web.Configuration.Options;
 using Uni.Identity.Web.Configuration.Options.IdentityServer;
+using Uni.Identity.Web.Interfaces;
 using Uni.Identity.Web.ViewModels.Account.LoggedOut;
 using Uni.Identity.Web.ViewModels.Account.Login;
 using Uni.Identity.Web.ViewModels.Account.Logout;
 
-namespace Uni.Identity.Web.Services.Account
+namespace Uni.Identity.Web.Services
 {
     /// <summary>
     ///     Реализация вспомогательного сервиса для контроллера аккаунта пользователя.
@@ -67,13 +67,13 @@ namespace Uni.Identity.Web.Services.Account
             return newViewModel;
         }
 
-        public async Task<UserResponseModel> FindUserAsync(string login, string password)
+        public async Task<UserDetailsResponseModel> FindUserAsync(string login, string password)
         {
             if (string.IsNullOrEmpty(login))
             {
                 return null;
             }
-
+            
             return await _uniApiClient.FindUserByLoginAndPasswordAsync(login, password);
         }
 

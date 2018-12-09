@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
+using Uni.Core.Exceptions;
 using Uni.DataAccess.Contexts;
 using Uni.DataAccess.Models;
 using Uni.Infrastructure.Interfaces.CQRS.Queries;
@@ -40,12 +41,17 @@ namespace Uni.Infrastructure.CQRS.Queries.Users.FindUserByLoginAndPassword
                 {
                     var user = await _dbContext
                         .Users
+                        .Include(x => x.Person)
                         .AsNoTracking()
                         .SingleOrDefaultAsync(
-                            x => EF.Functions.Like(x.Login, query.Login) &&
-                                 _passwordValidator.Verify(x.Password, query.Password),
+                            x => EF.Functions.Like(x.Login, query.Login),
                             cancellationToken
                         );
+
+                    if (user != null && !_passwordValidator.Verify(user.Password, query.Password))
+                    {
+                        throw new HttpStatusCodeException(422, "Wrong password.", "The user found, but the password was wrong.");
+                    }
 
                     transaction.Commit();
                     return user;

@@ -9,7 +9,7 @@ using IdentityServer4.Validation;
 using Microsoft.Extensions.Logging;
 using Uni.Api.Client;
 
-namespace Uni.Identity.Web.Services.IdentityServer
+namespace Uni.Identity.Web.Services
 {
     /// <summary>
     ///     Сервис, используемый IdentityServer-ом при аутентификации по логину и паролю (Resource Owner Credentials Flow).

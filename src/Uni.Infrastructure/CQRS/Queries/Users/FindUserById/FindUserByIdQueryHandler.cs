@@ -33,6 +33,7 @@ namespace Uni.Infrastructure.CQRS.Queries.Users.FindUserById
                 {
                     var user = await _dbContext
                         .Users
+                        .Include(x => x.Person)
                         .AsNoTracking()
                         .SingleOrDefaultAsync(x => x.Id == query.UserId, cancellationToken);
 

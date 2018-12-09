@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Uni.Identity.Web.ViewModels.Consent;
 
-namespace Uni.Identity.Web.Services.Consent
+namespace Uni.Identity.Web.Interfaces
 {
     /// <summary>
     ///     Вспомогательный сервис для контроллера контроля доступа.

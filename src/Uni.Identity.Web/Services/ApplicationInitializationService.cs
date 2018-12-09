@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Uni.Identity.Web.Configuration.Options;
 
-namespace Uni.Identity.Web.Services.Initialization
+namespace Uni.Identity.Web.Services
 {
     public class ApplicationInitializationService
     {

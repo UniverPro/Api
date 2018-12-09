@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Uni.Identity.Web.Services.Initialization;
+using Uni.Identity.Web.Services;
 
 namespace Uni.Identity.Web.Extensions.Installers
 {

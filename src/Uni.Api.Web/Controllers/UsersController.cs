@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -43,8 +42,9 @@ namespace Uni.Api.Web.Controllers
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>User object</returns>
         [HttpGet]
-        [SwaggerResponse(200, "Success", typeof(IEnumerable<UserResponseModel>))]
-        public async Task<UserResponseModel> GetUserByLoginAndPassword(
+        [SwaggerResponse(200, "Success", typeof(UserDetailsResponseModel))]
+        [SwaggerResponse(422, "The password was wrong", typeof(ErrorResponseModel))]
+        public async Task<UserDetailsResponseModel> GetUserByLoginAndPassword(
             [FromQuery] FindUserByLoginAndPasswordRequestModel model,
             CancellationToken cancellationToken
             )
@@ -60,7 +60,7 @@ namespace Uni.Api.Web.Controllers
                 throw new NotFoundException(nameof(user));
             }
 
-            var response = _mapper.Map<UserResponseModel>(user);
+            var response = _mapper.Map<UserDetailsResponseModel>(user);
 
             return response;
         }
@@ -73,8 +73,8 @@ namespace Uni.Api.Web.Controllers
         /// <returns>User object</returns>
         [HttpGet("{userId:int:min(1)}")]
         [SwaggerResponse(200, "Success", typeof(UserResponseModel))]
-        [SwaggerResponse(404, "Not Found")]
-        public async Task<UserResponseModel> GetUser(
+        [SwaggerResponse(404, "Not Found", typeof(ErrorResponseModel))]
+        public async Task<UserDetailsResponseModel> GetUser(
             int userId,
             CancellationToken cancellationToken
             )
@@ -90,7 +90,7 @@ namespace Uni.Api.Web.Controllers
                 throw new NotFoundException(nameof(user), userId);
             }
 
-            var response = _mapper.Map<UserResponseModel>(user);
+            var response = _mapper.Map<UserDetailsResponseModel>(user);
 
             return response;
         }
@@ -103,7 +103,7 @@ namespace Uni.Api.Web.Controllers
         /// <returns>Created user object</returns>
         [HttpPost]
         [SwaggerResponse(200, "Success", typeof(UserResponseModel))]
-        [SwaggerResponse(404, "Not Found")]
+        [SwaggerResponse(404, "Not Found", typeof(ErrorResponseModel))]
         public async Task<UserResponseModel> PostUser(
             [FromForm] UserRequestModel model,
             CancellationToken cancellationToken
@@ -132,7 +132,7 @@ namespace Uni.Api.Web.Controllers
         /// <returns>Updated user object</returns>
         [HttpPut("{userId:int:min(1)}")]
         [SwaggerResponse(200, "Success", typeof(UserResponseModel))]
-        [SwaggerResponse(404, "Not Found")]
+        [SwaggerResponse(404, "Not Found", typeof(ErrorResponseModel))]
         public async Task<UserResponseModel> PutUser(
             int userId,
             [FromForm] UserRequestModel model,
@@ -166,7 +166,7 @@ namespace Uni.Api.Web.Controllers
         /// <param name="cancellationToken">Cancellation token</param>
         [HttpDelete("{userId:int:min(1)}")]
         [SwaggerResponse(200, "Success")]
-        [SwaggerResponse(404, "Not Found")]
+        [SwaggerResponse(404, "Not Found", typeof(ErrorResponseModel))]
         public async Task DeleteUser(
             int userId,
             CancellationToken cancellationToken

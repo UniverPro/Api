@@ -4,7 +4,7 @@ using Uni.Identity.Web.ViewModels.Account.LoggedOut;
 using Uni.Identity.Web.ViewModels.Account.Login;
 using Uni.Identity.Web.ViewModels.Account.Logout;
 
-namespace Uni.Identity.Web.Services.Account
+namespace Uni.Identity.Web.Interfaces
 {
     /// <summary>
     ///     Вспомогательный сервис для контроллера аккаунта пользователя.
@@ -32,7 +32,7 @@ namespace Uni.Identity.Web.Services.Account
         /// <param name="login">Логин пользователя.</param>
         /// <param name="password">Пароль пользователя.</param>
         /// <returns></returns>
-        Task<UserResponseModel> FindUserAsync(string login, string password);
+        Task<UserDetailsResponseModel> FindUserAsync(string login, string password);
 
         /// <summary>
         ///     Создаёт модель данных для экрана выхода пользователя.

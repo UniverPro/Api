@@ -44,7 +44,7 @@ namespace Uni.Api.Web.Controllers
         /// <returns>List of faculty objects.</returns>
         [HttpGet]
         [SwaggerResponse(200, "Success", typeof(IEnumerable<FacultyResponseModel>))]
-        [SwaggerResponse(404, "Not Found")]
+        [SwaggerResponse(404, "Not Found", typeof(ErrorResponseModel))]
         public async Task<IEnumerable<FacultyResponseModel>> GetFaculties(
             [FromQuery] ListFacultiesRequestModel model,
             CancellationToken cancellationToken
@@ -69,7 +69,7 @@ namespace Uni.Api.Web.Controllers
         /// <returns>Faculty object</returns>
         [HttpGet("{facultyId:int:min(1)}")]
         [SwaggerResponse(200, "Success", typeof(FacultyResponseModel))]
-        [SwaggerResponse(404, "Not Found")]
+        [SwaggerResponse(404, "Not Found", typeof(ErrorResponseModel))]
         public async Task<FacultyResponseModel> GetFaculty(
             int facultyId,
             CancellationToken cancellationToken
@@ -99,7 +99,7 @@ namespace Uni.Api.Web.Controllers
         /// <returns>Created faculty object</returns>
         [HttpPost]
         [SwaggerResponse(200, "Success", typeof(FacultyResponseModel))]
-        [SwaggerResponse(404, "Not Found")]
+        [SwaggerResponse(404, "Not Found", typeof(ErrorResponseModel))]
         public async Task<FacultyResponseModel> PostFaculty(
             [FromForm] FacultyRequestModel model,
             CancellationToken cancellationToken
@@ -133,7 +133,7 @@ namespace Uni.Api.Web.Controllers
         /// <returns>Updated faculty object</returns>
         [HttpPut("{facultyId:int:min(1)}")]
         [SwaggerResponse(200, "Success", typeof(FacultyResponseModel))]
-        [SwaggerResponse(404, "Not Found")]
+        [SwaggerResponse(404, "Not Found", typeof(ErrorResponseModel))]
         public async Task<FacultyResponseModel> PutFaculty(
             int facultyId,
             [FromForm] FacultyRequestModel model,
@@ -168,7 +168,7 @@ namespace Uni.Api.Web.Controllers
         /// <param name="cancellationToken">Cancellation token</param>
         [HttpDelete("{facultyId:int:min(1)}")]
         [SwaggerResponse(200, "Success")]
-        [SwaggerResponse(404, "Not Found")]
+        [SwaggerResponse(404, "Not Found", typeof(ErrorResponseModel))]
         public async Task DeleteFaculty(
             int facultyId,
             CancellationToken cancellationToken

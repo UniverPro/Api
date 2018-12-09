@@ -44,7 +44,7 @@ namespace Uni.Api.Web.Controllers
         /// <returns>List of group objects.</returns>
         [HttpGet]
         [SwaggerResponse(200, "Success", typeof(IEnumerable<GroupResponseModel>))]
-        [SwaggerResponse(404, "Not Found")]
+        [SwaggerResponse(404, "Not Found", typeof(ErrorResponseModel))]
         public async Task<IEnumerable<GroupResponseModel>> GetGroups(
             [FromQuery] ListGroupsRequestModel model,
             CancellationToken cancellationToken
@@ -69,7 +69,7 @@ namespace Uni.Api.Web.Controllers
         /// <returns>Group object</returns>
         [HttpGet("{groupId:int:min(1)}")]
         [SwaggerResponse(200, "Success", typeof(GroupResponseModel))]
-        [SwaggerResponse(404, "Not Found")]
+        [SwaggerResponse(404, "Not Found", typeof(ErrorResponseModel))]
         public async Task<GroupResponseModel> GetGroup(
             int groupId,
             CancellationToken cancellationToken
@@ -99,7 +99,7 @@ namespace Uni.Api.Web.Controllers
         /// <returns>Created group object</returns>
         [HttpPost]
         [SwaggerResponse(200, "Success", typeof(GroupResponseModel))]
-        [SwaggerResponse(404, "Not Found")]
+        [SwaggerResponse(404, "Not Found", typeof(ErrorResponseModel))]
         public async Task<GroupResponseModel> PostGroup(
             [FromForm] GroupRequestModel model,
             CancellationToken cancellationToken
@@ -133,7 +133,7 @@ namespace Uni.Api.Web.Controllers
         /// <returns>Updated group object</returns>
         [HttpPut("{groupId:int:min(1)}")]
         [SwaggerResponse(200, "Success", typeof(GroupResponseModel))]
-        [SwaggerResponse(404, "Not Found")]
+        [SwaggerResponse(404, "Not Found", typeof(ErrorResponseModel))]
         public async Task<GroupResponseModel> PutGroup(
             int groupId,
             [FromForm] GroupRequestModel model,
@@ -167,7 +167,7 @@ namespace Uni.Api.Web.Controllers
         /// <param name="cancellationToken">Cancellation token</param>
         [HttpDelete("{groupId:int:min(1)}")]
         [SwaggerResponse(200, "Success")]
-        [SwaggerResponse(404, "Not Found")]
+        [SwaggerResponse(404, "Not Found", typeof(ErrorResponseModel))]
         public async Task DeleteGroup(
             int groupId,
             CancellationToken cancellationToken

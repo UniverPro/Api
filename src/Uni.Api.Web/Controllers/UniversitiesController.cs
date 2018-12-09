@@ -44,7 +44,7 @@ namespace Uni.Api.Web.Controllers
         /// <returns>List of university objects.</returns>
         [HttpGet]
         [SwaggerResponse(200, "Success", typeof(IEnumerable<UniversityResponseModel>))]
-        [SwaggerResponse(404, "Not Found")]
+        [SwaggerResponse(404, "Not Found", typeof(ErrorResponseModel))]
         public async Task<IEnumerable<UniversityResponseModel>> GetUniversities(
             [FromQuery] ListUniversitiesRequestModel model,
             CancellationToken cancellationToken
@@ -69,7 +69,7 @@ namespace Uni.Api.Web.Controllers
         /// <returns>University object</returns>
         [HttpGet("{universityId:int:min(1)}")]
         [SwaggerResponse(200, "Success", typeof(UniversityResponseModel))]
-        [SwaggerResponse(404, "Not Found")]
+        [SwaggerResponse(404, "Not Found", typeof(ErrorResponseModel))]
         public async Task<UniversityResponseModel> GetUniversity(
             int universityId,
             CancellationToken cancellationToken
@@ -99,7 +99,7 @@ namespace Uni.Api.Web.Controllers
         /// <returns>Created university object</returns>
         [HttpPost]
         [SwaggerResponse(200, "Success", typeof(UniversityResponseModel))]
-        [SwaggerResponse(404, "Not Found")]
+        [SwaggerResponse(404, "Not Found", typeof(ErrorResponseModel))]
         public async Task<UniversityResponseModel> PostUniversity(
             [FromForm] UniversityRequestModel model,
             CancellationToken cancellationToken
@@ -129,7 +129,7 @@ namespace Uni.Api.Web.Controllers
         /// <returns>Updated university object</returns>
         [HttpPut("{universityId:int:min(1)}")]
         [SwaggerResponse(200, "Success", typeof(UniversityResponseModel))]
-        [SwaggerResponse(404, "Not Found")]
+        [SwaggerResponse(404, "Not Found", typeof(ErrorResponseModel))]
         public async Task<UniversityResponseModel> PutUniversity(
             int universityId,
             [FromForm] UniversityRequestModel model,
@@ -163,7 +163,7 @@ namespace Uni.Api.Web.Controllers
         /// <param name="cancellationToken">Cancellation token</param>
         [HttpDelete("{universityId:int:min(1)}")]
         [SwaggerResponse(200, "Success")]
-        [SwaggerResponse(404, "Not Found")]
+        [SwaggerResponse(404, "Not Found", typeof(ErrorResponseModel))]
         public async Task DeleteUniversity(
             int universityId,
             CancellationToken cancellationToken

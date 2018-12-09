@@ -44,7 +44,7 @@ namespace Uni.Api.Web.Controllers
         /// <returns>List of schedule objects.</returns>
         [HttpGet]
         [SwaggerResponse(200, "Success", typeof(IEnumerable<ScheduleResponseModel>))]
-        [SwaggerResponse(404, "Not Found")]
+        [SwaggerResponse(404, "Not Found", typeof(ErrorResponseModel))]
         public async Task<IEnumerable<ScheduleResponseModel>> GetSchedules(
             [FromQuery] ListSchedulesRequestModel model,
             CancellationToken cancellationToken
@@ -69,7 +69,7 @@ namespace Uni.Api.Web.Controllers
         /// <returns>List of schedule objects with details.</returns>
         [HttpGet("details")]
         [SwaggerResponse(200, "Success", typeof(IEnumerable<ScheduleDetailsResponseModel>))]
-        [SwaggerResponse(404, "Not Found")]
+        [SwaggerResponse(404, "Not Found", typeof(ErrorResponseModel))]
         public async Task<IEnumerable<ScheduleDetailsResponseModel>> GetSchedulesDetails(
             [FromQuery] ListSchedulesRequestModel model,
             CancellationToken cancellationToken
@@ -94,7 +94,7 @@ namespace Uni.Api.Web.Controllers
         /// <returns>Schedule object</returns>
         [HttpGet("{scheduleId:int:min(1)}")]
         [SwaggerResponse(200, "Success", typeof(ScheduleResponseModel))]
-        [SwaggerResponse(404, "Not Found")]
+        [SwaggerResponse(404, "Not Found", typeof(ErrorResponseModel))]
         public async Task<ScheduleResponseModel> GetSchedule(int scheduleId, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -121,7 +121,7 @@ namespace Uni.Api.Web.Controllers
         /// <returns>Created schedule object</returns>
         [HttpPost]
         [SwaggerResponse(200, "Success", typeof(ScheduleResponseModel))]
-        [SwaggerResponse(404, "Not Found")]
+        [SwaggerResponse(404, "Not Found", typeof(ErrorResponseModel))]
         public async Task<ScheduleResponseModel> PostSchedule(
             [FromForm] ScheduleRequestModel model,
             CancellationToken cancellationToken
@@ -158,7 +158,7 @@ namespace Uni.Api.Web.Controllers
         /// <returns>Updated schedule object</returns>
         [HttpPut("{scheduleId:int:min(1)}")]
         [SwaggerResponse(200, "Success", typeof(ScheduleResponseModel))]
-        [SwaggerResponse(404, "Not Found")]
+        [SwaggerResponse(404, "Not Found", typeof(ErrorResponseModel))]
         public async Task<ScheduleResponseModel> PutSchedule(
             int scheduleId,
             [FromForm] ScheduleRequestModel model,
@@ -195,7 +195,7 @@ namespace Uni.Api.Web.Controllers
         /// <param name="scheduleId">Schedule unique identifier</param>
         [HttpDelete("{scheduleId:int:min(1)}")]
         [SwaggerResponse(200, "Success")]
-        [SwaggerResponse(404, "Not Found")]
+        [SwaggerResponse(404, "Not Found", typeof(ErrorResponseModel))]
         public async Task DeleteSchedule(int scheduleId, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();

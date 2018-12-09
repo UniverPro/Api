@@ -2,8 +2,8 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Uni.Identity.Web.Interfaces;
 using Uni.Identity.Web.MVC.Filters.ActionFilters;
-using Uni.Identity.Web.Services.Consent;
 using Uni.Identity.Web.ViewModels.Consent;
 
 namespace Uni.Identity.Web.Controllers

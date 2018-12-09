@@ -6,8 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Uni.Identity.Web.Configuration.Options;
 using Uni.Identity.Web.Configuration.Options.IdentityServer;
-using Uni.Identity.Web.Services.Authentication.Cookies;
-using Uni.Identity.Web.Services.IdentityServer;
+using Uni.Identity.Web.Services;
 
 namespace Uni.Identity.Web.Extensions.Installers
 {

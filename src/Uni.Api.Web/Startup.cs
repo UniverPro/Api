@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -19,13 +20,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using Uni.Api.Web.Configurations;
+using Uni.Api.Web.Configurations.Filters;
+using Uni.Api.Web.Configurations.Mappings;
 using Uni.DataAccess.Contexts;
 using Uni.Infrastructure.CQRS.Commands;
 using Uni.Infrastructure.CQRS.Queries;
 using Uni.Infrastructure.Interfaces.Services;
 using Uni.Infrastructure.Services;
-using Uni.Api.Web.Configurations;
-using Uni.Api.Web.Configurations.Filters;
 
 namespace Uni.Api.Web
 {
@@ -37,7 +39,7 @@ namespace Uni.Api.Web
         {
             _configuration = configuration;
         }
-        
+
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc(
@@ -53,35 +55,44 @@ namespace Uni.Api.Web
                     )
                 )
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            
-            services.Configure<RouteOptions>(options =>
-            {
-                options.LowercaseUrls = true;
-                options.AppendTrailingSlash = false;
-            });
 
-            services.AddAutoMapper();
+            services.Configure<RouteOptions>(
+                options =>
+                {
+                    options.LowercaseUrls = true;
+                    options.AppendTrailingSlash = false;
+                }
+            );
+
+            services.AddAutoMapper(
+                typeof(MapperProfilesMarker)
+            );
 
             services.AddMediatR(
                 typeof(QueriesMarker),
                 typeof(CommandsMarker)
             );
-            
+
             services.AddTransient<IBlobStorageUploader, AzureBlobStorageUploader>();
             services.AddTransient<ErrorHandlingMiddleware>();
             services.AddScoped<IPasswordHasher, PasswordHasher>();
             services.AddScoped<IPasswordValidator, PasswordHasher>();
             services.Configure<PasswordHasherOptions>(_configuration.GetSection("PasswordHasherOptions"));
-            services.AddScoped(resolver =>
-            {
-                var snapshot = resolver.GetRequiredService<IOptionsSnapshot<PasswordHasherOptions>>();
-                return snapshot.Value;
-            });
+            services.AddScoped(
+                resolver =>
+                {
+                    var snapshot = resolver.GetRequiredService<IOptionsSnapshot<PasswordHasherOptions>>();
+                    return snapshot.Value;
+                }
+            );
 
             services.AddEntityFrameworkSqlServer();
             services.AddDbContext<UniDbContext>(
                 x =>
                 {
+#if DEBUG
+                    x.EnableSensitiveDataLogging();
+#endif
                     x.UseSqlServer(
                         _configuration.GetConnectionString("UniDbConnection"),
                         sql => sql.MigrationsAssembly(typeof(UniDbContext).Assembly.FullName)
@@ -106,6 +117,7 @@ namespace Uni.Api.Web
                 {
                     var builder =
                         new AuthorizationPolicyBuilder(IdentityServerAuthenticationDefaults.AuthenticationScheme);
+
                     var policy = builder
                         .RequireAuthenticatedUser()
                         .RequireScope("api_main_scope")
@@ -145,6 +157,7 @@ namespace Uni.Api.Web
 
                     var xmlPath = Path.Combine(AppContext.BaseDirectory, "Uni.Api.Web.xml");
                     options.IncludeXmlComments(xmlPath);
+
                     options.OperationFilter<RemoveVersionFromParameter>();
                     options.DocumentFilter<ReplaceVersionWithExactValueInPath>();
 
@@ -163,6 +176,20 @@ namespace Uni.Api.Web
                             return versions.Any(x => $"v{x}" == version);
                         }
                     );
+                    
+                    options.AddSecurityDefinition("oauth2", new OAuth2Scheme
+                    {
+                        Type = "oauth2",
+                        Flow = "implicit",
+                        AuthorizationUrl = "http://localhost:5000/connect/authorize",
+                        TokenUrl = "http://localhost:5000/connect/token",
+                        Scopes = new Dictionary<string, string>
+                        {
+                            { "api_main_scope", "Main Application API Scope" }
+                        }
+                    });
+
+                    options.OperationFilter<AuthorizeCheckOperationFilter>();
                 }
             );
         }
@@ -185,7 +212,13 @@ namespace Uni.Api.Web
 
             app.UseMiddleware<ErrorHandlingMiddleware>();
             app.UseScopedSwagger();
-            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Uni API v1"));
+            app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Uni API v1");
+                    c.OAuthClientId("swaggerui");
+                    c.OAuthAppName("Swagger UI");
+                }
+            );
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseMvc();

@@ -15,6 +15,7 @@ namespace Uni.Core.Exceptions
 
         public UnsupportedMediaTypeException([NotNull] string message, Exception innerException) : base(
             HttpStatusCode.UnsupportedMediaType,
+            "Unsupported media type.",
             message,
             innerException
         )

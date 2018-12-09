@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 
-namespace Uni.Identity.Web.Services.Authentication.Cookies
+namespace Uni.Identity.Web.Services
 {
     /// <summary>
     ///     Class for setting cookie authentication parameters

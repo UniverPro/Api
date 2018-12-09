@@ -44,7 +44,7 @@ namespace Uni.Api.Web.Controllers
         /// <returns>List of teacher objects.</returns>
         [HttpGet]
         [SwaggerResponse(200, "Success", typeof(IEnumerable<TeacherResponseModel>))]
-        [SwaggerResponse(404, "Not Found")]
+        [SwaggerResponse(404, "Not Found", typeof(ErrorResponseModel))]
         public async Task<IEnumerable<TeacherResponseModel>> GetTeachers(
             [FromQuery] ListTeachersRequestModel model,
             CancellationToken cancellationToken
@@ -69,7 +69,7 @@ namespace Uni.Api.Web.Controllers
         /// <returns>Teacher object</returns>
         [HttpGet("{teacherId:int:min(1)}")]
         [SwaggerResponse(200, "Success", typeof(TeacherResponseModel))]
-        [SwaggerResponse(404, "Not Found")]
+        [SwaggerResponse(404, "Not Found", typeof(ErrorResponseModel))]
         public async Task<TeacherResponseModel> GetTeacher(int teacherId, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -96,7 +96,7 @@ namespace Uni.Api.Web.Controllers
         /// <returns>Created teacher object</returns>
         [HttpPost]
         [SwaggerResponse(200, "Success", typeof(TeacherResponseModel))]
-        [SwaggerResponse(404, "Not Found")]
+        [SwaggerResponse(404, "Not Found", typeof(ErrorResponseModel))]
         public async Task<TeacherResponseModel> PostTeacher(
             [FromForm] TeacherRequestModel model,
             CancellationToken cancellationToken
@@ -133,7 +133,7 @@ namespace Uni.Api.Web.Controllers
         /// <returns>Updated teacher object</returns>
         [HttpPut("{teacherId:int:min(1)}")]
         [SwaggerResponse(200, "Success", typeof(TeacherResponseModel))]
-        [SwaggerResponse(404, "Not Found")]
+        [SwaggerResponse(404, "Not Found", typeof(ErrorResponseModel))]
         public async Task<TeacherResponseModel> PutTeacher(
             int teacherId,
             [FromForm] TeacherRequestModel model,
@@ -170,7 +170,7 @@ namespace Uni.Api.Web.Controllers
         /// <param name="teacherId">Teacher unique identifier</param>
         [HttpDelete("{teacherId:int:min(1)}")]
         [SwaggerResponse(200, "Success")]
-        [SwaggerResponse(404, "Not Found")]
+        [SwaggerResponse(404, "Not Found", typeof(ErrorResponseModel))]
         public async Task DeleteTeacher(int teacherId, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();

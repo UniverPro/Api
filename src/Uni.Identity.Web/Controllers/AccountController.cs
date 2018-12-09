@@ -10,10 +10,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Refit;
+using Uni.Api.Shared.Responses;
 using Uni.Identity.Web.Configuration.Options;
 using Uni.Identity.Web.Configuration.Options.IdentityServer;
+using Uni.Identity.Web.Interfaces;
 using Uni.Identity.Web.MVC.Filters.ActionFilters;
-using Uni.Identity.Web.Services.Account;
 using Uni.Identity.Web.ViewModels.Account.Login;
 using Uni.Identity.Web.ViewModels.Account.Logout;
 
@@ -22,7 +24,7 @@ namespace Uni.Identity.Web.Controllers
     /// <summary>
     ///     Контроллер аккаунта пользователя.
     /// </summary>
-    [Authorize]
+    [Microsoft.AspNetCore.Authorization.Authorize]
     [SecurityHeaders]
     public class AccountController : Controller
     {
@@ -35,7 +37,8 @@ namespace Uni.Identity.Web.Controllers
             IAccountService accountService,
             IIdentityServerInteractionService interaction,
             IEventService events,
-            IOptionsSnapshot<IdentityServerConfiguration> identityServerCommonOptions)
+            IOptionsSnapshot<IdentityServerConfiguration> identityServerCommonOptions
+            )
         {
             _accountService = accountService ?? throw new ArgumentNullException(nameof(accountService));
             _interaction = interaction ?? throw new ArgumentNullException(nameof(interaction));
@@ -102,41 +105,58 @@ namespace Uni.Identity.Web.Controllers
 
             if (ModelState.IsValid)
             {
-                var user = await _accountService
-                    .FindUserAsync(model.Username, model.Password);
-                if (user != null)
+                try
                 {
-                    var userName = user.Login;
-                    var subjectId = user.Id.ToString(CultureInfo.InvariantCulture);
-                    await _events.RaiseAsync(new UserLoginSuccessEvent(
-                        userName,
-                        subjectId,
-                        userName)
-                    );
+                    var user = await _accountService
+                        .FindUserAsync(model.Username, model.Password);
 
-                    // Явно устанавливаем окончание жизни кук, только если пользователь выбрал "Запомнить"
-                    // в противном случае, срок жизни кук будет зависеть от настроек middleware, отвечающей за куки.
-                    AuthenticationProperties props = null;
-                    if (_identityServerCommonOptions.AllowRememberLogin && model.RememberMe)
-                        props = new AuthenticationProperties
+                    if (user != null)
+                    {
+                        var userName = user.Login;
+                        var subjectId = user.Id.ToString(CultureInfo.InvariantCulture);
+                        await _events.RaiseAsync(
+                            new UserLoginSuccessEvent(
+                                userName,
+                                subjectId,
+                                userName
+                            )
+                        );
+
+                        // Явно устанавливаем окончание жизни кук, только если пользователь выбрал "Запомнить"
+                        // в противном случае, срок жизни кук будет зависеть от настроек middleware, отвечающей за куки.
+                        AuthenticationProperties props = null;
+                        if (_identityServerCommonOptions.AllowRememberLogin && model.RememberMe)
                         {
-                            IsPersistent = true,
-                            ExpiresUtc = DateTimeOffset.UtcNow.Add(_identityServerCommonOptions.LoginDuration)
-                        };
+                            props = new AuthenticationProperties
+                            {
+                                IsPersistent = true,
+                                ExpiresUtc = DateTimeOffset.UtcNow.Add(_identityServerCommonOptions.LoginDuration)
+                            };
+                        }
 
-                    // выпускаем куку для аутентификации пользователя на основе уникального идентификатора и имени пользователя
-                    await HttpContext.SignInAsync(subjectId, userName, props);
+                        // выпускаем куку для аутентификации пользователя на основе уникального идентификатора и имени пользователя
+                        await HttpContext.SignInAsync(subjectId, userName, props);
 
-                    // необходимо удостовериться, что ссылка, по которой мы хотим перенаправить пользователя всё ещё корректна,
-                    // либо является локальной ссылкой внутри приложения
-                    if (_interaction.IsValidReturnUrl(model.ReturnUrl) || Url.IsLocalUrl(model.ReturnUrl))
-                        return Redirect(model.ReturnUrl);
+                        // необходимо удостовериться, что ссылка, по которой мы хотим перенаправить пользователя всё ещё корректна,
+                        // либо является локальной ссылкой внутри приложения
+                        if (_interaction.IsValidReturnUrl(model.ReturnUrl) || Url.IsLocalUrl(model.ReturnUrl))
+                        {
+                            return Redirect(model.ReturnUrl);
+                        }
 
-                    return RedirectToAction(nameof(HomeController.Index), "Home");
+                        return RedirectToAction(nameof(HomeController.Index), "Home");
+                    }
+
+                    await _events.RaiseAsync(new UserLoginFailureEvent(model.Username, "invalid credentials"));
+                    ModelState.AddModelError("", "Некорректные учётные данные");
                 }
+                catch (ApiException apiException)
+                {
+                    var errorResponse = apiException.GetContentAs<ErrorResponseModel>();
 
-                await _events.RaiseAsync(new UserLoginFailureEvent(model.Username, "invalid credentials"));
-                ModelState.AddModelError("", "Некорректные учётные данные");
+                    await _events.RaiseAsync(new UserLoginFailureEvent(model.Username, "invalid credentials"));
+                    ModelState.AddModelError("", errorResponse.Message);
+                }
             }
 
             // Если что-то пошло не так - переполучаем модель и рисуем вьюху заново.
@@ -173,7 +193,10 @@ namespace Uni.Identity.Web.Controllers
         {
             var viewModel = await _accountService.BuildLogoutViewModelAsync(logoutId);
 
-            if (viewModel.ShowLogoutPrompt == false) return await Logout(viewModel);
+            if (viewModel.ShowLogoutPrompt == false)
+            {
+                return await Logout(viewModel);
+            }
 
             return View(viewModel);
         }

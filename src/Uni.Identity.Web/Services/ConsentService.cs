@@ -10,8 +10,9 @@ using Microsoft.Extensions.Options;
 using Uni.Identity.Web.Configuration.Options;
 using Uni.Identity.Web.Configuration.Options.IdentityServer;
 using Uni.Identity.Web.ViewModels.Consent;
+using IConsentService = Uni.Identity.Web.Interfaces.IConsentService;
 
-namespace Uni.Identity.Web.Services.Consent
+namespace Uni.Identity.Web.Services
 {
     /// <summary>
     ///     Реализация вспомогательного сервиса для контроллера контроля доступа.
@@ -29,7 +30,8 @@ namespace Uni.Identity.Web.Services.Consent
             IClientStore clientStore,
             IResourceStore resourceStore,
             ILogger<ConsentService> logger,
-            IOptionsSnapshot<IdentityServerConfiguration> identityServerCommonOptions)
+            IOptionsSnapshot<IdentityServerConfiguration> identityServerCommonOptions
+            )
         {
             _interaction = interaction ?? throw new ArgumentNullException(nameof(interaction));
             _clientStore = clientStore ?? throw new ArgumentNullException(nameof(clientStore));
@@ -49,10 +51,19 @@ namespace Uni.Identity.Web.Services.Consent
                 {
                     var resources = await _resourceStore.FindEnabledResourcesByScopeAsync(request.ScopesRequested);
                     if (resources != null && (resources.IdentityResources.Any() || resources.ApiResources.Any()))
-                        return CreateConsentViewModel(model, returnUrl, client, resources);
+                    {
+                        return CreateConsentViewModel(
+                            model,
+                            returnUrl,
+                            client,
+                            resources
+                        );
+                    }
 
-                    _logger.LogError("No scopes matching: {0}",
-                        request.ScopesRequested.Aggregate((x, y) => x + ", " + y));
+                    _logger.LogError(
+                        "No scopes matching: {0}",
+                        request.ScopesRequested.Aggregate((x, y) => x + ", " + y)
+                    );
                 }
                 else
                 {
@@ -73,36 +84,48 @@ namespace Uni.Identity.Web.Services.Consent
 
             ConsentResponse grantedConsent = null;
 
-            // user clicked 'no' - send back the standard 'access_denied' response
-            if (model.Button == "no")
-                grantedConsent = ConsentResponse.Denied;
-            // user clicked 'yes' - validate the data
-            else if (model.Button == "yes")
-                if (model.ScopesConsented != null && model.ScopesConsented.Any())
+            switch (model.Button)
+            {
+                case "no":
+                {
+                    grantedConsent = ConsentResponse.Denied;
+                    break;
+                }
+                case "yes" when model.ScopesConsented != null && model.ScopesConsented.Any():
                 {
                     var scopes = model.ScopesConsented;
                     if (_identityServerCommonOptions.EnableOfflineAccess == false)
-                        scopes = scopes.Where(x =>
-                            x != IdentityServerConstants.StandardScopes.OfflineAccess);
+                    {
+                        scopes = scopes.Where(x => x != IdentityServerConstants.StandardScopes.OfflineAccess);
+                    }
 
                     grantedConsent = new ConsentResponse
                     {
                         RememberConsent = model.RememberConsent,
                         ScopesConsented = scopes.ToArray()
                     };
+                    break;
                 }
-                else
+                case "yes":
                 {
                     result.ValidationError = _identityServerCommonOptions.MustChooseOneErrorMessage;
+                    break;
                 }
-            else
-                result.ValidationError = _identityServerCommonOptions.InvalidSelectionErrorMessage;
+                default:
+                {
+                    result.ValidationError = _identityServerCommonOptions.InvalidSelectionErrorMessage;
+                    break;
+                }
+            }
 
             if (grantedConsent != null)
             {
                 // validate return url is still valid
                 var request = await _interaction.GetAuthorizationContextAsync(model.ReturnUrl);
-                if (request == null) return result;
+                if (request == null)
+                {
+                    return result;
+                }
 
                 // communicate outcome of consent back to IdentityServer
                 await _interaction.GrantConsentAsync(request, grantedConsent);
@@ -123,7 +146,8 @@ namespace Uni.Identity.Web.Services.Consent
             ConsentInputModel model,
             string returnUrl,
             Client client,
-            Resources resources)
+            Resources resources
+            )
         {
             var vm = new ConsentViewModel
             {
@@ -148,13 +172,19 @@ namespace Uni.Identity.Web.Services.Consent
                 .ToArray();
 
             if (_identityServerCommonOptions.EnableOfflineAccess && resources.OfflineAccess)
-                vm.ResourceScopes = vm.ResourceScopes.Union(new[]
-                {
-                    GetOfflineAccessScope(
-                        vm.ScopesConsented.Contains(
-                            IdentityServerConstants.StandardScopes.OfflineAccess)
-                        || model == null)
-                });
+            {
+                vm.ResourceScopes = vm.ResourceScopes.Union(
+                    new[]
+                    {
+                        GetOfflineAccessScope(
+                            vm.ScopesConsented.Contains(
+                                IdentityServerConstants.StandardScopes.OfflineAccess
+                            )
+                            || model == null
+                        )
+                    }
+                );
+            }
 
             return vm;
         }

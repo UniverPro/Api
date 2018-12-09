@@ -23,10 +23,12 @@
                     <div class="card">
                         <div class="card-header">Персональная информация</div>
                         <ul class="list-group list-group-flush">
+                            @* ReSharper disable UnusedVariable *@
                             @foreach (var scope in Model.IdentityScopes)
                             {
                                 <partial model="scope" name="_ScopeListItem" view-data="@ViewData"/>
                             }
+                            @* ReSharper restore UnusedVariable *@
                         </ul>
                     </div>
                 </div>
@@ -37,10 +39,12 @@
                     <div class="card">
                         <div class="card-header">Доступ к ресурсам</div>
                         <ul class="list-group list-group-flush">
+                            @* ReSharper disable UnusedVariable *@
                             @foreach (var scope in Model.ResourceScopes)
                             {
-                                <partial model="scope" name="_ScopeListItem" view-data="@ViewData"/>
+                                <partial model="scope" name="_ScopeListItem" view-data="@ViewData" />
                             }
+                            @* ReSharper restore UnusedVariable *@
                         </ul>
                     </div>
                 </div>

@@ -11,7 +11,7 @@ using JetBrains.Annotations;
 using Uni.Api.Client;
 using Uni.Api.Shared.Responses;
 
-namespace Uni.Identity.Web.Services.IdentityServer
+namespace Uni.Identity.Web.Services
 {
     public class ProfileService : IProfileService
     {
@@ -59,9 +59,9 @@ namespace Uni.Identity.Web.Services.IdentityServer
         }
     }
 
-    public static class PersonExtensions
+    public static class UserExtensions
     {
-        public static IEnumerable<Claim> ToClaims([NotNull] this UserResponseModel user)
+        public static IEnumerable<Claim> ToClaims([NotNull] this UserDetailsResponseModel user)
         {
             if (user == null)
             {
@@ -73,10 +73,25 @@ namespace Uni.Identity.Web.Services.IdentityServer
                 new Claim(JwtClaimTypes.PreferredUserName, user.Login)
             };
 
-            //if (!string.IsNullOrWhiteSpace(user.AvatarPath))
-            //{
-            //    claims.Add(new Claim(JwtClaimTypes.Picture, user.AvatarPath));
-            //}
+            var person = user.Person;
+
+            claims.Add(new Claim(JwtClaimTypes.GivenName, person.FirstName));
+            claims.Add(new Claim(JwtClaimTypes.FamilyName, person.LastName));
+
+            if (!string.IsNullOrEmpty(person.Email))
+            {
+                claims.Add(new Claim(JwtClaimTypes.Email, person.Email));
+            }
+
+            if (!string.IsNullOrEmpty(person.MiddleName))
+            {
+                claims.Add(new Claim(JwtClaimTypes.MiddleName, person.MiddleName));
+            }
+
+            if (!string.IsNullOrEmpty(person.AvatarPath))
+            {
+                claims.Add(new Claim(JwtClaimTypes.Picture, person.AvatarPath));
+            }
 
             return claims;
         }

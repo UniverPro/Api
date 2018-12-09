@@ -2,7 +2,7 @@
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using Uni.Identity.Web.Services.Initialization;
+using Uni.Identity.Web.Services;
 
 namespace Uni.Identity.Web.Extensions
 {
