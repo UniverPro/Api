@@ -93,6 +93,8 @@ namespace Uni.Identity.Web.Services
                 claims.Add(new Claim(JwtClaimTypes.Picture, person.AvatarPath));
             }
 
+            claims.Add(new Claim("permissions", "account.read"));
+            
             return claims;
         }
     }

@@ -35,8 +35,8 @@ namespace Uni.Api.Web.Controllers
         /// </summary>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>User object</returns>
-        [Authorize]
         [HttpGet]
+        [Authorize(Authorization.ReadAccount)]
         [SwaggerResponse(200, "The current user.", typeof(UserDetailsResponseModel))]
         public async Task<UserDetailsResponseModel> Get(
             CancellationToken cancellationToken

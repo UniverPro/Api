@@ -118,13 +118,24 @@ namespace Uni.Api.Web
                     var builder =
                         new AuthorizationPolicyBuilder(IdentityServerAuthenticationDefaults.AuthenticationScheme);
 
-                    var policy = builder
+                    var defaultPolicy = builder
                         .RequireAuthenticatedUser()
                         .RequireScope("api_main_scope")
                         .Build();
 
-                    options.AddPolicy("Application", policy);
-                    options.DefaultPolicy = policy;
+                    options.AddPolicy("MainScope", defaultPolicy);
+                    options.DefaultPolicy = defaultPolicy;
+
+                    foreach (var policyInfo in Authorization.Info)
+                    {
+                        var policy = builder
+                            .RequireAuthenticatedUser()
+                            .RequireScope(policyInfo.Scopes)
+                            .RequireClaim("permissions", policyInfo.Permissions)
+                            .Build();
+
+                        options.AddPolicy(policyInfo.Name, policy);
+                    }
                 }
             );
 

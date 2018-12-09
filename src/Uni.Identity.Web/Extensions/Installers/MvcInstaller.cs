@@ -27,31 +27,32 @@ namespace Uni.Identity.Web.Extensions.Installers
             services
                 .AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
-                .AddJsonOptions(options =>
-                {
-                    options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-                    options.SerializerSettings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
-                    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                    options.SerializerSettings.Converters.Add(new StringEnumConverter
+                .AddJsonOptions(
+                    options =>
                     {
-                        AllowIntegerValues = true,
-                        CamelCaseText = true
-                    });
-                });
+                        options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                        options.SerializerSettings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
+                        options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                        options.SerializerSettings.Converters.Add(
+                            new StringEnumConverter(new CamelCaseNamingStrategy())
+                        );
+                    }
+                );
 
-            services.Configure<RouteOptions>(options =>
-            {
-                options.LowercaseUrls = true;
-                options.AppendTrailingSlash = false;
-            });
+            services.Configure<RouteOptions>(
+                options =>
+                {
+                    options.LowercaseUrls = true;
+                    options.AppendTrailingSlash = false;
+                }
+            );
 
-            services.Configure<WebEncoderOptions>(options =>
-            {
-                options.TextEncoderSettings = new TextEncoderSettings(UnicodeRanges.All);
-            });
+            services.Configure<WebEncoderOptions>(
+                options => { options.TextEncoderSettings = new TextEncoderSettings(UnicodeRanges.All); }
+            );
 
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            
+
             return services;
         }
     }
