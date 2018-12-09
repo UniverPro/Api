@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using Uni.Api.Shared.Responses;
+using Uni.Api.Web.Configurations.Authorization;
 using Uni.Core.Extensions;
 using Uni.Infrastructure.CQRS.Queries.Users.FindUserById;
 
@@ -36,7 +37,7 @@ namespace Uni.Api.Web.Controllers
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>User object</returns>
         [HttpGet]
-        [Authorize(Authorization.ReadAccount)]
+        [Authorize(Policies.ReadAccount)]
         [SwaggerResponse(200, "The current user.", typeof(UserDetailsResponseModel))]
         public async Task<UserDetailsResponseModel> Get(
             CancellationToken cancellationToken

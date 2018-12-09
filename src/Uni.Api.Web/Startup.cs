@@ -21,6 +21,7 @@ using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Uni.Api.Web.Configurations;
+using Uni.Api.Web.Configurations.Authorization;
 using Uni.Api.Web.Configurations.Filters;
 using Uni.Api.Web.Configurations.Mappings;
 using Uni.DataAccess.Contexts;
@@ -78,6 +79,7 @@ namespace Uni.Api.Web
             services.AddScoped<IPasswordHasher, PasswordHasher>();
             services.AddScoped<IPasswordValidator, PasswordHasher>();
             services.Configure<PasswordHasherOptions>(_configuration.GetSection("PasswordHasherOptions"));
+
             services.AddScoped(
                 resolver =>
                 {
@@ -115,27 +117,16 @@ namespace Uni.Api.Web
             services.AddAuthorization(
                 options =>
                 {
-                    var builder =
-                        new AuthorizationPolicyBuilder(IdentityServerAuthenticationDefaults.AuthenticationScheme);
+                    const string mainScope = "MainScope";
+                    options.AddPolicy(
+                        mainScope,
+                        x => x.RequireAuthenticatedUser()
+                            .RequireScope(Scopes.Main)
+                    );
 
-                    var defaultPolicy = builder
-                        .RequireAuthenticatedUser()
-                        .RequireScope("api_main_scope")
-                        .Build();
+                    options.DefaultPolicy = options.GetPolicy(mainScope);
 
-                    options.AddPolicy("MainScope", defaultPolicy);
-                    options.DefaultPolicy = defaultPolicy;
-
-                    foreach (var policyInfo in Authorization.Info)
-                    {
-                        var policy = builder
-                            .RequireAuthenticatedUser()
-                            .RequireScope(policyInfo.Scopes)
-                            .RequireClaim("permissions", policyInfo.Permissions)
-                            .Build();
-
-                        options.AddPolicy(policyInfo.Name, policy);
-                    }
+                    options.AddPolicies(typeof(Policies));
                 }
             );
 
@@ -164,6 +155,8 @@ namespace Uni.Api.Web
 
                     options.DescribeAllEnumsAsStrings();
                     options.DescribeStringEnumsInCamelCase();
+                    options.DescribeAllParametersInCamelCase();
+
                     options.AddFluentValidationRules();
 
                     var xmlPath = Path.Combine(AppContext.BaseDirectory, "Uni.Api.Web.xml");
@@ -187,18 +180,21 @@ namespace Uni.Api.Web
                             return versions.Any(x => $"v{x}" == version);
                         }
                     );
-                    
-                    options.AddSecurityDefinition("oauth2", new OAuth2Scheme
-                    {
-                        Type = "oauth2",
-                        Flow = "implicit",
-                        AuthorizationUrl = "http://localhost:5000/connect/authorize",
-                        TokenUrl = "http://localhost:5000/connect/token",
-                        Scopes = new Dictionary<string, string>
+
+                    options.AddSecurityDefinition(
+                        "oauth2",
+                        new OAuth2Scheme
                         {
-                            { "api_main_scope", "Main Application API Scope" }
+                            Type = "oauth2",
+                            Flow = "implicit",
+                            AuthorizationUrl = "http://localhost:5000/connect/authorize",
+                            TokenUrl = "http://localhost:5000/connect/token",
+                            Scopes = new Dictionary<string, string>
+                            {
+                                {Scopes.Main, "Main Application API Scope"}
+                            }
                         }
-                    });
+                    );
 
                     options.OperationFilter<AuthorizeCheckOperationFilter>();
                 }
@@ -223,7 +219,8 @@ namespace Uni.Api.Web
 
             app.UseMiddleware<ErrorHandlingMiddleware>();
             app.UseScopedSwagger();
-            app.UseSwaggerUI(c =>
+            app.UseSwaggerUI(
+                c =>
                 {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Uni API v1");
                     c.OAuthClientId("swaggerui");
