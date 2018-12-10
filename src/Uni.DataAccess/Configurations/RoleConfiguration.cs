@@ -19,16 +19,6 @@ namespace Uni.DataAccess.Configurations
             builder.Property(e => e.Name)
                 .IsRequired()
                 .HasMaxLength(Consts.MaxRoleNameLength);
-            
-            builder.HasMany<UserRole>()
-                .WithOne()
-                .HasForeignKey(ur => ur.RoleId)
-                .IsRequired();
-            
-            builder.HasMany<RolePermission>()
-                .WithOne()
-                .HasForeignKey(ur => ur.RoleId)
-                .IsRequired();
         }
     }
 }

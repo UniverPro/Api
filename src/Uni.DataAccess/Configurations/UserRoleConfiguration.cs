@@ -13,6 +13,14 @@ namespace Uni.DataAccess.Configurations
             builder.ToTable(nameof(UserRole));
 
             builder.HasKey(r => new { r.UserId, r.RoleId });
+
+            builder.HasOne(ur => ur.Role)
+                .WithMany(r => r.UserRoles)
+                .HasForeignKey(ur => ur.RoleId);
+
+            builder.HasOne(ur => ur.User)
+                .WithMany(p => p.UserRoles)
+                .HasForeignKey(ur => ur.UserId);
         }
     }
 }
