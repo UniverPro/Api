@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Linq;
+using AutoMapper;
 using JetBrains.Annotations;
 using Uni.Api.Shared.Responses;
 using Uni.DataAccess.Models;
@@ -15,6 +16,18 @@ namespace Uni.Api.Web.Configurations.Mappings
 
             CreateMap<Student, StudentResponseModel>();
             CreateMap<Teacher, TeacherResponseModel>();
+
+            CreateMap<User, UserDetailsResponseModel>()
+                .ForMember(
+                    u => u.Roles,
+                    opt => opt.MapFrom(u => u.UserRoles.Select(y => y.Role).ToList())
+                );
+
+            CreateMap<Role, RoleResponseModel>()
+                .ForMember(
+                    r => r.Permissions,
+                    opt => opt.MapFrom(d => d.RolePermissions.Select(y => y.Permission).ToList())
+                );
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
+using Uni.DataAccess;
 using Uni.DataAccess.Contexts;
 using Uni.DataAccess.Models;
 using Uni.Infrastructure.Interfaces.CQRS.Queries;
@@ -33,7 +34,7 @@ namespace Uni.Infrastructure.CQRS.Queries.Users.FindUserById
                 {
                     var user = await _dbContext
                         .Users
-                        .Include(x => x.Person)
+                        .IncludeDefault()
                         .AsNoTracking()
                         .SingleOrDefaultAsync(x => x.Id == query.UserId, cancellationToken);
 

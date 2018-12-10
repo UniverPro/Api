@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 using Uni.Core.Exceptions;
+using Uni.DataAccess;
 using Uni.DataAccess.Contexts;
 using Uni.DataAccess.Models;
 using Uni.Infrastructure.Interfaces.CQRS.Queries;
@@ -41,7 +42,7 @@ namespace Uni.Infrastructure.CQRS.Queries.Users.FindUserByLoginAndPassword
                 {
                     var user = await _dbContext
                         .Users
-                        .Include(x => x.Person)
+                        .IncludeDefault()
                         .AsNoTracking()
                         .SingleOrDefaultAsync(
                             x => EF.Functions.Like(x.Login, query.Login),

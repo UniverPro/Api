@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using IdentityModel;
@@ -92,9 +93,12 @@ namespace Uni.Identity.Web.Services
             {
                 claims.Add(new Claim(JwtClaimTypes.Picture, person.AvatarPath));
             }
-
-            claims.Add(new Claim("permissions", "account.read"));
             
+            claims.AddRange(
+                user.Roles.SelectMany(x => x.Permissions).Select(x => x.Name).Distinct()
+                    .Select(permission => new Claim("permissions", permission))
+            );
+
             return claims;
         }
     }

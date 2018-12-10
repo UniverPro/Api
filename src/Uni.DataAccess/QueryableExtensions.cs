@@ -8,14 +8,29 @@ namespace Uni.DataAccess
 {
     public static class QueryableExtensions
     {
-        public static IQueryable<T> IncludeDefault<T>([NotNull] this IQueryable<T> items) where T : Person
+        public static IQueryable<T> IncludeDefault<T>([NotNull] this IQueryable<T> persons) where T : Person
         {
-            if (items == null)
+            if (persons == null)
             {
-                throw new ArgumentNullException(nameof(items));
+                throw new ArgumentNullException(nameof(persons));
             }
 
-            return items.Include(x => x.User);
+            return persons.Include(x => x.User);
+        }
+
+        public static IQueryable<User> IncludeDefault([NotNull] this IQueryable<User> users)
+        {
+            if (users == null)
+            {
+                throw new ArgumentNullException(nameof(users));
+            }
+
+            return users
+                .Include(x => x.Person)
+                .Include(x => x.UserRoles)
+                .ThenInclude(x => x.Role)
+                .ThenInclude(x => x.RolePermissions)
+                .ThenInclude(x => x.Permission);
         }
     }
 }

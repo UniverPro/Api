@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 using Uni.Api.Shared.Converters;
 
 namespace Uni.Api.Shared.Responses
@@ -12,5 +13,7 @@ namespace Uni.Api.Shared.Responses
 
         [JsonConverter(typeof(PersonConverter))]
         public PersonResponseModel Person { get; set; }
+
+        public List<RoleResponseModel> Roles { get; set; }
     }
 }
