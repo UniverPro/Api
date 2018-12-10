@@ -33,6 +33,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Uni.Api.Client\Uni.Api.Client.csproj" />
+    <ProjectReference Include="..\Uni.Common\Uni.Common.csproj" />
   </ItemGroup>
 
 </Project>

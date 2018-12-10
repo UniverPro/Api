@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Uni.Common\Uni.Common.csproj" />
     <ProjectReference Include="..\Uni.DataAccess\Uni.DataAccess.csproj" />
   </ItemGroup>
 

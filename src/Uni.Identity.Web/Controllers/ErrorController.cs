@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
 using IdentityServer4.Services;
+using JetBrains.Annotations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using Uni.Identity.Web.Extensions;
+using Uni.Common.Utilities;
 using Uni.Identity.Web.ViewModels.Error;
 
 namespace Uni.Identity.Web.Controllers
@@ -12,12 +13,13 @@ namespace Uni.Identity.Web.Controllers
     /// <summary>
     ///     Контроллер для обработки ошибок, возникающих в приложении.
     /// </summary>
+    /// <inheritdoc />
     [AllowAnonymous]
     public class ErrorController : Controller
     {
         private readonly IIdentityServerInteractionService _interaction;
 
-        public ErrorController(IIdentityServerInteractionService interaction)
+        public ErrorController([NotNull] IIdentityServerInteractionService interaction)
         {
             _interaction = interaction ?? throw new ArgumentNullException(nameof(interaction));
         }
@@ -30,6 +32,7 @@ namespace Uni.Identity.Web.Controllers
         public async Task<IActionResult> Index(string errorId)
         {
             ErrorViewModel viewModel = null;
+
             // Получаем информацию об ошибке от IdentityServer.
             var message = await _interaction.GetErrorContextAsync(errorId);
             if (message != null)

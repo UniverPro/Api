@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Uni.Identity.Web.Extensions;
+using Uni.Common.Extensions;
 using Uni.Identity.Web.Extensions.Installers;
 
 namespace Uni.Identity.Web
@@ -11,14 +11,10 @@ namespace Uni.Identity.Web
     public class Startup
     {
         private readonly IConfiguration _configuration;
-        private readonly IHostingEnvironment _environment;
 
-        public Startup(
-            IConfiguration configuration,
-            IHostingEnvironment environment)
+        public Startup(IConfiguration configuration)
         {
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-            _environment = environment ?? throw new ArgumentNullException(nameof(environment));
         }
 
         public void ConfigureServices(IServiceCollection services)
@@ -31,14 +27,16 @@ namespace Uni.Identity.Web
                     _configuration.GetSection("IdentityServer"),
                     _configuration.GetConnectionString("IdentityServerConfiguration"),
                     _configuration.GetConnectionString("IdentityServerTokens"))
-                .InstallInitializationServices()
                 .InstallApplicationServices()
                 .InstallMvc();
         }
 
-        public void Configure(IApplicationBuilder app)
+        public void Configure(
+            IApplicationBuilder app,
+            IHostingEnvironment env
+            )
         {
-            if (_environment.IsDevelopment())
+            if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
@@ -46,11 +44,8 @@ namespace Uni.Identity.Web
             {
                 app.UseExceptionHandler("/error");
             }
-
-            if (!_environment.IsEnvironment("ef"))
-            {
-                app.InitializeApplication();
-            }
+            
+            app.InitializeApplication();
 
             app.UseStaticFiles();
             app.UseIdentityServer();

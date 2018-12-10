@@ -1,10 +1,12 @@
 ﻿using System;
+using JetBrains.Annotations;
 
 namespace Uni.Identity.Web.Configuration.Options.IdentityServer
 {
     /// <summary>
     ///     Общие параметры IdentityServer.
     /// </summary>
+    [PublicAPI]
     public class IdentityServerCommonOptions
     {
         /// <summary>

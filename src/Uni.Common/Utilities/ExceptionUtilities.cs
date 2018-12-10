@@ -1,7 +1,7 @@
 ﻿using System;
 using JetBrains.Annotations;
 
-namespace Uni.Identity.Web.Extensions
+namespace Uni.Common.Utilities
 {
     public static class ExceptionUtilities
     {

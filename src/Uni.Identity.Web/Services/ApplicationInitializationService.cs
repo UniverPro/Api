@@ -1,71 +1,66 @@
 ﻿using System;
 using System.Data;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using IdentityServer4.EntityFramework.DbContexts;
 using IdentityServer4.EntityFramework.Mappers;
 using JetBrains.Annotations;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Uni.Common.Interfaces;
 using Uni.Identity.Web.Configuration.Options;
 
 namespace Uni.Identity.Web.Services
 {
-    public class ApplicationInitializationService
+    internal sealed class ApplicationInitializationService : IApplicationInitializationService
     {
+        private readonly IHostingEnvironment _environment;
         private readonly IdentityServerConfiguration _configuration;
         private readonly ConfigurationDbContext _configurationContext;
         private readonly PersistedGrantDbContext _persistedGrantContext;
 
         public ApplicationInitializationService(
+            [NotNull] IHostingEnvironment environment,
             [NotNull] PersistedGrantDbContext persistedGrantContext,
             [NotNull] ConfigurationDbContext configurationContext,
-            IOptionsSnapshot<IdentityServerConfiguration> configuration)
+            IOptionsSnapshot<IdentityServerConfiguration> configuration
+            )
         {
-            _persistedGrantContext = persistedGrantContext ?? throw new ArgumentNullException(nameof(persistedGrantContext));
-            _configurationContext = configurationContext ?? throw new ArgumentNullException(nameof(configurationContext));
+            _environment = environment ?? throw new ArgumentNullException(nameof(environment));
+            _persistedGrantContext =
+                persistedGrantContext ?? throw new ArgumentNullException(nameof(persistedGrantContext));
+            _configurationContext =
+                configurationContext ?? throw new ArgumentNullException(nameof(configurationContext));
             _configuration = configuration?.Value ?? throw new ArgumentNullException(nameof(configuration));
         }
 
-        /// <summary>
-        ///     Асинхронно выполняет инициализацию приложения.
-        /// </summary>
-        /// <returns></returns>
-        public async Task InitializeAsync()
+        public void Initialize()
         {
-            await InitializeDatabaseAsync();
-            await SynchronizeConfigurationAsync();
+            if (!_environment.IsEnvironment("ef"))
+            {
+                InitializeDatabase();
+                SynchronizeConfiguration();
+            }
         }
 
-        /// <summary>
-        ///     Асинхронно выполняет инициализацию базы данных IdentityServer4.
-        /// </summary>
-        /// <returns></returns>
-        private async Task InitializeDatabaseAsync()
+        private void InitializeDatabase()
         {
-            await _persistedGrantContext.Database.MigrateAsync();
-            // Пересоздаёт базу при запуске.
-            await _configurationContext.Database.EnsureDeletedAsync();
-            await _configurationContext.Database.MigrateAsync();
+            _persistedGrantContext.Database.Migrate();
+
+            _configurationContext.Database.EnsureDeleted();
+            _configurationContext.Database.Migrate();
         }
 
-        /// <summary>
-        ///     Асинхронно обновляет конфигурацию IdentityServer4.
-        /// </summary>
-        /// <returns></returns>
-        private async Task SynchronizeConfigurationAsync()
+        private void SynchronizeConfiguration()
         {
-            using (var transaction = await _configurationContext
-                .Database
-                .BeginTransactionAsync(IsolationLevel.ReadCommitted, CancellationToken.None))
+            using (var transaction = _configurationContext.Database.BeginTransaction(IsolationLevel.ReadCommitted))
             {
                 try
                 {
-                    await SynchronizeClientsAsync();
-                    await SynchronizeApiResourcesAsync();
-                    await SynchronizeIdentityResourcesAsync();
-                    await _configurationContext.SaveChangesAsync();
+                    SynchronizeClients();
+                    SynchronizeApiResources();
+                    SynchronizeIdentityResources();
+                    _configurationContext.SaveChanges();
                     transaction.Commit();
                 }
                 catch
@@ -76,49 +71,37 @@ namespace Uni.Identity.Web.Services
             }
         }
 
-        /// <summary>
-        ///     Асинхронно синхронизирует всех клиентов в соответствии с параметрами конфигурации.
-        /// </summary>
-        /// <returns></returns>
-        private async Task SynchronizeClientsAsync()
+        private void SynchronizeClients()
         {
             var configurationClients = _configuration.ResourcesAndClients.Clients;
 
-            var currentClients = await _configurationContext.Clients.ToArrayAsync();
+            var currentClients = _configurationContext.Clients.ToArray();
             _configurationContext.Clients.RemoveRange(currentClients);
 
             var newClients = configurationClients.Select(x => x.ToEntity());
-            await _configurationContext.Clients.AddRangeAsync(newClients);
+            _configurationContext.Clients.AddRange(newClients);
         }
 
-        /// <summary>
-        ///     Асинхронно синхронизирует все ApiResource в соответствии с параметрами конфигурации.
-        /// </summary>
-        /// <returns></returns>
-        private async Task SynchronizeApiResourcesAsync()
+        private void SynchronizeApiResources()
         {
             var configurationApiResources = _configuration.ResourcesAndClients.ApiResources;
 
-            var currentApiResources = await _configurationContext.ApiResources.ToArrayAsync();
+            var currentApiResources = _configurationContext.ApiResources.ToArray();
             _configurationContext.ApiResources.RemoveRange(currentApiResources);
 
             var newApiResources = configurationApiResources.Select(x => x.ToEntity());
-            await _configurationContext.ApiResources.AddRangeAsync(newApiResources);
+            _configurationContext.ApiResources.AddRange(newApiResources);
         }
 
-        /// <summary>
-        ///     Асинхронно синхронизирует все IdentityResource в соответствии с параметрами конфигурации.
-        /// </summary>
-        /// <returns></returns>
-        private async Task SynchronizeIdentityResourcesAsync()
+        private void SynchronizeIdentityResources()
         {
             var configurationIdentityResources = _configuration.ResourcesAndClients.IdentityResources;
 
-            var currentIdentityResources = await _configurationContext.IdentityResources.ToArrayAsync();
+            var currentIdentityResources = _configurationContext.IdentityResources.ToArray();
             _configurationContext.IdentityResources.RemoveRange(currentIdentityResources);
 
             var newIdentityResources = configurationIdentityResources.Select(x => x.ToEntity());
-            await _configurationContext.IdentityResources.AddRangeAsync(newIdentityResources);
+            _configurationContext.IdentityResources.AddRange(newIdentityResources);
         }
     }
 }

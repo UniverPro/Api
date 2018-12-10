@@ -1,8 +1,11 @@
-﻿namespace Uni.Identity.Web.Configuration.Options.IdentityServer
+﻿using JetBrains.Annotations;
+
+namespace Uni.Identity.Web.Configuration.Options.IdentityServer
 {
     /// <summary>
     ///     Параметры сертификата для подписи токенов.
     /// </summary>
+    [PublicAPI]
     public class SigningCertificateOptions
     {
         /// <summary>

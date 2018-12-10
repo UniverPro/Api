@@ -7,6 +7,7 @@ namespace Uni.Identity.Web.Controllers
     /// <summary>
     ///     Контроллер по-умолчанию.
     /// </summary>
+    /// <inheritdoc />
     [AllowAnonymous]
     public class HomeController : Controller
     {

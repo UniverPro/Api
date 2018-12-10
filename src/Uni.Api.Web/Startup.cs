@@ -24,6 +24,7 @@ using Uni.Api.Web.Configurations;
 using Uni.Api.Web.Configurations.Authorization;
 using Uni.Api.Web.Configurations.Filters;
 using Uni.Api.Web.Configurations.Mappings;
+using Uni.Common.Extensions;
 using Uni.DataAccess.Contexts;
 using Uni.Infrastructure.CQRS.Commands;
 using Uni.Infrastructure.CQRS.Queries;
@@ -36,7 +37,9 @@ namespace Uni.Api.Web
     {
         private readonly IConfiguration _configuration;
 
-        public Startup(IConfiguration configuration)
+        public Startup(
+            IConfiguration configuration
+            )
         {
             _configuration = configuration;
         }
@@ -210,12 +213,8 @@ namespace Uni.Api.Web
             {
                 app.UseDeveloperExceptionPage();
             }
-
-            using (var scope = app.ApplicationServices.CreateScope())
-            {
-                var dbContext = scope.ServiceProvider.GetRequiredService<UniDbContext>();
-                dbContext.Database.Migrate();
-            }
+            
+            app.InitializeApplication();
 
             app.UseMiddleware<ErrorHandlingMiddleware>();
             app.UseScopedSwagger();
@@ -227,6 +226,7 @@ namespace Uni.Api.Web
                     c.OAuthAppName("Swagger UI");
                 }
             );
+
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseMvc();

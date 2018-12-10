@@ -7,6 +7,7 @@ using IdentityServer4.Services;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
+using Refit;
 using Uni.Api.Client;
 using Uni.Api.Shared.Responses;
 using Uni.Identity.Web.Configuration.Options;
@@ -21,6 +22,7 @@ namespace Uni.Identity.Web.Services
     /// <summary>
     ///     Реализация вспомогательного сервиса для контроллера аккаунта пользователя.
     /// </summary>
+    /// <inheritdoc />
     public class AccountService : IAccountService
     {
         private readonly IHttpContextAccessor _contextAccessor;
@@ -32,7 +34,8 @@ namespace Uni.Identity.Web.Services
             IOptionsSnapshot<IdentityServerConfiguration> identityServerCommonOptions,
             [NotNull] IHttpContextAccessor contextAccessor,
             [NotNull] IUniApiClient uniApiClient,
-            [NotNull] IIdentityServerInteractionService interaction)
+            [NotNull] IIdentityServerInteractionService interaction
+            )
         {
             _identityServerCommonOptions = identityServerCommonOptions?.Value?.Common ??
                                            throw new ArgumentNullException(nameof(identityServerCommonOptions));
@@ -67,14 +70,20 @@ namespace Uni.Identity.Web.Services
             return newViewModel;
         }
 
-        public async Task<UserDetailsResponseModel> FindUserAsync(string login, string password)
+        public async Task<(UserDetailsResponseModel, ErrorResponseModel)> FindUserAsync(string login, string password)
         {
-            if (string.IsNullOrEmpty(login))
+            try
             {
-                return null;
+                var user = await _uniApiClient.FindUserByLoginAndPasswordAsync(login, password);
+
+                return (user, null);
             }
-            
-            return await _uniApiClient.FindUserByLoginAndPasswordAsync(login, password);
+            catch (ApiException apiException)
+            {
+                var error = apiException.GetContentAs<ErrorResponseModel>();
+
+                return (null, error);
+            }
         }
 
         public async Task<LogoutViewModel> BuildLogoutViewModelAsync(string logoutId)
@@ -94,13 +103,13 @@ namespace Uni.Identity.Web.Services
             }
 
             var context = await _interaction.GetLogoutContextAsync(logoutId);
-            if (context?.ShowSignoutPrompt == false)
+            if (context?.ShowSignoutPrompt != false)
             {
-                // для пользователя установлена настройка об автоматическом выходе, без запроса
-                vm.ShowLogoutPrompt = false;
                 return vm;
             }
 
+            // для пользователя установлена настройка об автоматическом выходе, без запроса
+            vm.ShowLogoutPrompt = false;
             return vm;
         }
 
@@ -120,20 +129,29 @@ namespace Uni.Identity.Web.Services
 
             var httpContext = _contextAccessor.HttpContext;
             var user = httpContext.User;
-            if (user?.Identity.IsAuthenticated == true)
+            if (user?.Identity.IsAuthenticated != true)
             {
-                var idp = user.FindFirst(JwtClaimTypes.IdentityProvider)?.Value;
-                if (idp != null && idp != IdentityServerConstants.LocalIdentityProvider)
-                {
-                    var providerSupportsSignOut = await httpContext.GetSchemeSupportsSignOutAsync(idp);
-                    if (providerSupportsSignOut)
-                    {
-                        if (vm.LogoutId == null) vm.LogoutId = await _interaction.CreateLogoutContextAsync();
-
-                        vm.ExternalAuthenticationScheme = idp;
-                    }
-                }
+                return vm;
             }
+
+            var idp = user.FindFirst(JwtClaimTypes.IdentityProvider)?.Value;
+            if (idp == null || idp == IdentityServerConstants.LocalIdentityProvider)
+            {
+                return vm;
+            }
+
+            var providerSupportsSignOut = await httpContext.GetSchemeSupportsSignOutAsync(idp);
+            if (!providerSupportsSignOut)
+            {
+                return vm;
+            }
+
+            if (vm.LogoutId == null)
+            {
+                vm.LogoutId = await _interaction.CreateLogoutContextAsync();
+            }
+
+            vm.ExternalAuthenticationScheme = idp;
 
             return vm;
         }

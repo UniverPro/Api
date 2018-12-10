@@ -10,6 +10,7 @@ namespace Uni.Identity.Web.MVC.TagHelpers
     ///     указан для свойства модели. В противном случае использует название указанного свойства модели. Создаёт html-атрибут
     ///     placeholder и заполняет его извлечённым значением.
     /// </summary>
+    /// <inheritdoc />
     [PublicAPI]
     [HtmlTargetElement("input", Attributes = PlaceholderForAttributeName)]
     public class PlaceholderForTagHelper : TagHelper

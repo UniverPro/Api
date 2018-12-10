@@ -5,7 +5,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Uni.Identity.Web.Configuration.Options;
-using Uni.Identity.Web.Configuration.Options.IdentityServer;
 using Uni.Identity.Web.Services;
 
 namespace Uni.Identity.Web.Extensions.Installers
@@ -80,6 +79,7 @@ namespace Uni.Identity.Web.Extensions.Installers
                 })
                 .AddProfileService<ProfileService>()
                 .AddResourceOwnerValidator<ResourceOwnerPasswordValidator>();
+
             services.AddSingleton<IConfigureOptions<CookieAuthenticationOptions>, ConfigureCookieOptions>();
             return services;
         }

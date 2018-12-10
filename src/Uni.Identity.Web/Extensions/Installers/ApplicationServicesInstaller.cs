@@ -6,26 +6,19 @@ using Uni.Identity.Web.Services;
 
 namespace Uni.Identity.Web.Extensions.Installers
 {
-    /// <summary>
-    ///     Методы расширения для настройки сервисов уровня приложения.
-    /// </summary>
-    public static class ApplicationServicesInstaller
+    internal static class ApplicationServicesInstaller
     {
-        /// <summary>
-        ///     Настраивает сервисы уровня приложения.
-        /// </summary>
-        /// <param name="services">Экземпляр настраиваемой коллекции сервисов.</param>
-        /// <returns></returns>
         public static IServiceCollection InstallApplicationServices(this IServiceCollection services)
         {
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IConsentService, ConsentService>();
+            services.AddScoped<ApplicationInitializationService>();
+
             services.AddUniApiClient()
-                .ConfigureHttpClient(x=>
-                    {
-                        x.BaseAddress = new Uri("http://localhost:5001/api/v1");
-                    }
+                .ConfigureHttpClient(
+                    x => { x.BaseAddress = new Uri("http://localhost:5001/api/v1"); }
                 );
+
             return services;
         }
     }

@@ -10,8 +10,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Refit;
-using Uni.Api.Shared.Responses;
 using Uni.Identity.Web.Configuration.Options;
 using Uni.Identity.Web.Configuration.Options.IdentityServer;
 using Uni.Identity.Web.Interfaces;
@@ -24,7 +22,8 @@ namespace Uni.Identity.Web.Controllers
     /// <summary>
     ///     Контроллер аккаунта пользователя.
     /// </summary>
-    [Microsoft.AspNetCore.Authorization.Authorize]
+    /// <inheritdoc />
+    [Authorize]
     [SecurityHeaders]
     public class AccountController : Controller
     {
@@ -47,10 +46,6 @@ namespace Uni.Identity.Web.Controllers
                                            throw new ArgumentNullException(nameof(identityServerCommonOptions));
         }
 
-        /// <summary>
-        ///     Обработка маршрута по-умолчанию.
-        /// </summary>
-        /// <returns></returns>
         [AllowAnonymous]
         public IActionResult Index()
         {
@@ -105,57 +100,54 @@ namespace Uni.Identity.Web.Controllers
 
             if (ModelState.IsValid)
             {
-                try
+                var (user, error) = await _accountService
+                    .FindUserAsync(model.Username, model.Password);
+
+                if (error != null)
                 {
-                    var user = await _accountService
-                        .FindUserAsync(model.Username, model.Password);
+                    await _events.RaiseAsync(new UserLoginFailureEvent(model.Username, "invalid credentials"));
+                    ModelState.AddModelError("", error.Message);
+                }
+                else if (user != null)
+                {
+                    var userName = user.Login;
+                    var subjectId = user.Id.ToString(CultureInfo.InvariantCulture);
+                    await _events.RaiseAsync(
+                        new UserLoginSuccessEvent(
+                            userName,
+                            subjectId,
+                            userName
+                        )
+                    );
 
-                    if (user != null)
+                    // Явно устанавливаем окончание жизни кук, только если пользователь выбрал "Запомнить"
+                    // в противном случае, срок жизни кук будет зависеть от настроек middleware, отвечающей за куки.
+                    AuthenticationProperties props = null;
+                    if (_identityServerCommonOptions.AllowRememberLogin && model.RememberMe)
                     {
-                        var userName = user.Login;
-                        var subjectId = user.Id.ToString(CultureInfo.InvariantCulture);
-                        await _events.RaiseAsync(
-                            new UserLoginSuccessEvent(
-                                userName,
-                                subjectId,
-                                userName
-                            )
-                        );
-
-                        // Явно устанавливаем окончание жизни кук, только если пользователь выбрал "Запомнить"
-                        // в противном случае, срок жизни кук будет зависеть от настроек middleware, отвечающей за куки.
-                        AuthenticationProperties props = null;
-                        if (_identityServerCommonOptions.AllowRememberLogin && model.RememberMe)
+                        props = new AuthenticationProperties
                         {
-                            props = new AuthenticationProperties
-                            {
-                                IsPersistent = true,
-                                ExpiresUtc = DateTimeOffset.UtcNow.Add(_identityServerCommonOptions.LoginDuration)
-                            };
-                        }
-
-                        // выпускаем куку для аутентификации пользователя на основе уникального идентификатора и имени пользователя
-                        await HttpContext.SignInAsync(subjectId, userName, props);
-
-                        // необходимо удостовериться, что ссылка, по которой мы хотим перенаправить пользователя всё ещё корректна,
-                        // либо является локальной ссылкой внутри приложения
-                        if (_interaction.IsValidReturnUrl(model.ReturnUrl) || Url.IsLocalUrl(model.ReturnUrl))
-                        {
-                            return Redirect(model.ReturnUrl);
-                        }
-
-                        return RedirectToAction(nameof(HomeController.Index), "Home");
+                            IsPersistent = true,
+                            ExpiresUtc = DateTimeOffset.UtcNow.Add(_identityServerCommonOptions.LoginDuration)
+                        };
                     }
 
-                    await _events.RaiseAsync(new UserLoginFailureEvent(model.Username, "invalid credentials"));
-                    ModelState.AddModelError("", "Некорректные учётные данные");
-                }
-                catch (ApiException apiException)
-                {
-                    var errorResponse = apiException.GetContentAs<ErrorResponseModel>();
+                    // выпускаем куку для аутентификации пользователя на основе уникального идентификатора и имени пользователя
+                    await HttpContext.SignInAsync(subjectId, userName, props);
 
+                    // необходимо удостовериться, что ссылка, по которой мы хотим перенаправить пользователя всё ещё корректна,
+                    // либо является локальной ссылкой внутри приложения
+                    if (_interaction.IsValidReturnUrl(model.ReturnUrl) || Url.IsLocalUrl(model.ReturnUrl))
+                    {
+                        return Redirect(model.ReturnUrl);
+                    }
+
+                    return RedirectToAction(nameof(HomeController.Index), "Home");
+                }
+                else
+                {
                     await _events.RaiseAsync(new UserLoginFailureEvent(model.Username, "invalid credentials"));
-                    ModelState.AddModelError("", errorResponse.Message);
+                    ModelState.AddModelError("", "Invalid user data");
                 }
             }
 

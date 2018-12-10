@@ -32,7 +32,7 @@ namespace Uni.Identity.Web.Interfaces
         /// <param name="login">Логин пользователя.</param>
         /// <param name="password">Пароль пользователя.</param>
         /// <returns></returns>
-        Task<UserDetailsResponseModel> FindUserAsync(string login, string password);
+        Task<(UserDetailsResponseModel user, ErrorResponseModel error)> FindUserAsync(string login, string password);
 
         /// <summary>
         ///     Создаёт модель данных для экрана выхода пользователя.

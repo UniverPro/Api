@@ -2,8 +2,9 @@
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
 using JetBrains.Annotations;
+using Uni.Identity.Web.Configuration.Options.IdentityServer;
 
-namespace Uni.Identity.Web.Configuration.Options.IdentityServer
+namespace Uni.Identity.Web.Extensions
 {
     public static class SigningCertificateOptionsExtensions
     {

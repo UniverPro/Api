@@ -1,10 +1,12 @@
 ﻿using IdentityServer4.Models;
+using JetBrains.Annotations;
 
 namespace Uni.Identity.Web.Configuration.Options.IdentityServer
 {
     /// <summary>
     ///     Параметры клиентов и ресурсов IdentityServer.
     /// </summary>
+    [PublicAPI]
     public class ResourcesAndClientsOptions
     {
         /// <summary>

@@ -11,8 +11,9 @@ namespace Uni.Identity.Web.Controllers
     /// <summary>
     ///     Контроллер для UI контроля доступа.
     /// </summary>
-    [SecurityHeaders]
+    /// <inheritdoc />
     [Authorize]
+    [SecurityHeaders]
     public class ConsentController : Controller
     {
         private readonly IConsentService _consentService;
@@ -31,7 +32,7 @@ namespace Uni.Identity.Web.Controllers
         public async Task<IActionResult> Index(string returnUrl)
         {
             var vm = await _consentService.BuildViewModelAsync(returnUrl);
-            if (vm != null) return View("Index", vm);
+            if (vm != null) return View(nameof(Index), vm);
             return RedirectToAction(nameof(ErrorController.Index), "Error");
         }
 

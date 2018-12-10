@@ -83,6 +83,7 @@ namespace Uni.Api.Web.Configurations.Authorization
                 scopes,
                 permissions
             );
+
             return policyInfo;
         }
 

@@ -6,10 +6,11 @@ using Microsoft.AspNetCore.Razor.TagHelpers;
 namespace Uni.Identity.Web.MVC.TagHelpers
 {
     /// <summary>
-    ///     Достаёт значение Name из атрибута <see cref="System.ComponentModel.DataAnnotations.DisplayAttribute" /> если он
+    ///     Достаёт значение Name из атрибута <see cref="T:System.ComponentModel.DataAnnotations.DisplayAttribute" /> если он
     ///     указан для свойства модели. В противном случае использует название указанного свойства модели. Дополняет содержимое
     ///     контента html-элемента извлечённым значением.
     /// </summary>
+    /// <inheritdoc />
     [PublicAPI]
     [HtmlTargetElement(Attributes = NameForAttributeName, TagStructure = TagStructure.NormalOrSelfClosing)]
     public class NameForTagHelper : TagHelper
