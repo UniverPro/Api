@@ -42,7 +42,7 @@ namespace Uni.Infrastructure.CQRS.Commands.Users.UpdateUser
 
                     university.Login = command.Login;
                     university.PersonId = command.PersonId;
-                    university.Password = command.Password;
+                    university.PasswordHash = command.Password;
 
                     await _dbContext.SaveChangesAsync(cancellationToken);
 

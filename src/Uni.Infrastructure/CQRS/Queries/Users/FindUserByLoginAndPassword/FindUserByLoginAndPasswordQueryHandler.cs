@@ -48,7 +48,7 @@ namespace Uni.Infrastructure.CQRS.Queries.Users.FindUserByLoginAndPassword
                             cancellationToken
                         );
 
-                    if (user != null && !_passwordValidator.Verify(user.Password, query.Password))
+                    if (user != null && !_passwordValidator.Verify(user.PasswordHash, query.Password))
                     {
                         throw new HttpStatusCodeException(422, "Wrong password.", "The user found, but the password was wrong.");
                     }

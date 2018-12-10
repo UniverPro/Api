@@ -35,7 +35,7 @@ namespace Uni.Infrastructure.CQRS.Commands.Users.CreateUser
                     var user = new User
                     {
                         Login = command.Login,
-                        Password = _passwordHasher.HashPassword(command.Password),
+                        PasswordHash = _passwordHasher.HashPassword(command.Password),
                         PersonId = command.PersonId
                     };
 

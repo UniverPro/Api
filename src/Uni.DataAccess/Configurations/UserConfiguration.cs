@@ -20,7 +20,7 @@ namespace Uni.DataAccess.Configurations
                 .IsRequired()
                 .HasMaxLength(Consts.MaxLoginLength);
 
-            builder.Property(e => e.Password)
+            builder.Property(e => e.PasswordHash)
                 .IsRequired();
 
             builder.HasOne(x => x.Person)
@@ -28,6 +28,11 @@ namespace Uni.DataAccess.Configurations
                 .HasForeignKey<User>(x => x.PersonId)
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasMany<UserRole>()
+                .WithOne()
+                .HasForeignKey(ur => ur.UserId)
+                .IsRequired();
         }
     }
 }
