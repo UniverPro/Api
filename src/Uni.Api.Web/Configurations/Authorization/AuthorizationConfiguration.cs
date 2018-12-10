@@ -48,7 +48,27 @@ namespace Uni.Api.Web.Configurations.Authorization
 
             AddPoliciesInternal(options, policyInfos);
         }
-        
+
+        [NotNull]
+        [ItemNotNull]
+        public static IEnumerable<string> GetPermissions([NotNull] Type type)
+        {
+            var constantFields = ReflectionUtilities.GetConstantFields<string>(type);
+            var permissions = new HashSet<string>();
+            foreach (var constantField in constantFields)
+            {
+                var constantValue = constantField.GetRawConstantValue();
+                if (!(constantValue is string value))
+                {
+                    continue;
+                }
+
+                permissions.Add(value);
+            }
+
+            return permissions;
+        }
+
         private static IEnumerable<AuthorizationPolicyInfo> GetPolicies(Type type)
         {
             var constantFields = ReflectionUtilities.GetConstantFields<string>(type);

@@ -24,7 +24,9 @@ using Uni.Api.Web.Configurations;
 using Uni.Api.Web.Configurations.Authorization;
 using Uni.Api.Web.Configurations.Filters;
 using Uni.Api.Web.Configurations.Mappings;
+using Uni.Api.Web.Services;
 using Uni.Common.Extensions;
+using Uni.Common.Interfaces;
 using Uni.DataAccess.Contexts;
 using Uni.Infrastructure.CQRS.Commands;
 using Uni.Infrastructure.CQRS.Queries;
@@ -76,7 +78,8 @@ namespace Uni.Api.Web
                 typeof(QueriesMarker),
                 typeof(CommandsMarker)
             );
-
+            
+            services.AddScoped<IApplicationInitializationService, ApplicationInitializationService>();
             services.AddTransient<IBlobStorageUploader, AzureBlobStorageUploader>();
             services.AddTransient<ErrorHandlingMiddleware>();
             services.AddScoped<IPasswordHasher, PasswordHasher>();

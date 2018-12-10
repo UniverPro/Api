@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
 using Uni.Api.Client;
+using Uni.Common.Interfaces;
 using Uni.Identity.Web.Interfaces;
 using Uni.Identity.Web.Services;
 
@@ -12,7 +13,7 @@ namespace Uni.Identity.Web.Extensions.Installers
         {
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IConsentService, ConsentService>();
-            services.AddScoped<ApplicationInitializationService>();
+            services.AddScoped<IApplicationInitializationService, ApplicationInitializationService>();
 
             services.AddUniApiClient()
                 .ConfigureHttpClient(
