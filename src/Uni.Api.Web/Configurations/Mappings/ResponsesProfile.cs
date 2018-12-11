@@ -1,8 +1,8 @@
 ﻿using System.Linq;
 using AutoMapper;
 using JetBrains.Annotations;
+using Uni.Api.DataAccess.Models;
 using Uni.Api.Shared.Responses;
-using Uni.DataAccess.Models;
 
 namespace Uni.Api.Web.Configurations.Mappings
 {

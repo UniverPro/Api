@@ -7,15 +7,15 @@ using JetBrains.Annotations;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using Uni.Api.Core.Exceptions;
+using Uni.Api.Infrastructure.CQRS.Commands.Schedules.CreateSchedule;
+using Uni.Api.Infrastructure.CQRS.Commands.Schedules.RemoveSchedule;
+using Uni.Api.Infrastructure.CQRS.Commands.Schedules.UpdateSchedule;
+using Uni.Api.Infrastructure.CQRS.Queries.Schedules.FindScheduleById;
+using Uni.Api.Infrastructure.CQRS.Queries.Schedules.FindSchedules;
 using Uni.Api.Shared.Requests;
 using Uni.Api.Shared.Requests.Filters;
 using Uni.Api.Shared.Responses;
-using Uni.Core.Exceptions;
-using Uni.Infrastructure.CQRS.Commands.Schedules.CreateSchedule;
-using Uni.Infrastructure.CQRS.Commands.Schedules.RemoveSchedule;
-using Uni.Infrastructure.CQRS.Commands.Schedules.UpdateSchedule;
-using Uni.Infrastructure.CQRS.Queries.Schedules.FindScheduleById;
-using Uni.Infrastructure.CQRS.Queries.Schedules.FindSchedules;
 
 namespace Uni.Api.Web.Controllers
 {

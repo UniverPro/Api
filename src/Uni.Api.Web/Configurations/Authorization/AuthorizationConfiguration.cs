@@ -4,8 +4,8 @@ using System.Reflection;
 using IdentityServer4.AccessTokenValidation;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Authorization;
+using Uni.Api.Core.Utilities;
 using Uni.Api.Web.Configurations.Authorization.Attributes;
-using Uni.Core.Utilities;
 
 namespace Uni.Api.Web.Configurations.Authorization
 {

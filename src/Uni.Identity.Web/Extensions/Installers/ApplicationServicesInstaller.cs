@@ -17,7 +17,7 @@ namespace Uni.Identity.Web.Extensions.Installers
 
             services.AddUniApiClient()
                 .ConfigureHttpClient(
-                    x => { x.BaseAddress = new Uri("http://localhost:5001/api/v1"); }
+                    x => x.BaseAddress = new Uri("http://localhost:5001/api/v1")
                 );
 
             return services;

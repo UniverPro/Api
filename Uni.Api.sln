@@ -6,11 +6,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{ECD4772D-2D4
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uni.Api.Web", "src\Uni.Api.Web\Uni.Api.Web.csproj", "{2A357BF3-4384-44CF-BDC9-F99D7CF16BA8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uni.DataAccess", "src\Uni.DataAccess\Uni.DataAccess.csproj", "{C440D1B4-70A3-4F46-970B-76EEFE3C1C07}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uni.Api.DataAccess", "src\Uni.Api.DataAccess\Uni.Api.DataAccess.csproj", "{C440D1B4-70A3-4F46-970B-76EEFE3C1C07}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uni.Infrastructure", "src\Uni.Infrastructure\Uni.Infrastructure.csproj", "{2F06A395-3A69-4559-BD52-A7D711CB31C9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uni.Api.Infrastructure", "src\Uni.Api.Infrastructure\Uni.Api.Infrastructure.csproj", "{2F06A395-3A69-4559-BD52-A7D711CB31C9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uni.Core", "src\Uni.Core\Uni.Core.csproj", "{91958F35-DBE4-4D03-8679-738280F1C7CE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uni.Api.Core", "src\Uni.Api.Core\Uni.Api.Core.csproj", "{91958F35-DBE4-4D03-8679-738280F1C7CE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uni.Api.Client", "src\Uni.Api.Client\Uni.Api.Client.csproj", "{97298CB3-3D8F-4B54-8F0F-5DBA30E39156}"
 EndProject
@@ -24,7 +24,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1. Identity", "1. Identity"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "0. Common", "0. Common", "{ED45CD68-97AD-4D40-8F4F-6F8B35F52129}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uni.Common", "src\Uni.Common\Uni.Common.csproj", "{F834004F-C0AA-49AE-8171-D6E6F868F6AA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uni.Common", "src\Uni.Common\Uni.Common.csproj", "{F834004F-C0AA-49AE-8171-D6E6F868F6AA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

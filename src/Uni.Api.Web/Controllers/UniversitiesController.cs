@@ -7,15 +7,15 @@ using JetBrains.Annotations;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using Uni.Api.Core.Exceptions;
+using Uni.Api.Infrastructure.CQRS.Commands.Universities.CreateUniversity;
+using Uni.Api.Infrastructure.CQRS.Commands.Universities.RemoveUniversity;
+using Uni.Api.Infrastructure.CQRS.Commands.Universities.UpdateUniversity;
+using Uni.Api.Infrastructure.CQRS.Queries.Universities.FindUniversities;
+using Uni.Api.Infrastructure.CQRS.Queries.Universities.FindUniversityById;
 using Uni.Api.Shared.Requests;
 using Uni.Api.Shared.Requests.Filters;
 using Uni.Api.Shared.Responses;
-using Uni.Core.Exceptions;
-using Uni.Infrastructure.CQRS.Commands.Universities.CreateUniversity;
-using Uni.Infrastructure.CQRS.Commands.Universities.RemoveUniversity;
-using Uni.Infrastructure.CQRS.Commands.Universities.UpdateUniversity;
-using Uni.Infrastructure.CQRS.Queries.Universities.FindUniversities;
-using Uni.Infrastructure.CQRS.Queries.Universities.FindUniversityById;
 
 namespace Uni.Api.Web.Controllers
 {

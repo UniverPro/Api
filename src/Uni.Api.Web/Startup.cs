@@ -20,6 +20,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using Uni.Api.DataAccess.Contexts;
+using Uni.Api.Infrastructure.CQRS.Commands;
+using Uni.Api.Infrastructure.CQRS.Queries;
+using Uni.Api.Infrastructure.Interfaces.Services;
+using Uni.Api.Infrastructure.Services;
 using Uni.Api.Web.Configurations;
 using Uni.Api.Web.Configurations.Authorization;
 using Uni.Api.Web.Configurations.Filters;
@@ -27,11 +32,6 @@ using Uni.Api.Web.Configurations.Mappings;
 using Uni.Api.Web.Services;
 using Uni.Common.Extensions;
 using Uni.Common.Interfaces;
-using Uni.DataAccess.Contexts;
-using Uni.Infrastructure.CQRS.Commands;
-using Uni.Infrastructure.CQRS.Queries;
-using Uni.Infrastructure.Interfaces.Services;
-using Uni.Infrastructure.Services;
 
 namespace Uni.Api.Web
 {
@@ -39,9 +39,7 @@ namespace Uni.Api.Web
     {
         private readonly IConfiguration _configuration;
 
-        public Startup(
-            IConfiguration configuration
-            )
+        public Startup(IConfiguration configuration)
         {
             _configuration = configuration;
         }
@@ -78,7 +76,7 @@ namespace Uni.Api.Web
                 typeof(QueriesMarker),
                 typeof(CommandsMarker)
             );
-            
+
             services.AddScoped<IApplicationInitializationService, ApplicationInitializationService>();
             services.AddTransient<IBlobStorageUploader, AzureBlobStorageUploader>();
             services.AddTransient<ErrorHandlingMiddleware>();
@@ -197,7 +195,7 @@ namespace Uni.Api.Web
                             TokenUrl = "http://localhost:5000/connect/token",
                             Scopes = new Dictionary<string, string>
                             {
-                                {Scopes.Main, "Main Application API Scope"}
+                                [Scopes.Main] = "Main Application API Scope"
                             }
                         }
                     );
@@ -216,7 +214,7 @@ namespace Uni.Api.Web
             {
                 app.UseDeveloperExceptionPage();
             }
-            
+
             app.InitializeApplication();
 
             app.UseMiddleware<ErrorHandlingMiddleware>();
@@ -230,7 +228,6 @@ namespace Uni.Api.Web
                 }
             );
 
-            app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseMvc();
         }

@@ -7,15 +7,15 @@ using JetBrains.Annotations;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using Uni.Api.Core.Exceptions;
+using Uni.Api.Infrastructure.CQRS.Commands.Groups.CreateGroup;
+using Uni.Api.Infrastructure.CQRS.Commands.Groups.RemoveGroup;
+using Uni.Api.Infrastructure.CQRS.Commands.Groups.UpdateGroup;
+using Uni.Api.Infrastructure.CQRS.Queries.Groups.FindGroupById;
+using Uni.Api.Infrastructure.CQRS.Queries.Groups.FindGroups;
 using Uni.Api.Shared.Requests;
 using Uni.Api.Shared.Requests.Filters;
 using Uni.Api.Shared.Responses;
-using Uni.Core.Exceptions;
-using Uni.Infrastructure.CQRS.Commands.Groups.CreateGroup;
-using Uni.Infrastructure.CQRS.Commands.Groups.RemoveGroup;
-using Uni.Infrastructure.CQRS.Commands.Groups.UpdateGroup;
-using Uni.Infrastructure.CQRS.Queries.Groups.FindGroupById;
-using Uni.Infrastructure.CQRS.Queries.Groups.FindGroups;
 
 namespace Uni.Api.Web.Controllers
 {

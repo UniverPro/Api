@@ -6,15 +6,15 @@ using JetBrains.Annotations;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using Uni.Api.Core.Exceptions;
+using Uni.Api.Infrastructure.CQRS.Commands.Users.CreateUser;
+using Uni.Api.Infrastructure.CQRS.Commands.Users.RemoveUser;
+using Uni.Api.Infrastructure.CQRS.Commands.Users.UpdateUser;
+using Uni.Api.Infrastructure.CQRS.Queries.Users.FindUserById;
+using Uni.Api.Infrastructure.CQRS.Queries.Users.FindUserByLoginAndPassword;
 using Uni.Api.Shared.Requests;
 using Uni.Api.Shared.Requests.Filters;
 using Uni.Api.Shared.Responses;
-using Uni.Core.Exceptions;
-using Uni.Infrastructure.CQRS.Commands.Users.CreateUser;
-using Uni.Infrastructure.CQRS.Commands.Users.RemoveUser;
-using Uni.Infrastructure.CQRS.Commands.Users.UpdateUser;
-using Uni.Infrastructure.CQRS.Queries.Users.FindUserById;
-using Uni.Infrastructure.CQRS.Queries.Users.FindUserByLoginAndPassword;
 
 namespace Uni.Api.Web.Controllers
 {

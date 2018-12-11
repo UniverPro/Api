@@ -6,10 +6,10 @@ using LinqKit;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Uni.Api.DataAccess.Contexts;
+using Uni.Api.DataAccess.Models;
 using Uni.Api.Web.Configurations.Authorization;
 using Uni.Common.Interfaces;
-using Uni.DataAccess.Contexts;
-using Uni.DataAccess.Models;
 
 namespace Uni.Api.Web.Services
 {

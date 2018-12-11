@@ -2,8 +2,8 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
+using Uni.Api.Core.Exceptions;
 using Uni.Api.Shared.Responses;
-using Uni.Core.Exceptions;
 
 namespace Uni.Api.Web
 {

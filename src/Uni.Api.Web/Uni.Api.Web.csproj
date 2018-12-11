@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
-    <RootNamespace>Uni.Api.Web</RootNamespace>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
@@ -36,8 +35,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Uni.Api.Shared\Uni.Api.Shared.csproj" />
-    <ProjectReference Include="..\Uni.DataAccess\Uni.DataAccess.csproj" />
-    <ProjectReference Include="..\Uni.Infrastructure\Uni.Infrastructure.csproj" />
+    <ProjectReference Include="..\Uni.Api.DataAccess\Uni.Api.DataAccess.csproj" />
+    <ProjectReference Include="..\Uni.Api.Infrastructure\Uni.Api.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

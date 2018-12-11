@@ -7,10 +7,10 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using Uni.Api.Core.Extensions;
+using Uni.Api.Infrastructure.CQRS.Queries.Users.FindUserById;
 using Uni.Api.Shared.Responses;
 using Uni.Api.Web.Configurations.Authorization;
-using Uni.Core.Extensions;
-using Uni.Infrastructure.CQRS.Queries.Users.FindUserById;
 
 namespace Uni.Api.Web.Controllers
 {
