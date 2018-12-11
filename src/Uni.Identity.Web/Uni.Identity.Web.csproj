@@ -36,4 +36,13 @@
     <ProjectReference Include="..\Uni.Common\Uni.Common.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="data-protection\key-d39ae88f-6e93-46ac-a48d-a164d7a940fc.xml">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Update="tempkey.rsa">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

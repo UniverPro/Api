@@ -36,7 +36,7 @@ namespace Uni.Identity.Web.Extensions.Installers
             )
         {
             var config = identityServerConfiguration.Get<IdentityServerConfiguration>();
-            var signingCert = config.SigningCertificate.ToCertificate();
+            //var signingCert = config.SigningCertificate.ToCertificate();
             var migrationsAssembly = typeof(IdentityServerInstaller).GetTypeInfo().Assembly.GetName().Name;
 
             services.Configure<IdentityServerConfiguration>(identityServerConfiguration);
@@ -51,7 +51,7 @@ namespace Uni.Identity.Web.Extensions.Installers
                         options.Events.RaiseSuccessEvents = true;
                     }
                 )
-                .AddSigningCredential(signingCert)
+                .AddDeveloperSigningCredential()
                 .AddConfigurationStore(
                     store =>
                     {

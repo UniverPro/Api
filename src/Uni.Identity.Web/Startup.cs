@@ -20,10 +20,10 @@ namespace Uni.Identity.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services
-                .InstallDataProtection(
-                    "backoffice_identity",
-                    _configuration.GetValue<string>("DataProtectionDirectory")
-                )
+                //.InstallDataProtection(
+                //    "backoffice_identity",
+                //    _configuration.GetValue<string>("DataProtectionDirectory")
+                //)
                 .InstallIdentityServer(
                     _configuration.GetSection("IdentityServer"),
                     _configuration.GetConnectionString("IdentityServerConfiguration"),
