@@ -8,7 +8,8 @@ namespace Uni.Api.Web.Configurations.Authorization
         public AuthorizationPolicyInfo(
             [NotNull] string name,
             [CanBeNull] string[] scopes,
-            [CanBeNull] string[] permissions)
+            [CanBeNull] string[] permissions
+            )
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -20,7 +21,7 @@ namespace Uni.Api.Web.Configurations.Authorization
             Permissions = permissions;
         }
 
-        [NotNull] 
+        [NotNull]
         public string Name { get; }
 
         [CanBeNull]

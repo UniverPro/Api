@@ -45,7 +45,7 @@ namespace Uni.Api.Infrastructure.CQRS.Commands.Teachers.UpdateTeacher
                     {
                         throw new NotFoundException(nameof(teacher), command.Id);
                     }
-                    
+
                     // TODO: Check if FacultyId exists
                     teacher.FirstName = command.FirstName;
                     teacher.LastName = command.LastName;

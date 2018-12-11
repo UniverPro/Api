@@ -21,7 +21,7 @@ namespace Uni.Identity.Web.Extensions
             }
 
             var certFileInfo = new FileInfo(options.Location);
-            
+
             var cert = new X509Certificate2(
                 certFileInfo.FullName,
                 options.Password,

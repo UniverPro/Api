@@ -26,7 +26,8 @@ namespace Uni.Identity.Web.Interfaces
         Task<LoginViewModel> BuildLoginViewModelAsync(LoginViewModel loginViewModel);
 
         /// <summary>
-        ///     Ищет пользователя по логину и паролю. Если пользователь найден - вернёт экземпляр <see cref="UserResponseModel" />, если нет -
+        ///     Ищет пользователя по логину и паролю. Если пользователь найден - вернёт экземпляр <see cref="UserResponseModel" />,
+        ///     если нет -
         ///     <see langword="null" />.
         /// </summary>
         /// <param name="login">Логин пользователя.</param>

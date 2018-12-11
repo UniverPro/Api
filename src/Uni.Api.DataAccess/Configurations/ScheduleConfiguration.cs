@@ -11,7 +11,7 @@ namespace Uni.Api.DataAccess.Configurations
         public void Configure(EntityTypeBuilder<Schedule> builder)
         {
             builder.ToTable(nameof(Schedule));
-            
+
             builder.HasOne(d => d.Subject)
                 .WithMany(p => p.Schedules)
                 .HasForeignKey(d => d.SubjectId)

@@ -39,7 +39,7 @@ namespace Uni.Api.Infrastructure.CQRS.Commands.Schedules.UpdateSchedule
                     {
                         throw new NotFoundException(nameof(schedule), command.Id);
                     }
-                    
+
                     // TODO: check SubjectId & TeacherId exists
                     schedule.SubjectId = command.SubjectId;
                     schedule.TeacherId = command.TeacherId;

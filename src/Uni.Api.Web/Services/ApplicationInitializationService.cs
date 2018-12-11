@@ -16,8 +16,8 @@ namespace Uni.Api.Web.Services
     internal sealed class ApplicationInitializationService : IApplicationInitializationService
     {
         private readonly IHostingEnvironment _environment;
-        private readonly UniDbContext _uniDbContext;
         private readonly ILogger<ApplicationInitializationService> _logger;
+        private readonly UniDbContext _uniDbContext;
 
         public ApplicationInitializationService(
             [NotNull] IHostingEnvironment environment,
@@ -62,7 +62,7 @@ namespace Uni.Api.Web.Services
                                 y => string.Equals(x, y.Name, StringComparison.OrdinalIgnoreCase)
                             )
                         ).Select(x => new Permission {Name = x}).ToArray();
-                    
+
                     if (newPermissions.Length != 0)
                     {
                         _logger.LogInformation($"Found {newPermissions.Length} new permissions.");

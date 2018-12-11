@@ -18,7 +18,8 @@ namespace Uni.Identity.Web
             .AddJsonFile(
                 $"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json",
                 true,
-                true)
+                true
+            )
             .AddEnvironmentVariables()
             .Build();
 
@@ -46,21 +47,25 @@ namespace Uni.Identity.Web
         public static IWebHostBuilder CreateWebHostBuilder(string[] args)
         {
             return WebHost.CreateDefaultBuilder(args)
-                .ConfigureAppConfiguration((hostingContext, config) =>
-                {
-                    var hostingEnvironment = hostingContext.HostingEnvironment;
-                    if (hostingEnvironment.IsEnvironment("ef"))
+                .ConfigureAppConfiguration(
+                    (hostingContext, config) =>
                     {
-                        var assembly = Assembly.Load(new AssemblyName(hostingEnvironment.ApplicationName));
-                        if (assembly != null)
+                        var hostingEnvironment = hostingContext.HostingEnvironment;
+                        if (hostingEnvironment.IsEnvironment("ef"))
                         {
-                            config.AddUserSecrets(assembly, true);
+                            var assembly = Assembly.Load(new AssemblyName(hostingEnvironment.ApplicationName));
+                            if (assembly != null)
+                            {
+                                config.AddUserSecrets(assembly, true);
+                            }
                         }
                     }
-                })
+                )
                 .ConfigureLogging(builder => builder.ClearProviders())
-                .UseSerilog((hostingContext, loggerConfiguration) =>
-                    loggerConfiguration.ReadFrom.Configuration(hostingContext.Configuration))
+                .UseSerilog(
+                    (hostingContext, loggerConfiguration) =>
+                        loggerConfiguration.ReadFrom.Configuration(hostingContext.Configuration)
+                )
                 .UseStartup<Startup>();
         }
     }

@@ -14,7 +14,7 @@ namespace Uni.Api.Web.Validators
 
             RuleFor(x => x.TeacherId)
                 .NotEmpty();
-            
+
             RuleFor(x => x.StartTime)
                 .NotEmpty();
 

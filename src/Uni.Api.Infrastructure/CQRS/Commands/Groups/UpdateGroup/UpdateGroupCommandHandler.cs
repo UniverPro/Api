@@ -39,7 +39,7 @@ namespace Uni.Api.Infrastructure.CQRS.Commands.Groups.UpdateGroup
                     {
                         throw new NotFoundException(nameof(group), command.Id);
                     }
-                    
+
                     // TODO: check FacultyId exists
                     group.Name = command.Name;
                     group.FacultyId = command.FacultyId;

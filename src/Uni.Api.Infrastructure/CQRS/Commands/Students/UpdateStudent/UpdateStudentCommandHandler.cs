@@ -42,7 +42,7 @@ namespace Uni.Api.Infrastructure.CQRS.Commands.Students.UpdateStudent
                     {
                         throw new NotFoundException(nameof(student), command.Id);
                     }
-                    
+
                     // TODO: Check if GroupId exists
                     student.FirstName = command.FirstName;
                     student.LastName = command.LastName;

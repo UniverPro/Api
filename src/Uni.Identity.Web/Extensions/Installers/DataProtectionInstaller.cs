@@ -10,7 +10,8 @@ namespace Uni.Identity.Web.Extensions.Installers
         public static IServiceCollection InstallDataProtection(
             this IServiceCollection services,
             string applicationDiscriminator,
-            string dataProtectionDirectory)
+            string dataProtectionDirectory
+            )
         {
             var directory = new DirectoryInfo(dataProtectionDirectory);
             if (!directory.Exists)

@@ -32,7 +32,11 @@ namespace Uni.Identity.Web.Controllers
         public async Task<IActionResult> Index(string returnUrl)
         {
             var vm = await _consentService.BuildViewModelAsync(returnUrl);
-            if (vm != null) return View(nameof(Index), vm);
+            if (vm != null)
+            {
+                return View(nameof(Index), vm);
+            }
+
             return RedirectToAction(nameof(ErrorController.Index), "Error");
         }
 
@@ -41,9 +45,21 @@ namespace Uni.Identity.Web.Controllers
         public async Task<IActionResult> Index(ConsentInputModel model)
         {
             var result = await _consentService.ProcessConsent(model);
-            if (result.IsRedirect) return Redirect(result.RedirectUri);
-            if (result.HasValidationError) ModelState.AddModelError("", result.ValidationError);
-            if (result.ShowView) return View("Index", result.ViewModel);
+            if (result.IsRedirect)
+            {
+                return Redirect(result.RedirectUri);
+            }
+
+            if (result.HasValidationError)
+            {
+                ModelState.AddModelError("", result.ValidationError);
+            }
+
+            if (result.ShowView)
+            {
+                return View("Index", result.ViewModel);
+            }
+
             return RedirectToAction(nameof(ErrorController.Index), "Error");
         }
     }

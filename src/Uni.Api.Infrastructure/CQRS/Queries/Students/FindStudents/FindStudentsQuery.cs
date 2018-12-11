@@ -70,7 +70,7 @@ namespace Uni.Api.Infrastructure.CQRS.Queries.Students.FindStudents
                     Spec<Student>.New(x => EF.Functions.Like(x.MiddleName, $"%{MiddleName}%"))
                 );
             }
-            
+
             if (!string.IsNullOrEmpty(Email))
             {
                 specification = specification.And(

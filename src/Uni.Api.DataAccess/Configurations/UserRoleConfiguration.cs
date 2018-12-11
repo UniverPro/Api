@@ -12,7 +12,7 @@ namespace Uni.Api.DataAccess.Configurations
         {
             builder.ToTable(nameof(UserRole));
 
-            builder.HasKey(r => new { r.UserId, r.RoleId });
+            builder.HasKey(r => new {r.UserId, r.RoleId});
 
             builder.HasOne(ur => ur.Role)
                 .WithMany(r => r.UserRoles)

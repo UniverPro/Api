@@ -12,7 +12,7 @@ namespace Uni.Api.DataAccess.Configurations
         public void Configure(EntityTypeBuilder<Person> builder)
         {
             builder.ToTable(nameof(Person));
-            
+
             builder.Property(e => e.FirstName)
                 .IsRequired()
                 .HasMaxLength(Consts.MaxNameLength);
@@ -20,10 +20,10 @@ namespace Uni.Api.DataAccess.Configurations
             builder.Property(e => e.LastName)
                 .IsRequired()
                 .HasMaxLength(Consts.MaxNameLength);
-            
+
             builder.Property(e => e.MiddleName)
                 .HasMaxLength(Consts.MaxNameLength);
-            
+
             builder.HasIndex(e => e.Email)
                 .IsUnique();
 

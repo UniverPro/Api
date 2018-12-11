@@ -43,7 +43,7 @@ namespace Uni.Api.Infrastructure.CQRS.Commands.Students.CreateStudent
                         Email = command.Email,
                         GroupId = command.GroupId
                     };
-                    
+
                     _dbContext.Students.Add(student);
 
                     await _dbContext.SaveChangesAsync(cancellationToken);
@@ -57,7 +57,7 @@ namespace Uni.Api.Infrastructure.CQRS.Commands.Students.CreateStudent
 
                         student.AvatarPath = avatarUri;
                     }
-                    
+
                     await _dbContext.SaveChangesAsync(cancellationToken);
 
                     transaction.Commit();

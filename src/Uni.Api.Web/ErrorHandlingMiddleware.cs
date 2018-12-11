@@ -18,7 +18,7 @@ namespace Uni.Api.Web
             catch (Exception ex)
             {
                 context.Response.ContentType = "application/json";
-                
+
 
                 var errorResponseModel = new ErrorResponseModel
                 {
@@ -40,7 +40,7 @@ namespace Uni.Api.Web
                 var result = JsonConvert.SerializeObject(
                     errorResponseModel
                 );
-                
+
                 await context.Response.WriteAsync(result);
             }
         }

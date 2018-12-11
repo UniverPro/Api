@@ -39,19 +39,17 @@ namespace Uni.Api.Web.Controllers
         [HttpGet]
         [Authorize(Policies.ReadAccount)]
         [SwaggerResponse(200, "The current user.", typeof(UserDetailsResponseModel))]
-        public async Task<UserDetailsResponseModel> Get(
-            CancellationToken cancellationToken
-            )
+        public async Task<UserDetailsResponseModel> Get(CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            
+
             var userId = User.SubjectId();
 
             // TODO: add custom query that should not return null - Single()
             var query = new FindUserByIdQuery(userId);
 
             var user = await _mediator.Send(query, cancellationToken);
-            
+
             var response = _mapper.Map<UserDetailsResponseModel>(user);
 
             return response;

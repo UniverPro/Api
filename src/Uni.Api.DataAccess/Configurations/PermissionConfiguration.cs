@@ -12,7 +12,7 @@ namespace Uni.Api.DataAccess.Configurations
         public void Configure(EntityTypeBuilder<Permission> builder)
         {
             builder.ToTable(nameof(Permission));
-            
+
             builder.HasIndex(e => e.Name)
                 .IsUnique();
 

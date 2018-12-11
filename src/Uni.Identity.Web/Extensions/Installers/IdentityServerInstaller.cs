@@ -32,51 +32,64 @@ namespace Uni.Identity.Web.Extensions.Installers
             this IServiceCollection services,
             IConfiguration identityServerConfiguration,
             string configurationDatabaseConnectionString,
-            string tokensDatabaseConnectionString)
+            string tokensDatabaseConnectionString
+            )
         {
             var config = identityServerConfiguration.Get<IdentityServerConfiguration>();
             var signingCert = config.SigningCertificate.ToCertificate();
             var migrationsAssembly = typeof(IdentityServerInstaller).GetTypeInfo().Assembly.GetName().Name;
 
             services.Configure<IdentityServerConfiguration>(identityServerConfiguration);
-            services.AddIdentityServer(options =>
-                {
-                    options.UserInteraction.ErrorUrl = "/error/index";
-                    options.UserInteraction.ErrorIdParameter = "errorId";
-                    options.Events.RaiseErrorEvents = true;
-                    options.Events.RaiseInformationEvents = true;
-                    options.Events.RaiseFailureEvents = true;
-                    options.Events.RaiseSuccessEvents = true;
-                })
+            services.AddIdentityServer(
+                    options =>
+                    {
+                        options.UserInteraction.ErrorUrl = "/error/index";
+                        options.UserInteraction.ErrorIdParameter = "errorId";
+                        options.Events.RaiseErrorEvents = true;
+                        options.Events.RaiseInformationEvents = true;
+                        options.Events.RaiseFailureEvents = true;
+                        options.Events.RaiseSuccessEvents = true;
+                    }
+                )
                 .AddSigningCredential(signingCert)
-                .AddConfigurationStore(store =>
-                {
-                    store.ConfigureDbContext = builder =>
+                .AddConfigurationStore(
+                    store =>
                     {
-#if DEBUG
-                        builder.EnableSensitiveDataLogging();
-#endif
-                        builder.UseSqlServer(configurationDatabaseConnectionString, sql =>
+                        store.ConfigureDbContext = builder =>
                         {
-                            sql.MigrationsAssembly(migrationsAssembly);
-                            sql.MigrationsHistoryTable("Idsrv4_Migrations_ConfigurationStore");
-                        });
-                    };
-                })
-                .AddOperationalStore(store =>
-                {
-                    store.ConfigureDbContext = builder =>
+#if DEBUG
+                            builder.EnableSensitiveDataLogging();
+#endif
+                            builder.UseSqlServer(
+                                configurationDatabaseConnectionString,
+                                sql =>
+                                {
+                                    sql.MigrationsAssembly(migrationsAssembly);
+                                    sql.MigrationsHistoryTable("Idsrv4_Migrations_ConfigurationStore");
+                                }
+                            );
+                        };
+                    }
+                )
+                .AddOperationalStore(
+                    store =>
                     {
-#if DEBUG
-                        builder.EnableSensitiveDataLogging();
-#endif
-                        builder.UseSqlServer(tokensDatabaseConnectionString, sql =>
+                        store.ConfigureDbContext = builder =>
                         {
-                            sql.MigrationsAssembly(migrationsAssembly);
-                            sql.MigrationsHistoryTable("Idsrv4_Migrations_OperationalStore");
-                        });
-                    };
-                })
+#if DEBUG
+                            builder.EnableSensitiveDataLogging();
+#endif
+                            builder.UseSqlServer(
+                                tokensDatabaseConnectionString,
+                                sql =>
+                                {
+                                    sql.MigrationsAssembly(migrationsAssembly);
+                                    sql.MigrationsHistoryTable("Idsrv4_Migrations_OperationalStore");
+                                }
+                            );
+                        };
+                    }
+                )
                 .AddProfileService<ProfileService>()
                 .AddResourceOwnerValidator<ResourceOwnerPasswordValidator>();
 

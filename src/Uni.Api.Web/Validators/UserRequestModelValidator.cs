@@ -16,7 +16,7 @@ namespace Uni.Api.Web.Validators
             RuleFor(x => x.Login)
                 .NotEmpty()
                 .MaximumLength(Consts.MaxLoginLength);
-            
+
             RuleFor(x => x.Password)
                 .NotEmpty()
                 .MaximumLength(Consts.MaxPasswordLength);

@@ -48,7 +48,9 @@ namespace Uni.Identity.Web.Controllers
                 {
                     var lastExceptionMessage = ExceptionUtilities.GetExceptionMessage(feature.Error);
                     if (!string.IsNullOrEmpty(lastExceptionMessage))
+                    {
                         viewModel = new ErrorViewModel(lastExceptionMessage);
+                    }
                 }
             }
 

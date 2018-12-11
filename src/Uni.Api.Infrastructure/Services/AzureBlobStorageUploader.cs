@@ -32,7 +32,7 @@ namespace Uni.Api.Infrastructure.Services
             {
                 throw new ArgumentNullException(nameof(file));
             }
-            
+
             using (var stream = new MemoryStream())
             {
                 await file.CopyToAsync(stream, cancellationToken);
@@ -48,14 +48,18 @@ namespace Uni.Api.Infrastructure.Services
                 }
 
                 stream.Seek(0, SeekOrigin.Begin);
-                
+
                 var blobName = $"{Guid.NewGuid()}.{formatDescription}";
 
                 return await UploadToStorageInternal(stream, blobName, cancellationToken);
             }
         }
 
-        private async Task<string> UploadToStorageInternal(Stream stream, [NotNull] string blobName, CancellationToken cancellationToken)
+        private async Task<string> UploadToStorageInternal(
+            Stream stream,
+            [NotNull] string blobName,
+            CancellationToken cancellationToken
+            )
         {
             if (string.IsNullOrWhiteSpace(blobName))
             {

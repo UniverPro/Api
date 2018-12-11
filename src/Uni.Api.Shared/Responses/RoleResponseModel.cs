@@ -9,7 +9,7 @@ namespace Uni.Api.Shared.Responses
         public int Id { get; set; }
 
         public string Name { get; set; }
-        
+
         public List<PermissionResponseModel> Permissions { get; set; }
     }
 }

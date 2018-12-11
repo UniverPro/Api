@@ -16,10 +16,12 @@ namespace Uni.Api.Web.Configurations.Filters
             var requiredScopes = context.MethodInfo.GetCustomAttributes(true)
                 .OfType<AuthorizeAttribute>()
                 .Select(attr => attr.Policy)
-                .Concat(context.MethodInfo.DeclaringType
-                    .GetCustomAttributes(true)
-                    .OfType<AuthorizeAttribute>()
-                    .Select(attr => attr.Policy))
+                .Concat(
+                    context.MethodInfo.DeclaringType
+                        .GetCustomAttributes(true)
+                        .OfType<AuthorizeAttribute>()
+                        .Select(attr => attr.Policy)
+                )
                 .Distinct()
                 .ToArray();
 

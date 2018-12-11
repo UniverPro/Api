@@ -93,7 +93,7 @@ namespace Uni.Identity.Web.Services
             {
                 claims.Add(new Claim(JwtClaimTypes.Picture, person.AvatarPath));
             }
-            
+
             claims.AddRange(
                 user.Roles.SelectMany(x => x.Permissions).Select(x => x.Name).Distinct()
                     .Select(permission => new Claim("permissions", permission))

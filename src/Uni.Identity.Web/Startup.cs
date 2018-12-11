@@ -22,11 +22,13 @@ namespace Uni.Identity.Web
             services
                 .InstallDataProtection(
                     "backoffice_identity",
-                    _configuration.GetValue<string>("DataProtectionDirectory"))
+                    _configuration.GetValue<string>("DataProtectionDirectory")
+                )
                 .InstallIdentityServer(
                     _configuration.GetSection("IdentityServer"),
                     _configuration.GetConnectionString("IdentityServerConfiguration"),
-                    _configuration.GetConnectionString("IdentityServerTokens"))
+                    _configuration.GetConnectionString("IdentityServerTokens")
+                )
                 .InstallApplicationServices()
                 .InstallMvc();
         }
@@ -44,7 +46,7 @@ namespace Uni.Identity.Web
             {
                 app.UseExceptionHandler("/error");
             }
-            
+
             app.InitializeApplication();
 
             app.UseStaticFiles();

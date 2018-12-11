@@ -32,7 +32,10 @@ namespace Uni.Api.Client
 
         [ItemNotNull]
         [Get("/users/{userId}")]
-        Task<UserDetailsResponseModel> FindUserByIdAsync([AliasAs("userId")] int userId, CancellationToken token = default);
+        Task<UserDetailsResponseModel> FindUserByIdAsync(
+            [AliasAs("userId")] int userId,
+            CancellationToken token = default
+            );
 
         [ItemNotNull]
         [Get("/users")]

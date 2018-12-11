@@ -14,9 +14,9 @@ namespace Uni.Identity.Web.Services
 {
     internal sealed class ApplicationInitializationService : IApplicationInitializationService
     {
-        private readonly IHostingEnvironment _environment;
         private readonly IdentityServerConfiguration _configuration;
         private readonly ConfigurationDbContext _configurationContext;
+        private readonly IHostingEnvironment _environment;
         private readonly PersistedGrantDbContext _persistedGrantContext;
 
         public ApplicationInitializationService(

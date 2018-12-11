@@ -51,7 +51,11 @@ namespace Uni.Api.Infrastructure.CQRS.Queries.Users.FindUserByLoginAndPassword
 
                     if (user != null && !_passwordValidator.Verify(user.PasswordHash, query.Password))
                     {
-                        throw new HttpStatusCodeException(422, "Wrong password.", "The user found, but the password was wrong.");
+                        throw new HttpStatusCodeException(
+                            422,
+                            "Wrong password.",
+                            "The user found, but the password was wrong."
+                        );
                     }
 
                     transaction.Commit();

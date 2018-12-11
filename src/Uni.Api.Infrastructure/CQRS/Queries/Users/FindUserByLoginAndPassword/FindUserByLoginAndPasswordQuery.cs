@@ -22,7 +22,7 @@ namespace Uni.Api.Infrastructure.CQRS.Queries.Users.FindUserByLoginAndPassword
             Login = login;
             Password = password;
         }
-        
+
         [NotNull]
         public string Login { get; }
 

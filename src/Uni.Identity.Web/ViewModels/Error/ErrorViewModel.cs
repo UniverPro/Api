@@ -11,7 +11,11 @@
         /// <param name="message">Текст сообщения об ошибке.</param>
         /// <param name="description">Подробное описание ошибки.</param>
         /// <param name="requestId">Уникальный идентификатор запроса, вызвавшего ошибку.</param>
-        public ErrorViewModel(string message, string description = null, string requestId = null)
+        public ErrorViewModel(
+            string message,
+            string description = null,
+            string requestId = null
+            )
         {
             Message = message;
             Description = description;

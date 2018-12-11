@@ -54,7 +54,7 @@ namespace Uni.Api.Web.Controllers
             var query = new FindUserByLoginAndPasswordQuery(model.Login, model.Password);
 
             var user = await _mediator.Send(query, cancellationToken);
-            
+
             if (user == null)
             {
                 throw new NotFoundException(nameof(user));

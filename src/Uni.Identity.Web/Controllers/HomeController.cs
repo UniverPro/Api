@@ -21,7 +21,8 @@ namespace Uni.Identity.Web.Controllers
                 User.IsAuthenticated()
                     ? nameof(AccountController.Authenticated)
                     : nameof(AccountController.Login),
-                "Account");
+                "Account"
+            );
         }
     }
 }
