@@ -35,7 +35,7 @@ namespace Uni.Identity.Web.Extensions.Installers
             string tokensDatabaseConnectionString
             )
         {
-            var config = identityServerConfiguration.Get<IdentityServerConfiguration>();
+            //var config = identityServerConfiguration.Get<IdentityServerConfiguration>();
             //var signingCert = config.SigningCertificate.ToCertificate();
             var migrationsAssembly = typeof(IdentityServerInstaller).GetTypeInfo().Assembly.GetName().Name;
 

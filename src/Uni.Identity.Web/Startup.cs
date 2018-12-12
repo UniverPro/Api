@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Uni.Api.Client;
+using Uni.Common.Configurations;
 using Uni.Common.Extensions;
 using Uni.Identity.Web.Extensions.Installers;
 
@@ -31,6 +33,13 @@ namespace Uni.Identity.Web
                 )
                 .InstallApplicationServices()
                 .InstallMvc();
+            
+            var baseServiceUriSettings = _configuration.GetSection("BaseServiceUriSettings").Get<BaseServiceUriSettings>();
+
+            services.AddUniApiClient()
+                .ConfigureHttpClient(
+                    x => x.BaseAddress = new Uri($"{baseServiceUriSettings.Api}/api/v1")
+                );
         }
 
         public void Configure(

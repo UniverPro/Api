@@ -30,6 +30,7 @@ using Uni.Api.Web.Configurations.Authorization;
 using Uni.Api.Web.Configurations.Filters;
 using Uni.Api.Web.Configurations.Mappings;
 using Uni.Api.Web.Services;
+using Uni.Common.Configurations;
 using Uni.Common.Extensions;
 using Uni.Common.Interfaces;
 
@@ -105,12 +106,14 @@ namespace Uni.Api.Web
                     );
                 }
             );
+            
+            var baseServiceUriSettings = _configuration.GetSection("BaseServiceUriSettings").Get<BaseServiceUriSettings>();
 
             services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
                 .AddIdentityServerAuthentication(
                     options =>
                     {
-                        options.Authority = "http://localhost:5000";
+                        options.Authority = baseServiceUriSettings.Identity;
                         options.RequireHttpsMetadata = false;
                         options.SupportedTokens = SupportedTokens.Reference;
                         options.ApiName = "api_main";
@@ -191,8 +194,8 @@ namespace Uni.Api.Web
                         {
                             Type = "oauth2",
                             Flow = "implicit",
-                            AuthorizationUrl = "http://localhost:5000/connect/authorize",
-                            TokenUrl = "http://localhost:5000/connect/token",
+                            AuthorizationUrl = $"{baseServiceUriSettings.Identity}/connect/authorize",
+                            TokenUrl = $"{baseServiceUriSettings.Identity}/connect/token",
                             Scopes = new Dictionary<string, string>
                             {
                                 [Scopes.Main] = "Main Application API Scope"
